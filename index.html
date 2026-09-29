@@ -49,7 +49,36 @@
         </div>
     </div>
 
-    <div id="ui-layer">
+        <!-- Panel del Ecosistema Sobrepuesto al 3D -->
+    <div id="ui-layer" style="display: none; width: 100%; padding: 20px; box-sizing: border-box;">
+        
+        <!-- Tarjeta de Vitalidad -->
+        <div style="background: rgba(20, 20, 30, 0.85); border: 1px solid #ff3366; border-radius: 15px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px);">
+            <h3 style="margin: 0 0 10px 0; color: #ff3366; font-size: 1rem;">🌱 Vitalidad y Comprobación</h3>
+            <div style="width: 100%; background: #333; border-radius: 10px; height: 10px; margin-bottom: 5px;">
+                <div id="barra-vitalidad" style="width: 10%; height: 100%; background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); border-radius: 10px; transition: width 0.5s ease;"></div>
+            </div>
+            <p style="margin: 0; font-size: 0.85rem; color: #ddd;" id="ui-vitalidad">10% (0/14 hojas • 0/6 acuerdos)</p>
+        </div>
+
+        <!-- Tarjeta de Tierra y Agua -->
+        <div style="background: rgba(20, 20, 30, 0.85); border: 1px solid #4caf50; border-radius: 15px; padding: 15px; margin-bottom: 15px; backdrop-filter: blur(10px);">
+            <h3 style="margin: 0 0 10px 0; color: #4caf50; font-size: 1rem;">💧 La Tierra (Raíz y Hogar)</h3>
+            <p style="margin: 0 0 10px 0; font-size: 0.85rem; color: #ddd;">Nivel de Humedad: <strong id="ui-humedad">25% - Calculando...</strong></p>
+            <button id="btn-regar" style="width: 100%; background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer;">
+                🌧️ Regar Girasol (Tu Amor 24/7)
+            </button>
+        </div>
+
+        <!-- Tarjeta de Conflicto (Hoja Seca) -->
+        <div style="background: rgba(20, 20, 30, 0.85); border: 1px solid #ff9800; border-radius: 15px; padding: 15px; backdrop-filter: blur(10px);">
+            <h3 style="margin: 0 0 5px 0; color: #ff9800; font-size: 1rem;">🌻 Etapa 1: Girasol del Alba</h3>
+            <p style="margin: 0 0 10px 0; font-size: 0.75rem; color: #aaa;">Hoja 1: Madrugada en Discord (Castigo de Silencio)</p>
+            <button id="btn-sanar" style="width: 100%; background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer;">
+                ✨ Sanar esta Hoja
+            </button>
+        </div>
+    </div>
         <h2 style="margin: 0; font-size: 1.2rem; color: #ff3366;">Conexión Cuántica Estable</h2>
     </div>
     
