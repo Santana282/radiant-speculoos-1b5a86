@@ -1,619 +1,691 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Stark-OS: Entrelazamiento Kevin & Analy</title>
-<meta name="theme-color" content="#0B0E14">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#090d16">
+    <title>Nuestro Ecosistema 🌻</title>
+    <style>
+        /* === VARIABLES GLOBALES Y THEME === */
+        :root {
+            --sky1: #090d16; --sky2: #161f33; --sky3: #231917;
+            --gold: #fbbf24; --gold-glow: rgba(251, 191, 36, 0.4);
+            --rose: #f43f5e; --pink: #fda4af; --green: #22c55e;
+            --purple: #c084fc; --blue: #38bdf8; --mc-blue: #00bcd4;
+            --card: rgba(15, 23, 42, 0.65);
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.12);
+            --txt: #f8fafc; --muted: #94a3b8;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 55%, var(--sky3) 100%);
+            color: var(--txt); min-height: 100vh; overflow-x: hidden;
+            transition: background 1.5s var(--ease-out-expo); line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
 
-:root {
-    --bg-main: #0B0E14; --card-bg: #131823;
-    --gold: #FFB020; --rose: #F43F5E;
-    --blue: #38BDF8; --green: #10B981;
-}
+        /* === PRELOADER TIPO TERMINAL (Homenaje a Python/Termux) === */
+        #terminal-loader {
+            position: fixed; inset: 0; background: #050505; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; padding: 30px;
+            font-family: 'Courier New', Courier, monospace; color: #4ade80;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .term-line { opacity: 0; transform: translateY(10px); animation: termFade 0.4s forwards; font-size: 0.9rem; margin-bottom: 8px; }
+        @keyframes termFade { to { opacity: 1; transform: translateY(0); } }
+        .cursor { display: inline-block; width: 8px; height: 15px; background: #4ade80; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { background-color: var(--bg-main); color: #F8FAFC; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        /* === ATMÓSFERA Y PARTICULAS === */
+        .sky-backdrop { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        .particle { position: absolute; border-radius: 50%; background: rgba(251, 191, 36, 0.6); box-shadow: 0 0 12px var(--gold); animation: floatUp linear infinite; }
+        @keyframes floatUp { 0% { transform: translateY(105vh) scale(0.3); opacity: 0; } 50% { opacity: 0.9; } 100% { transform: translateY(-10vh) scale(1.2); opacity: 0; } }
+        .rain-drop { position: absolute; width: 2px; height: 25px; background: linear-gradient(transparent, rgba(56,189,248,0.8)); animation: rainFall 0.7s linear forwards; }
+        @keyframes rainFall { to { transform: translateY(105vh); opacity: 0; } }
 
-/* Canvas de Fondo */
-#canvas-container { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        /* === LAYOUT PRINCIPAL === */
+        .app-container { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 15px 15px 100px; }
 
-.app-container { max-width: 1000px; margin: 0 auto; padding: 20px 15px 120px; position: relative; z-index: 10; }
+        /* === DOMO CELESTE (CÁLCULO TRIGONOMÉTRICO) === */
+        .sky-dome {
+            position: relative; height: 160px; border-radius: 24px; border: 1px solid var(--border);
+            background: rgba(0,0,0,0.25); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            overflow: hidden; margin-bottom: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        .arc-path { position: absolute; width: 86%; height: 180px; left: 7%; top: 30px; border-top: 2px dashed rgba(255,255,255,0.15); border-radius: 50% 50% 0 0; }
+        .celestial-orb {
+            position: absolute; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+            transform: translate(-50%, -50%); transition: all 1s var(--ease-out-expo); z-index: 3;
+        }
+        .orb-sun { background: radial-gradient(circle, #fef08a, #f59e0b); box-shadow: 0 0 40px var(--gold), 0 0 80px var(--gold-glow); }
+        .orb-moon { background: radial-gradient(circle, #f8fafc, #94a3b8); box-shadow: 0 0 30px #e2e8f0, 0 0 60px rgba(56,189,248,0.3); }
+        .sky-hud { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 12px 16px; z-index: 4; }
+        .weather-pill { background: rgba(0,0,0,0.5); border: 1px solid var(--border); padding: 6px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; backdrop-filter: blur(5px); display: inline-flex; align-items: center; gap: 6px; }
 
-.dash-card {
-    background-color: var(--card-bg);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 16px; padding: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
+        /* === TYPOGRAPHY & HEADER === */
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: clamp(2rem, 6vw, 3rem); font-weight: 900; background: linear-gradient(90deg, #fde68a, #f59e0b, #ec4899, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .subtitle { color: var(--muted); font-size: 0.9rem; max-width: 800px; margin: 0 auto; }
+        
+        /* === KPIS (DASHBOARD) === */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 15px 0; }
+        .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 14px; text-align: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .kpi-val { font-size: 1.1rem; font-weight: 900; color: var(--gold); font-variant-numeric: tabular-nums; margin: 4px 0; }
+        .kpi-lbl { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); font-weight: 800; letter-spacing: 0.5px; }
+        .progress-track { width: 100%; height: 8px; background: rgba(0,0,0,0.5); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--rose), var(--gold), var(--green)); transition: width 1s var(--ease-out-expo); }
 
-.text-gradient { background: linear-gradient(to right, #FDE68A, #F59E0B, #FB7185); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.font-mono { font-family: 'Space Mono', monospace; }
+        /* === SECCIONES Y VISTAS === */
+        .view-section { display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s var(--ease-out-expo); }
+        .view-section.active { display: block; opacity: 1; transform: translateY(0); }
+        .split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start; }
+        @media(max-width: 850px) { .split-layout { grid-template-columns: 1fr; } }
+        
+        .glass-panel { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 20px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        
+        /* === COMPONENTES INTERNOS === */
+        .info-box { background: rgba(0,0,0,0.3); border-radius: 14px; padding: 14px; border-left: 4px solid var(--rose); margin-bottom: 10px; }
+        .info-box.psych { border-left-color: var(--purple); background: rgba(192, 132, 252, 0.05); }
+        .info-box.empathy { border-left-color: var(--blue); background: rgba(56, 189, 248, 0.05); }
+        .info-box.mc { border-left-color: var(--mc-blue); background: rgba(0, 188, 212, 0.05); }
+        .box-label { font-size: 0.68rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+        .box-text { font-size: 0.88rem; color: #e2e8f0; }
 
-/* Navigation */
-.bottom-nav-container {
-    position: fixed; bottom: 0; left: 0; width: 100%;
-    background: rgba(11, 14, 20, 0.95); backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255,255,255,0.05); z-index: 50;
-    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-}
-.bottom-nav {
-    display: flex; justify-content: space-between; overflow-x: auto;
-    padding: 0 15px; max-width: 1000px; margin: 0 auto; gap: 15px;
-}
-.bottom-nav::-webkit-scrollbar { display: none; }
-.nav-item {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-width: 50px; color: #64748B; font-size: 0.55rem; font-weight: 700;
-    cursor: pointer; transition: all 0.2s; gap: 4px;
-}
-.nav-item span.icon { font-size: 1.2rem; filter: grayscale(100%) opacity(0.5); transition: all 0.2s; }
-.nav-item.active { color: var(--gold); }
-.nav-item.active span.icon { filter: grayscale(0%) opacity(1); transform: translateY(-2px); }
+        /* === GIRASOLES SVG === */
+        .flowers-row { display: flex; justify-content: space-around; align-items: flex-end; padding-top: 15px; min-height: 250px; flex-wrap: wrap; }
+        .flower-unit { display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 19%; transition: transform 0.3s; }
+        .flower-unit:active { transform: scale(0.95); }
+        .flower-svg { width: 100%; max-width: 90px; height: 180px; overflow: visible; transform-origin: bottom center; animation: sway 5s ease-in-out infinite; }
+        @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+        .flower-unit.wilted .flower-head { transform: translateY(15px) rotate(25deg); filter: grayscale(80%) brightness(0.6); transition: all 0.8s var(--ease-out-expo); }
+        .flower-unit.bloomed .flower-head { transform: translateY(0) rotate(0deg); filter: drop-shadow(0 0 15px var(--gold-glow)); transition: all 0.8s var(--ease-out-expo); }
+        .flower-unit.wilted .stem-path { stroke: #475569; } .flower-unit.bloomed .stem-path { stroke: var(--green); }
+        .flower-label { margin-top: 8px; background: rgba(0,0,0,0.8); border: 1px solid var(--border); padding: 4px 8px; border-radius: 99px; font-size: 0.65rem; font-weight: 700; }
+        .flower-unit.selected .flower-label { background: var(--gold); color: #000; }
 
-/* Vistas */
-.view-section { display: none; animation: fadeIn 0.3s ease-out; }
-.view-section.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* === BOTONES Y TAGS === */
+        .btn-primary { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
+        .btn-primary:active { transform: translateY(2px); box-shadow: none; }
+        .btn-secondary { background: linear-gradient(135deg, #d97706, #b45309); box-shadow: 0 4px 15px rgba(217,119,6,0.4); }
+        .btn-success { background: linear-gradient(135deg, #16a34a, #059669); box-shadow: 0 4px 15px rgba(22,163,74,0.4); }
+        
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .tag { background: rgba(255,255,255,0.08); border: 1px solid var(--border); padding: 5px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
+        .tag.interactive { cursor: pointer; transition: all 0.2s; }
+        .tag.interactive.active { background: rgba(251,191,36,0.2); border-color: var(--gold); color: var(--gold); }
+        .tag.pink { background: rgba(244,63,94,0.15); color: #ffe4e6; border-color: rgba(244,63,94,0.3); }
+        .tag.blue { background: rgba(56,189,248,0.15); color: #e0f2fe; border-color: rgba(56,189,248,0.3); }
 
-/* Pacman UI */
-.pacman-wrapper { width: 100%; max-width: 400px; margin: 0 auto; aspect-ratio: 1; background: #000; border: 2px solid var(--blue); border-radius: 8px; box-shadow: 0 0 15px rgba(56,189,248,0.3); }
-.d-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 200px; margin: 20px auto 0; }
-.d-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; user-select: none; }
-.d-btn:active { background: var(--gold); color: black; transform: scale(0.95); }
-
-/* Custom Scroll */
-.custom-scroll::-webkit-scrollbar { width: 4px; }
-.custom-scroll::-webkit-scrollbar-track { background: transparent; }
-.custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-</style>
+        /* === BOTTOM NAVIGATION (iOS STYLE) === */
+        .bottom-nav {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 94%; max-width: 500px;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 30px; display: flex; justify-content: space-between; padding: 6px 12px; z-index: 100;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .nav-item {
+            background: none; border: none; color: var(--muted); font-size: 0.65rem; font-weight: 700;
+            display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 20px; cursor: pointer; transition: all 0.3s;
+        }
+        .nav-item span { font-size: 1.2rem; transition: transform 0.3s var(--ease-out-expo); }
+        .nav-item.active { background: rgba(255,255,255,0.1); color: #fff; }
+        .nav-item.active span { transform: translateY(-2px) scale(1.15); }
+    </style>
 </head>
 <body>
 
-<div id="canvas-container"></div>
+    <!-- PANTALLA DE CARGA ESTILO TERMINAL (HOMENAJE AL 21 DE SEPTIEMBRE) -->
+    <div id="terminal-loader">
+        <div id="term-content"></div>
+    </div>
 
-<div class="app-container">
-    
-    <!-- HEADER -->
-    <header class="mb-8">
-        <div class="flex justify-between items-center mb-6 text-[0.65rem] font-medium text-gray-400">
-            <div class="flex items-center gap-2"><span class="text-yellow-500">☀️</span> Orizaba, Veracruz - Despejado</div>
-            <div class="flex items-center gap-2">
-                <button onclick="toggleAudio()" id="audio-btn" class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 px-3 py-1 rounded-full flex items-center gap-2 transition-all active:scale-95">
-                    🎵 Sintetizador: OFF
-                </button>
-            </div>
-        </div>
+    <div class="sky-backdrop" id="particles"></div>
 
-        <div class="mb-6 pl-2">
-            <div class="flex items-center gap-4 mb-2">
-                <span class="text-5xl" style="filter: drop-shadow(0 0 15px rgba(255,176,32,0.4));">🌙</span>
-                <h1 class="text-4xl md:text-5xl font-black tracking-tight font-mono" id="main-clock">00:00:00</h1>
-            </div>
-            <div class="bg-[#1A1611] border border-yellow-900/50 text-yellow-500/80 text-[0.65rem] px-4 py-2 rounded-lg inline-block w-full max-w-md">
-                ✨ Noche • Descansa mi amor, nos vemos en sueños. (Aunque sigas compilando en Java).
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <div class="dash-card">
-                <div class="text-[0.5rem] text-gray-400 font-bold tracking-wider mb-1 flex items-center gap-1"><span>⏱️</span> TIEMPO JUNTOS</div>
-                <div class="text-lg md:text-xl font-bold text-white font-mono mb-1" id="uptime">--d --h</div>
-                <div class="text-[0.55rem] text-rose-400 uppercase font-bold">DESDE EL 22 DE JULIO</div>
-            </div>
-            <div class="dash-card">
-                <div class="text-[0.5rem] text-green-400 font-bold tracking-wider mb-1 flex items-center gap-1"><span>🌱</span> COMPROBACIÓN LÓGICA</div>
-                <div class="text-sm font-bold text-white mb-2">100% Sin Errores</div>
-                <div class="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden"><div class="bg-green-500 w-full h-full"></div></div>
-            </div>
-            <div class="dash-card col-span-2 md:col-span-1">
-                <div class="text-[0.5rem] text-yellow-500 font-bold tracking-wider mb-1 flex items-center gap-1"><span>☀️</span> LO QUE SIGNIFICAS</div>
-                <div class="text-sm font-bold text-white mb-1">Mi motor (Aún sin mi laptop Asus)</div>
-            </div>
-        </div>
-    </header>
-
-    <!-- VISTA 1: DASHBOARD PRINCIPAL -->
-    <section id="view-dashboard" class="view-section active">
-        <div class="grid md:grid-cols-2 gap-4">
-            
-            <!-- Curva Emocional -->
-            <div class="dash-card">
-                <div class="text-[0.55rem] text-yellow-500 uppercase font-bold mb-3 flex items-center gap-1"><span>🌙</span> BIOLOGÍA Y APAPACHO</div>
-                <div class="bg-[#0B0E14] border border-white/5 rounded-xl p-3 mb-4">
-                    <div class="text-[0.5rem] text-gray-400 font-bold uppercase mb-2">CURVA DE ENERGÍA VS. SOBREPENSAMIENTO</div>
-                    <canvas id="sine-canvas" class="w-full h-20"></canvas>
-                </div>
-                <div class="bg-[#1A1611] border-l-2 border-yellow-500 p-3 rounded-r-lg">
-                    <h4 class="text-[0.6rem] font-bold text-yellow-500 mb-1">💡 NOTA DE KEVIN</h4>
-                    <p class="text-[0.65rem] text-gray-400 leading-relaxed font-mono">
-                        Si sobrepiensas por mis tiempos de respuesta, recuerda que estoy peleando con código limpio en Visual Studio, Java o lidiando con mi terminal. Pero mi proceso principal siempre eres tú.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Gustos -->
-            <div class="dash-card">
-                <div class="text-[0.55rem] text-yellow-500 uppercase font-bold mb-3 flex items-center gap-1"><span>📒</span> MI LIBRETA DIGITAL DE TI</div>
-                <div class="space-y-4">
-                    <div>
-                        <h4 class="text-[0.65rem] font-bold text-rose-300 mb-2">🍰 Gastronomía y Antojos</h4>
-                        <div class="flex flex-wrap gap-1.5 text-[0.65rem] font-mono">
-                            <span class="bg-rose-950/30 text-rose-200 border border-rose-900/50 px-2 py-1 rounded">Locoño</span>
-                            <span class="bg-rose-950/30 text-rose-200 border border-rose-900/50 px-2 py-1 rounded">Huevitos rancheros (NUNCA revueltos)</span>
-                            <span class="bg-rose-950/30 text-rose-200 border border-rose-900/50 px-2 py-1 rounded">Tepache bien frío</span>
-                            <span class="bg-rose-950/30 text-rose-200 border border-rose-900/50 px-2 py-1 rounded">Chilaquiles verdes/rojos</span>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-[0.65rem] font-bold text-blue-300 mb-2">🎮 Nuestro Entrelazamiento</h4>
-                        <div class="flex flex-wrap gap-1.5 text-[0.65rem] font-mono">
-                            <span class="bg-blue-950/30 text-blue-200 border border-blue-900/50 px-2 py-1 rounded">Resident Evil 2 (Maldito Caballo)</span>
-                            <span class="bg-blue-950/30 text-blue-200 border border-blue-900/50 px-2 py-1 rounded">COD Mobile (Yo con BY15)</span>
-                            <span class="bg-blue-950/30 text-blue-200 border border-blue-900/50 px-2 py-1 rounded">Cuidar a Rogelio 🐓</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- VISTA 2: DIARIO DE LA RELACIÓN (Bitácora) -->
-    <section id="view-diario" class="view-section">
-        <div class="dash-card">
-            <h2 class="text-lg font-black text-gold mb-1">Bitácora Cuántica 📖</h2>
-            <p class="text-[0.65rem] text-gray-400 mb-6">Un registro inmutable de nuestros momentos, porque la memoria humana falla, pero mis bases de datos no.</p>
-
-            <div class="space-y-4">
-                <!-- Log 1 -->
-                <div class="bg-[#0B0E14] border-l-2 border-yellow-500 p-4 rounded-r-lg">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-xs font-bold text-yellow-500 font-mono">🌻 21 Sept - Las Flores de Termux</h4>
-                        <span class="text-[0.55rem] text-gray-500">Orizaba / Atlixco</span>
-                    </div>
-                    <p class="text-[0.65rem] text-gray-300 leading-relaxed">
-                        Tú con tu iPhone (iOS no me dejaba compilar bien) y yo tratando de meterte una terminal iSH Shell solo para correr <code>python3 campo_flores.py</code>. ¿Creíste que me olvidaría de darte tus flores amarillas aunque fueran virtuales? Jamás, mi vida.
-                    </p>
-                </div>
-                <!-- Log 2 -->
-                <div class="bg-[#0B0E14] border-l-2 border-blue-500 p-4 rounded-r-lg">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-xs font-bold text-blue-400 font-mono">🎮 14 Sept - El Caballo de RE2 y COD</h4>
-                        <span class="text-[0.55rem] text-gray-500">Xbox Cloud</span>
-                    </div>
-                    <p class="text-[0.65rem] text-gray-300 leading-relaxed">
-                        Nos atoramos en RE2 con el puzzle ("la torre está cerca del caballo pero mira a la reina"). Luego te fuiste a la tienda y me morí por Birkin. Terminamos en COD Mobile, yo usando mi BY15. El mejor dúo dinámico.
-                    </p>
-                </div>
-                <!-- Log 3 -->
-                <div class="bg-[#0B0E14] border-l-2 border-green-500 p-4 rounded-r-lg">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-xs font-bold text-green-400 font-mono">🥋 8 Sept - El Panamericano BJJ</h4>
-                        <span class="text-[0.55rem] text-gray-500">Modo Pelea</span>
-                    </div>
-                    <p class="text-[0.65rem] text-gray-300 leading-relaxed">
-                        "En lo mío, pero pa' usted". Preparándome para el Panamericano. Sé que a veces me pierdo entrenando o programando, pero te aseguré a mi dama antes de volver a encerrarme en mi disciplina. 
-                    </p>
-                </div>
-                <!-- Log 4 -->
-                <div class="bg-[#0B0E14] border-l-2 border-rose-500 p-4 rounded-r-lg">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-xs font-bold text-rose-400 font-mono">💻 25 Mayo - Código Limpio</h4>
-                        <span class="text-[0.55rem] text-gray-500">Visual Studio</span>
-                    </div>
-                    <p class="text-[0.65rem] text-gray-300 leading-relaxed">
-                        Lidiando con Java y las cagadas de mis compañeros que no saben declarar variables. Tú cuidando de Rogelio mientras yo me acababa los ojos frente a la pantalla (y usando mis gotitas). 
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- VISTA 3: PAC-MAN GAME -->
-    <section id="view-pacman" class="view-section">
-        <div class="dash-card text-center">
-            <h2 class="text-lg font-black text-gold mb-1">Terminal Pac-Man 👾</h2>
-            <p class="text-[0.65rem] text-gray-400 mb-4">"Para cuando no podemos salirnos de terminales por exámenes" - xSantana. (Usa los botones para jugar).</p>
-            
-            <div class="pacman-wrapper relative">
-                <canvas id="pacman-canvas" class="w-full h-full"></canvas>
-                <!-- Game Over Overlay -->
-                <div id="pac-overlay" class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center hidden">
-                    <h3 class="text-xl font-bold text-red-500 mb-2">GAME OVER</h3>
-                    <button onclick="initPacman()" class="bg-yellow-500 text-black font-bold px-4 py-2 rounded text-xs">Reintentar</button>
-                </div>
-            </div>
-
-            <!-- D-PAD Móvil -->
-            <div class="d-pad">
-                <div></div>
-                <div class="d-btn" onclick="pacDir(0, -1)">⬆️</div>
-                <div></div>
-                <div class="d-btn" onclick="pacDir(-1, 0)">⬅️</div>
-                <div class="d-btn" onclick="pacDir(0, 1)">⬇️</div>
-                <div class="d-btn" onclick="pacDir(1, 0)">➡️</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- VISTA 4: STARK-OS TERMINAL -->
-    <section id="view-terminal" class="view-section">
-        <div class="dash-card">
-            <div class="text-[0.55rem] text-yellow-500 uppercase font-bold mb-1 flex items-center gap-1"><span>💻</span> Stark OS - Módulo de Ejecución</div>
-            <h3 class="text-sm font-bold mb-4">Terminal Interactiva (iSH Shell Emulator)</h3>
-            <p class="text-[0.6rem] text-gray-400 mb-4">Presiona para compilar nuestros recuerdos en tiempo real:</p>
-
-            <div class="space-y-2 mb-4">
-                <div class="bg-[#1C2333] border border-white/5 rounded-lg p-3 text-[0.65rem] font-mono text-gray-300 flex items-center gap-2 cursor-pointer hover:bg-[#252D40]" onclick="runCommand('campo')">
-                    <span>🌻</span> python3 campo_flores.py
-                </div>
-                <div class="bg-[#1C2333] border border-white/5 rounded-lg p-3 text-[0.65rem] font-mono text-gray-300 flex items-center gap-2 cursor-pointer hover:bg-[#252D40]" onclick="runCommand('dados')">
-                    <span>🎲</span> java JuegoDados.java
-                </div>
-                <div class="bg-[#1C2333] border border-white/5 rounded-lg p-3 text-[0.65rem] font-mono text-gray-300 flex items-center gap-2 cursor-pointer hover:bg-[#252D40]" onclick="runCommand('fix')">
-                    <span>🔧</span> nano reparar_laptop_inside.py
-                </div>
-            </div>
-
-            <!-- Ventana Consola -->
-            <div class="bg-[#0B0E14] border border-gray-800 rounded-lg overflow-hidden">
-                <div class="bg-[#161B22] px-3 py-2 flex justify-between items-center border-b border-gray-800">
-                    <div class="flex gap-1.5">
-                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                    </div>
-                    <span class="text-[0.55rem] font-mono text-gray-500">bash — xSantana@Stark-OS</span>
-                </div>
-                <div class="p-3 font-mono text-[0.65rem] text-gray-300 h-48 overflow-y-auto custom-scroll" id="terminal-output">
-                    <p class="text-green-400">root@stark-os:~# Sistema iniciado.</p>
-                    <p class="text-gray-500">Esperando instrucciones...</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="bottom-nav-container">
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchView('view-dashboard', this)">
-            <span class="icon">🌙</span><span>Tu Vida</span>
-        </div>
-        <div class="nav-item" onclick="switchView('view-diario', this)">
-            <span class="icon">📖</span><span>Bitácora</span>
-        </div>
-        <div class="nav-item" onclick="switchView('view-pacman', this)">
-            <span class="icon">👾</span><span>Pac-Man</span>
-        </div>
-        <div class="nav-item" onclick="switchView('view-terminal', this)">
-            <span class="icon">💻</span><span>Stark-OS</span>
-        </div>
-    </nav>
-</div>
-
-<script>
-/* =========================================
-   1. THREE.JS: GALAXIA (Fondo)
-   ========================================= */
-let scene, camera, renderer, particles;
-let mouseX = 0, mouseY = 0;
-
-function initGalaxy() {
-    const container = document.getElementById('canvas-container');
-    scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0B0E14, 0.0015);
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.z = 300;
-    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    container.appendChild(renderer.domElement);
-
-    const geometry = new THREE.BufferGeometry();
-    const vertices = [], colors = [];
-    const palette = [new THREE.Color('#F43F5E'), new THREE.Color('#10B981'), new THREE.Color('#38BDF8'), new THREE.Color('#FFB020')];
-
-    for ( let i = 0; i < 600; i ++ ) {
-        vertices.push((Math.random() - 0.5) * 1000, (Math.random() - 0.5) * 1000, (Math.random() - 0.5) * 800);
-        const color = palette[Math.floor(Math.random() * palette.length)];
-        colors.push(color.r, color.g, color.b);
-    }
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
-    const canvas = document.createElement('canvas'); canvas.width = 16; canvas.height = 16;
-    const ctx = canvas.getContext('2d');
-    const grad = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
-    grad.addColorStop(0, 'rgba(255,255,255,1)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = grad; ctx.fillRect(0,0,16,16);
-    const texture = new THREE.CanvasTexture(canvas);
-
-    const material = new THREE.PointsMaterial({ size: 4, vertexColors: true, map: texture, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false });
-    particles = new THREE.Points(geometry, material);
-    scene.add(particles);
-
-    window.addEventListener('deviceorientation', e => { if(e.gamma!==null) { mouseX = e.gamma * 2; mouseY = (e.beta-45) * 2; }});
-    animateGalaxy();
-}
-function animateGalaxy() {
-    requestAnimationFrame(animateGalaxy);
-    camera.position.x += (mouseX - camera.position.x) * 0.05;
-    camera.position.y += (-mouseY - camera.position.y) * 0.05;
-    camera.lookAt(scene.position);
-    particles.rotation.y += 0.0005; particles.rotation.x += 0.0002;
-    renderer.render(scene, camera);
-}
-
-/* =========================================
-   2. RELOJ Y UPTIME
-   ========================================= */
-function startTimers() {
-    const clockEl = document.getElementById('main-clock');
-    const uptimeEl = document.getElementById('uptime');
-    const startDate = new Date("2026-07-22T00:00:00");
-
-    setInterval(() => {
-        const now = new Date();
-        let h = now.getHours(), m = now.getMinutes().toString().padStart(2, '0'), s = now.getSeconds().toString().padStart(2, '0');
-        clockEl.innerText = `${h.toString().padStart(2, '0')}:${m}:${s}`;
+    <div class="app-container" style="display:none;" id="main-app">
         
-        const diff = now - startDate;
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hr = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        uptimeEl.innerText = `${d}d ${hr}h`;
-    }, 1000);
-}
+        <!-- DOMO CELESTE Y CLIMA -->
+        <div class="sky-dome">
+            <div class="arc-path"></div>
+            <div class="celestial-orb orb-sun" id="celestial-orb">☀️</div>
+            <div class="sky-hud">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div class="weather-pill" id="weather-display">🌤️ Sincronizando satélite...</div>
+                    <div style="display:flex; gap:5px;">
+                        <button class="tag interactive active" onclick="fetchWeather('auto', this)">📍 Auto</button>
+                        <button class="tag interactive" onclick="fetchWeather('atlixco', this)">🌸 Atlixco</button>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div class="weather-pill" style="font-family: monospace; font-size: 0.85rem;" id="clock-display">00:00:00</div>
+                    <div class="weather-pill" id="sky-phase-label" style="color: var(--gold); border-color: var(--gold-glow);">✨ En línea</div>
+                </div>
+            </div>
+        </div>
 
-/* =========================================
-   3. NAVEGACIÓN Y CANVAS CURVA
-   ========================================= */
-function switchView(viewId, navEl) {
-    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
-    navEl.classList.add('active');
+        <!-- HEADER Y DASHBOARD -->
+        <header>
+            <h1>Nuestro Ecosistema</h1>
+            <p class="subtitle">Código limpio, variables independientes y métodos de comprobación para que nuestra partida nunca termine. Eres mi dúo en el Gulag y mi paz en el refugio. <br><code>while (vida > 0) { teAmo(); }</code></p>
+            
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <span class="kpi-lbl">Tiempo Compilando Juntos</span>
+                    <div class="kpi-val" id="kpi-uptime">0d 0h 0m 0s</div>
+                    <span class="kpi-lbl" style="color: var(--pink);" id="kpi-next"></span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-lbl">Vitalidad de la Base de Datos</span>
+                    <div class="kpi-val" id="health-val">0%</div>
+                    <div class="progress-track"><div class="progress-fill" id="health-fill"></div></div>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-lbl">Estado del Servidor</span>
+                    <div class="kpi-val" style="color: var(--green);">Online 🟢</div>
+                    <span class="kpi-lbl">Listos para jugar COD / Realm</span>
+                </div>
+            </div>
+        </header>
 
-    if(viewId === 'view-dashboard') drawSineWave();
-    if(viewId === 'view-pacman') {
-        if(!pacInterval) initPacman(); // Iniciar juego si no está corriendo
-    }
-}
+        <!-- VISTA 1: EL JARDÍN (DEBUGGING DE ERRORES) -->
+        <section id="view-garden" class="view-section active">
+            <div class="split-layout">
+                <div class="glass-panel">
+                    <span class="box-label" style="text-align: center; color: var(--gold);">Terminal de Diagnóstico de Girasoles</span>
+                    <div class="flowers-row" id="flowers-container"></div>
+                    <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; text-align: center;">
+                        <span class="box-label">Radar de Estabilidad Lógica y Emocional</span>
+                        <svg id="radar-svg" viewBox="0 0 200 160" style="width: 100%; max-width: 220px; height: 140px; margin: 0 auto;"></svg>
+                    </div>
+                </div>
 
-function drawSineWave() {
-    const canvas = document.getElementById('sine-canvas');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width = canvas.offsetWidth, h = canvas.height = canvas.offsetHeight;
-    ctx.clearRect(0,0,w,h);
-    
-    ctx.beginPath();
-    for(let x=0; x<w; x++) {
-        const y = (h/2) - Math.sin((x/w) * Math.PI * 2) * (h/3);
-        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle = '#F43F5E'; ctx.lineWidth = 2; ctx.shadowColor = '#F43F5E'; ctx.shadowBlur = 8; ctx.stroke();
-    
-    const curX = w * 0.4, curY = (h/2) - Math.sin((curX/w) * Math.PI * 2) * (h/3);
-    ctx.beginPath(); ctx.arc(curX, curY, 4, 0, Math.PI*2);
-    ctx.fillStyle = '#FBBF24'; ctx.fill(); ctx.shadowColor = '#FBBF24'; ctx.shadowBlur = 10; ctx.fill();
-}
+                <div class="glass-panel">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+                        <div>
+                            <span class="box-label" style="color: var(--gold);" id="f-month">ETAPA</span>
+                            <h2 style="font-size: 1.1rem; color: #fff;" id="f-title">Selecciona una Flor</h2>
+                        </div>
+                        <span class="weather-pill" id="f-badge">🥀</span>
+                    </div>
 
-/* =========================================
-   4. TERMINAL (STARK-OS)
-   ========================================= */
-function runCommand(type) {
-    const out = document.getElementById('terminal-output');
-    if(type === 'campo') {
-        out.innerHTML += `
-            <p class="text-green-400 mt-3">root@stark-os:~# python3 campo_flores.py</p>
-            <p class="text-yellow-500 mt-1">Iluminando el cielo y cultivando tu campo de girasoles...</p>
-            <p class="text-yellow-300 font-bold whitespace-pre mt-2">
-      .-.         .-.  
-     (   )       (   ) 
-   .-.( @ ).-. .-( @ )-.
-     (   )       (   ) 
-      \`-\'         \`-\'  
-       |           |   
-      \\|/         \\|/  
-            </p>
-            <p class="text-white mt-1">¿Creíste que el iPhone me detendría para darte tus flores amarillas? 🌻</p>
-        `;
-    } else if(type === 'dados') {
-        out.innerHTML += `
-            <p class="text-green-400 mt-3">root@stark-os:~# java JuegoDados.java</p>
-            <p class="text-gray-400">Compilando código limpio...</p>
-            <p>Tirada Jugador 1 (Mi Reina): >>> [5]</p>
-            <p>Tirada Jugador 2 (Mi Inge): >>> [1]</p>
-            <p class="text-blue-400 font-bold mt-1">¡Gana Mi Reina y se lleva besitos extra! ❤️‍🔥</p>
-        `;
-    } else {
-        out.innerHTML += `
-            <p class="text-green-400 mt-3">root@stark-os:~# nano laptop_inside.py</p>
-            <p class="text-red-400">Error: Core i0 detectado. Se recomienda restablecimiento de fábrica a la laptop de tu hermano en Oaxaca.</p>
-            <p class="text-gray-400">Enviando ánimos a la chef...</p>
-        `;
-    }
-    out.scrollTop = out.scrollHeight;
-}
+                    <span class="box-label">Selecciona el módulo a depurar (Hojas):</span>
+                    <div class="tag-cloud" id="leaves-buttons" style="margin-bottom: 15px;"></div>
 
-/* =========================================
-   5. PAC-MAN ENGINE (Canvas Mini Game)
-   ========================================= */
-let pacCanvas, pCtx, pacInterval;
-let gridSize = 10; // 10x10 map
-let tileSize;
-// 1: wall, 0: dot, 2: space
-const map = [
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,1,0,0,0,0,1],
-    [1,0,1,0,1,0,1,1,0,1],
-    [1,0,1,0,0,0,0,0,0,1],
-    [1,0,1,1,1,2,1,1,0,1],
-    [1,0,0,0,0,0,0,1,0,1],
-    [1,1,1,0,1,1,0,1,0,1],
-    [1,0,0,0,1,0,0,0,0,1],
-    [1,0,1,0,0,0,1,1,0,1],
-    [1,1,1,1,1,1,1,1,1,1]
-];
-let currentMap = [];
+                    <div class="info-box">
+                        <span class="box-label" style="color: var(--rose);">🔴 Error en Sintaxis (El Hecho):</span>
+                        <p class="box-text" id="l-error"></p>
+                    </div>
+                    <div class="info-box psych">
+                        <span class="box-label" style="color: var(--purple);">🧠 Depuración Lógica (Por qué fallé):</span>
+                        <p class="box-text" id="l-psych"></p>
+                    </div>
+                    <div class="info-box empathy">
+                        <span class="box-label" style="color: var(--blue);">💙 Impacto en Interfaz (Lo que sentiste):</span>
+                        <p class="box-text" id="l-empathy"></p>
+                    </div>
+                    <div class="info-box mc">
+                        <span class="box-label" style="color: var(--green);">✅ Commit Final (Solución):</span>
+                        <p class="box-text" id="l-sol"></p>
+                    </div>
 
-let pacman = { x: 1, y: 1, dx: 0, dy: 0, nextDx: 0, nextDy: 0 };
-let ghost = { x: 8, y: 8, dx: -1, dy: 0 };
-let score = 0;
-let mouthOpen = 0;
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                        <button class="btn-primary btn-secondary" id="btn-heal" onclick="healLeaf()">🌿 Compilar Hoja</button>
+                        <button class="btn-primary" id="btn-water" onclick="waterFlower()">💧 Ejecutar Girasol</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-function initPacman() {
-    pacCanvas = document.getElementById('pacman-canvas');
-    pCtx = pacCanvas.getContext('2d');
-    
-    // Adaptar tamaño
-    const rect = pacCanvas.parentElement.getBoundingClientRect();
-    pacCanvas.width = rect.width; pacCanvas.height = rect.height;
-    tileSize = pacCanvas.width / gridSize;
+        <!-- VISTA 2: BIOLOGÍA Y GUSTOS -->
+        <section id="view-care" class="view-section">
+            <div class="split-layout">
+                <div class="glass-panel">
+                    <span class="box-label" style="color: var(--pink);">🌙 Algoritmo Lunar (Base: 11 Sept)</span>
+                    <h2 style="font-size: 1.2rem; margin-bottom: 10px;">Monitor Hormonal de Mi Reina</h2>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <span class="box-text">Duración (días):</span>
+                        <select id="cycle-sel" style="background: var(--sky1); color: var(--gold); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px;" onchange="updateLunar()">
+                            <option value="28" selected>28</option><option value="29">29</option><option value="30">30</option>
+                        </select>
+                    </div>
 
-    // Clonar mapa
-    currentMap = JSON.parse(JSON.stringify(map));
-    pacman = { x: 1, y: 1, dx: 1, dy: 0, nextDx: 1, nextDy: 0 };
-    ghost = { x: 8, y: 8, dx: 0, dy: -1 };
-    score = 0;
+                    <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 15px;">
+                        <span class="box-label" style="color: var(--gold);">Gráfica Sinusoidal de Energía</span>
+                        <svg id="lunar-wave" viewBox="0 0 300 80" style="width: 100%; height: 70px; margin: 10px 0; overflow: visible;"></svg>
+                    </div>
 
-    document.getElementById('pac-overlay').classList.add('hidden');
-    
-    if(pacInterval) clearInterval(pacInterval);
-    pacInterval = setInterval(gameLoop, 200); // Velocidad 
-}
+                    <div class="info-box" style="border-left-color: var(--pink);">
+                        <span class="box-label" style="color: var(--pink);" id="phase-title"></span>
+                        <p class="box-text" id="phase-desc" style="margin-bottom: 8px;"></p>
+                        <p class="box-text" style="font-weight: bold; color: #fff;" id="phase-rec"></p>
+                    </div>
+                </div>
 
-function pacDir(dx, dy) {
-    pacman.nextDx = dx; pacman.nextDy = dy;
-}
+                <div class="glass-panel">
+                    <span class="box-label" style="color: var(--gold);">🍓 Base de Datos: Tú</span>
+                    <h2 style="font-size: 1.2rem; margin-bottom: 15px;">Parámetros de Mi Niña Hermosa</h2>
+                    
+                    <div style="display: grid; gap: 12px;">
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px; border-radius: 12px;">
+                            <span class="box-label" style="color: var(--pink);">🍰 Postres & Bebidas</span>
+                            <div class="tag-cloud">
+                                <span class="tag pink">Pastel de Chocolate/3 Leches</span><span class="tag pink">Mil Hojas</span>
+                                <span class="tag pink">Arroz con leche</span><span class="tag pink">Tepache bien frío pa' la calor 🧊</span><span class="tag pink">Miches y Tequila</span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px; border-radius: 12px;">
+                            <span class="box-label" style="color: var(--gold);">🌮 Gastronomía Core</span>
+                            <div class="tag-cloud">
+                                <span class="tag">Lasaña (te gusta muchooo)</span><span class="tag">Comida China (Pollo agridulce)</span>
+                                <span class="tag">Mole, Enmoladas y Tamales</span><span class="tag">Huevitos rancheritos (¡NUNCA revueltos!)</span><span class="tag">Pizza (Orilla de queso)</span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px; border-radius: 12px;">
+                            <span class="box-label" style="color: var(--blue);">💙 Lore de Nuestra Relación</span>
+                            <div class="tag-cloud">
+                                <span class="tag blue">Flor con lata de Monster</span><span class="tag blue">Jardín polinizador 🐝</span><span class="tag blue">Fotos de meñiques</span>
+                                <span class="tag blue">Gym (Piernita al fallo)</span><span class="tag blue">Cuidar a Rogelio 🐓</span><span class="tag blue">COD (BY15) & Minecraft</span><span class="tag blue">Recordar mi Omeprazol</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-function gameLoop() {
-    updatePacman();
-    updateGhost();
-    drawPacmanWorld();
-    
-    // Colisión con fantasma
-    if(pacman.x === ghost.x && pacman.y === ghost.y) {
-        clearInterval(pacInterval);
-        document.getElementById('pac-overlay').classList.remove('hidden');
-    }
-}
+        <!-- VISTA 3: CONSOLA DE MÉTODOS DE COMPROBACIÓN -->
+        <section id="view-console" class="view-section">
+            <div class="glass-panel" style="max-width: 800px; margin: 0 auto;">
+                <span class="box-label" style="color: var(--mc-blue);">🛠️ Consola Central</span>
+                <h2 style="font-size: 1.3rem; margin-bottom: 10px;">Métodos de Comprobación</h2>
+                <p class="box-text" style="margin-bottom: 20px; color: var(--muted);">El 25 de mayo te expliqué que en matemáticas y programación, todo tiene un método de comprobación para ver dónde falló el código. Esta es nuestra consola para depurar el corazón cuando algo duele.</p>
+                
+                <div style="display: grid; gap: 12px;">
+                    <div class="info-box mc">
+                        <span class="box-label">🥺 Script: "Te extraño / Te necesito"</span>
+                        <p class="box-text"><strong>Paso 1:</strong> Freno el código o tarea por 10 min.<br><strong>Paso 2:</strong> Llamada o audio escuchándonos.<br><strong>Paso 3:</strong> Recordarte que eres mi variable más importante y que te quiero en mis brazos.</p>
+                    </div>
+                    <div class="info-box empathy">
+                        <span class="box-label">💔 Script: "Ya cedí / Ahí muere"</span>
+                        <p class="box-text"><strong>Paso 1:</strong> Abortamos la discusión. Prohibido rendirse.<br><strong>Paso 2:</strong> Reconozco mi error de sintaxis (falta de atención).<br><strong>Paso 3:</strong> Tomo yo la iniciativa para que no tengas que mendigar mi amor.</p>
+                    </div>
+                    <div class="info-box psych">
+                        <span class="box-label">🕒 Script: "Error 404: Madrugada y Sueño"</span>
+                        <p class="box-text"><strong>Regla:</strong> Si son más de las 12:00 AM, prohibido compilar discusiones lógicas. Guardamos el archivo, nos decimos que nos amamos, dormimos y depuramos de día.</p>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 20px 0 10px; font-size: 1rem; border-top: 1px solid var(--border); padding-top: 15px;">✅ Acuerdos Activos (Guardados en Caché)</h3>
+                <div id="pacts-container" style="display: grid; gap: 8px;"></div>
+                
+                <button class="btn-primary btn-success" style="margin-top: 20px;" onclick="syncData()">📲 Sincronizar Base de Datos con WhatsApp</button>
+            </div>
+        </section>
 
-function updatePacman() {
-    // Intentar mover en nextDir
-    let nx = pacman.x + pacman.nextDx; let ny = pacman.y + pacman.nextDy;
-    if(currentMap[ny][nx] !== 1) {
-        pacman.dx = pacman.nextDx; pacman.dy = pacman.nextDy;
-    }
-    // Mover
-    nx = pacman.x + pacman.dx; ny = pacman.y + pacman.dy;
-    if(currentMap[ny][nx] !== 1) {
-        pacman.x = nx; pacman.y = ny;
-        if(currentMap[ny][nx] === 0) {
-            currentMap[ny][nx] = 2; // Comer punto
-            score += 10;
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav" id="bottom-nav" style="display: none;">
+        <button class="nav-item active" onclick="switchTab('garden', this)"><span>🌻</span>Jardín</button>
+        <button class="nav-item" onclick="switchTab('care', this)"><span>🌙</span>Tus Datos</button>
+        <button class="nav-item" onclick="switchTab('console', this)"><span>🛠️</span>Consola</button>
+    </nav>
+
+    <script>
+        // === CORE DATA ===
+        const db = {
+            flowers: [
+                {
+                    month: "Mayo-Jun", title: "Girasol 1: Excepciones de Madrugada", bloomed: false,
+                    leaves: [
+                        { name: "Muteo en Discord", error: "Al llegar tu hermano me muteaste para cuidar mi sueño. Mi sistema lanzó una excepción de desconfianza y te apliqué la ley del hielo.", psych: "Hipervigilancia. Mi código interno asocia cambios bruscos con amenazas. Reacción de defensa instintiva.", empathy: "Te sentiste castigada y frustrada al ver que cuidar mi sueño provocó un conflicto.", sol: "Validar variables primero: '¿Todo bien amor?'. Cero muteos como castigo.", healed: false },
+                        { name: "Inseguridad de Prioridad", error: "Sobreanalizar redes dudando si yo era tu única variable importante.", psych: "Apego ansioso. Miedo a que mi código fuente no sea suficiente para ti.", empathy: "Te dolió ver que tu lealtad constante no compilaba confianza en mí.", sol: "Declarar vulnerabilidad limpia: pedir apapacho en vez de lanzar reclamos.", healed: false },
+                        { name: "Desvelos Extremos", error: "Clavarme programando sin parpadear hasta la madrugada, descuidando nuestro tiempo.", psych: "Refugio en la productividad matemática para sentir control.", empathy: "Ansiedad por mi salud y mis ojos mientras tú me esperabas despierta.", sol: "Ejecutar comando Sleep(). Cerrar la PC para ir a la camita contigo.", healed: false }
+                    ]
+                },
+                {
+                    month: "Jul-Ago", title: "Girasol 2: Interfaz y Detalles", bloomed: false,
+                    leaves: [
+                        { name: "Fotos a cuenta gotas", error: "Tardar en mandarte fotos o darte vueltas cuando me las pedías.", psych: "Coraza de autosuficiencia. Olvidar que a distancia, lo visual es tu conexión.", empathy: "Sentiste que mendigabas mi atención y mi cariño.", sol: "Automatizar envío de fotos y videos espontáneos semanales.", healed: false },
+                        { name: "El 1 de Agosto", error: "Omitir el Día de la Novia por no conocer el evento en mi base de datos.", psych: "Lógica fría: creer que las fechas no importan si hay amor diario.", empathy: "Ilusión rota al ver el día pasar en blanco.", sol: "Agendar eventos (Día 22, cumpleaños) con recordatorios previos.", healed: false },
+                        { name: "Likes de Despedida", error: "Dar like a posts de 'alejarme para dar paz' o enviar memes primero a grupos.", psych: "Autosabotaje por sentimiento de insuficiencia de sistema.", empathy: "Terror a que yo cerrara la sesión y te abandonara de repente.", sol: "Tú eres mi Admin. Prioridad de memes para ti, cero indirectas.", healed: false }
+                    ]
+                },
+                {
+                    month: "Ago-Sept", title: "Girasol 3: Servidores y Salud", bloomed: false,
+                    leaves: [
+                        { name: "Tensión en COD", error: "Tono cortante por puntos o comparar situaciones sensibles de tu familia en el juego.", psych: "Fuga de memoria: desplazar mi estrés diario a nuestro único servidor de juego.", empathy: "Transformé nuestro refugio en un Gulag estresante.", sol: "En COD tú y yo vs todos. Cero reclamos, solo risas y BY15.", healed: false },
+                        { name: "Volver al Clan DS", error: "Jurar que mi código viejo estaba borrado y volver a ejecutarlo rompiendo mi palabra.", psych: "Dificultad para borrar directorios antiguos de mi identidad 'salvadora'.", empathy: "Inestabilidad; sentir que mis promesas tenían bugs.", sol: "Commit definitivo: el pasado se borró. Mi tribu eres tú.", healed: false },
+                        { name: "Límites y Excesos", error: "Hablar de volver a 'la loquera' o vicios ignorando tu preocupación.", psych: "Minimización de riesgos de un código peligroso.", empathy: "Miedo a que el hombre con el que sueña un futuro sano recaiga.", sol: "Priorizar mi hardware y software por mí y nuestra futura casa.", healed: false }
+                    ]
+                },
+                {
+                    month: "Septiembre", title: "Girasol 4: Depuración del Presente", bloomed: false,
+                    leaves: [
+                        { name: "Audios del Servicio", error: "El 10 de Sept. leí tu transcripción y juzgué tu escuela, haciéndote decir 'es pa lo que me alcanzó'.", psych: "Output sin Input correcto. Opinar desde mi lógica sin escuchar tu voz.", empathy: "Te minimicé y te hice pedir perdón por tu digno esfuerzo.", sol: "Parsear siempre el audio completo. Orgullo total por mi futura chef.", healed: false },
+                        { name: "Peros a tu visita", error: "El 19 de Sept. te puse excusas de dinero y horarios ante tu ilusión de viajar a verme.", psych: "Vergüenza económica. Miedo a no patrocinarte como mereces hoy.", empathy: "Sentiste rechazo, como si tu presencia estorbara en mi RAM.", sol: "El presente es el mejor Framework. Recibirte con los brazos abiertos, sin dinero como excusa.", healed: false },
+                        { name: "Lógica 3:00 AM", error: "Forzar la terminal emocional pidiendo 'bases de datos de problemas' en plena madrugada.", psych: "Loop infinito de ansiedad ingenieril queriendo controlar todo.", empathy: "Agotamiento emocional al ser tratada como máquina.", sol: "Regla de 12AM: Cerrar terminal, abrazar y dormir. Mañana se depura.", healed: false }
+                    ]
+                }
+            ],
+            pacts: [
+                { txt: "1. Usar señal 🌻 antes de guardar dolor en caché.", state: false },
+                { txt: "2. Priorizar el PRESENTE; vernos sin peros económicos.", state: false },
+                { txt: "3. Iniciativa Push: mandar fotos y audios porque me nace.", state: false },
+                { txt: "4. Regla 12AM: Prohibido compilar discusiones con sueño.", state: false }
+            ]
+        };
+
+        let g_fIdx = 0, g_lIdx = 0;
+
+        // === PRELOADER TIPO TERMINAL ===
+        const bootSequence = [
+            "pkg update && pkg upgrade -y",
+            "Instalando dependencias de amor...",
+            "Importing sys, math, datetime, heart...",
+            "python3 compilar_ecosistema.py",
+            "Analizando bases de datos (Lasaña, Minecraft, COD)...",
+            "Aplicando Método de Comprobación...",
+            "while (vida > 0) { teAmo(); }",
+            "[ÉXITO] Servidor conectado con Mi Reina 💚"
+        ];
+
+        function runTerminal() {
+            const term = document.getElementById('term-content');
+            let delay = 0;
+            bootSequence.forEach((line, i) => {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = 'term-line';
+                    p.innerHTML = `> ${line}`;
+                    term.appendChild(p);
+                    if (i === bootSequence.length - 1) {
+                        setTimeout(() => {
+                            document.getElementById('terminal-loader').style.opacity = '0';
+                            document.getElementById('terminal-loader').style.visibility = 'hidden';
+                            document.getElementById('main-app').style.display = 'block';
+                            document.getElementById('bottom-nav').style.display = 'flex';
+                            initApp();
+                        }, 1500);
+                    }
+                }, delay);
+                delay += (Math.random() * 400) + 300;
+            });
         }
-    }
-    mouthOpen = mouthOpen === 0 ? 0.2 : 0;
-}
 
-function updateGhost() {
-    // IA Basica aleatoria
-    let possible = [];
-    const dirs = [[0,-1],[0,1],[-1,0],[1,0]];
-    for(let d of dirs) {
-        if(currentMap[ghost.y+d[1]][ghost.x+d[0]] !== 1) {
-            // Evitar regresarse inmediatamente si es posible
-            if(d[0] !== -ghost.dx || d[1] !== -ghost.dy) possible.push(d);
-        }
-    }
-    if(possible.length === 0) possible.push([-ghost.dx, -ghost.dy]); // Atrapado, regresa
-    
-    let move = possible[Math.floor(Math.random()*possible.length)];
-    ghost.dx = move[0]; ghost.dy = move[1];
-    ghost.x += ghost.dx; ghost.y += ghost.dy;
-}
-
-function drawPacmanWorld() {
-    pCtx.fillStyle = '#000'; pCtx.fillRect(0,0, pacCanvas.width, pacCanvas.height);
-    
-    // Draw Map
-    for(let y=0; y<gridSize; y++){
-        for(let x=0; x<gridSize; x++){
-            if(currentMap[y][x] === 1) {
-                pCtx.fillStyle = '#1e3a8a'; // Blue wall
-                pCtx.fillRect(x*tileSize, y*tileSize, tileSize, tileSize);
-                pCtx.strokeStyle = '#3b82f6'; pCtx.strokeRect(x*tileSize, y*tileSize, tileSize, tileSize);
-            } else if (currentMap[y][x] === 0) {
-                pCtx.fillStyle = '#FDE68A';
-                pCtx.beginPath(); pCtx.arc(x*tileSize + tileSize/2, y*tileSize + tileSize/2, tileSize/8, 0, Math.PI*2); pCtx.fill();
+        // === INICIALIZACIÓN ===
+        function initApp() {
+            loadStorage();
+            startClocks();
+            fetchWeather('auto');
+            renderFlowers();
+            renderPacts();
+            updateLunar();
+            
+            // Particulas background
+            const pCont = document.getElementById('particles');
+            for(let i=0; i<15; i++) {
+                let p = document.createElement('div'); p.className = 'particle';
+                p.style.width = p.style.height = (Math.random()*4+2)+'px';
+                p.style.left = Math.random()*100+'%';
+                p.style.animationDuration = (Math.random()*10+8)+'s';
+                pCont.appendChild(p);
             }
         }
-    }
 
-    // Draw Pacman
-    pCtx.fillStyle = '#EAB308';
-    pCtx.beginPath();
-    let angle = Math.atan2(pacman.dy, pacman.dx);
-    pCtx.arc(pacman.x*tileSize + tileSize/2, pacman.y*tileSize + tileSize/2, tileSize/2 - 2, angle + mouthOpen*Math.PI, angle + (2-mouthOpen)*Math.PI);
-    pCtx.lineTo(pacman.x*tileSize + tileSize/2, pacman.y*tileSize + tileSize/2);
-    pCtx.fill();
+        // === TIEMPO Y CLIMA ===
+        function startClocks() {
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock-display').innerText = now.toLocaleTimeString('es-MX', {hour12:false});
+                
+                const start = new Date(2026, 6, 22); // 22 Julio 2026 (Mes 6 indexado)
+                const diff = Math.max(0, now - start);
+                const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+                document.getElementById('kpi-uptime').innerText = `${d}d ${h}h ${m}m ${s}s`;
 
-    // Draw Ghost
-    pCtx.fillStyle = '#EF4444'; // Rojo
-    pCtx.beginPath();
-    pCtx.arc(ghost.x*tileSize + tileSize/2, ghost.y*tileSize + tileSize/2, tileSize/2 - 2, Math.PI, 0);
-    pCtx.lineTo(ghost.x*tileSize + tileSize - 2, ghost.y*tileSize + tileSize - 2);
-    pCtx.lineTo(ghost.x*tileSize + 2, ghost.y*tileSize + tileSize - 2);
-    pCtx.fill();
-    
-    // Draw Score
-    pCtx.fillStyle = '#FFF'; pCtx.font = '10px Space Mono';
-    pCtx.fillText('SCORE: ' + score, 5, 12);
-}
+                let next22 = new Date(now.getFullYear(), now.getMonth(), 22);
+                if(now.getDate() >= 22) next22.setMonth(next22.getMonth()+1);
+                const dLeft = Math.ceil((next22 - now)/86400000);
+                document.getElementById('kpi-next').innerText = dLeft===0 ? "¡Hoy cumplimos mes! 🎉" : `Próximo mes en ${dLeft} días`;
 
-/* =========================================
-   6. SINTETIZADOR DE AUDIO
-   ========================================= */
-let audioOn = false, synth;
-async function toggleAudio() {
-    const btn = document.getElementById('audio-btn');
-    if(!synth) {
-        await Tone.start();
-        synth = new Tone.PolySynth(Tone.Synth, { oscillator: {type:"sine"} }).toDestination();
-        synth.volume.value = -15;
-    }
-    if(!audioOn) {
-        audioOn = true;
-        btn.innerHTML = "🎵 Sintetizador: ON";
-        btn.classList.replace('text-yellow-500', 'text-green-400');
-        synth.triggerAttackRelease(["C4", "E4", "G4", "B4"], "2n");
-    } else {
-        audioOn = false;
-        btn.innerHTML = "🎵 Sintetizador: OFF";
-        btn.classList.replace('text-green-400', 'text-yellow-500');
-    }
-}
+                // Cielo dinámico
+                const hr = now.getHours() + now.getMinutes()/60;
+                const orb = document.getElementById('celestial-orb'), root = document.documentElement;
+                const isDay = hr >= 6 && hr < 19;
+                let perc = isDay ? (hr-6)/13 : (hr>=19 ? hr-19 : hr+5)/11;
+                orb.style.left = `${10 + perc*80}%`;
+                orb.style.top = `${90 - Math.sin(perc * Math.PI)*60}%`;
 
-// INICIAR
-window.onload = () => {
-    initGalaxy();
-    startTimers();
-    drawSineWave();
-    
-    window.addEventListener('resize', () => {
-        if(document.getElementById('view-dashboard').classList.contains('active')) drawSineWave();
-    });
-};
-</script>
+                if(hr>=6 && hr<8) {
+                    orb.className = 'celestial-orb orb-sun'; orb.innerText = '🌅';
+                    root.style.setProperty('--sky1','#1e1b4b'); root.style.setProperty('--sky2','#be185d'); root.style.setProperty('--sky3','#f59e0b');
+                } else if(hr>=8 && hr<17) {
+                    orb.className = 'celestial-orb orb-sun'; orb.innerText = '☀️';
+                    root.style.setProperty('--sky1','#0284c7'); root.style.setProperty('--sky2','#1d4ed8'); root.style.setProperty('--sky3','#0f172a');
+                } else if(hr>=17 && hr<19) {
+                    orb.className = 'celestial-orb orb-sun'; orb.innerText = '🌇';
+                    root.style.setProperty('--sky1','#1e1b4b'); root.style.setProperty('--sky2','#9d174d'); root.style.setProperty('--sky3','#ea580c');
+                } else {
+                    orb.className = 'celestial-orb orb-moon'; orb.innerText = '🌙';
+                    root.style.setProperty('--sky1','#050505'); root.style.setProperty('--sky2','#090d16'); root.style.setProperty('--sky3','#1e1b4b');
+                }
+            }, 1000);
+        }
+
+        async function fetchWeather(mode, btn=null) {
+            if(btn) { document.querySelectorAll('.tag').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+            const w = document.getElementById('weather-display');
+            let lat = 18.9088, lon = -98.4321, c = "Atlixco"; // Default Atlixco
+            
+            if(mode === 'auto') {
+                try {
+                    const ip = await fetch('https://ipapi.co/json/');
+                    if(ip.ok) { const d = await ip.json(); lat=d.latitude; lon=d.longitude; c=d.city; }
+                } catch(e) {}
+            }
+
+            try {
+                const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const d = await r.json();
+                const code = d.current_weather.weathercode, temp = Math.round(d.current_weather.temperature);
+                let i = '☀️', txt = 'Despejado';
+                if(code>0&&code<4){i='⛅';txt='Nublado';} else if(code>=51){i='🌧️';txt='Lluvia (Modo cobijita)'; rain();}
+                w.innerText = `${i} ${temp}°C ${c}`;
+            } catch(e) { w.innerText = `🌸 Conectado a Mi Reina`; }
+        }
+
+        function rain() {
+            for(let i=0; i<20; i++) {
+                let d = document.createElement('div'); d.className='rain-drop';
+                d.style.left = Math.random()*100+'vw'; d.style.animationDelay = Math.random()*1+'s';
+                document.body.appendChild(d); setTimeout(()=>d.remove(), 1000);
+            }
+        }
+
+        // === FUNCIONES DEL JARDIN (SVG Y LÓGICA) ===
+        function renderFlowers() {
+            const cont = document.getElementById('flowers-container'); cont.innerHTML = '';
+            db.flowers.forEach((f, i) => {
+                const div = document.createElement('div');
+                div.className = `flower-unit ${f.bloomed ? 'bloomed':'wilted'} ${i===g_fIdx?'selected':''}`;
+                div.onclick = () => { g_fIdx = i; g_lIdx = 0; renderFlowers(); };
+                
+                const c1 = f.leaves[0]?.healed ? '#22c55e' : '#475569';
+                const c2 = f.leaves[1]?.healed ? '#22c55e' : '#475569';
+                const c3 = f.leaves[2]?.healed ? '#22c55e' : '#475569';
+
+                div.innerHTML = `
+                    <svg class="flower-svg" viewBox="0 0 120 240">
+                        <path class="stem-path" d="M60 235 Q55 160 60 90" stroke-width="6" fill="none"/>
+                        <path fill="${c1}" d="M58 180 Q18 160 24 190 Q40 205 58 186 Z" style="transition:fill 0.5s;"/>
+                        <path fill="${c2}" d="M60 150 Q100 130 94 160 Q78 175 60 156 Z" style="transition:fill 0.5s;"/>
+                        ${f.leaves.length>2 ? `<path fill="${c3}" d="M58 122 Q20 105 26 132 Q42 142 58 128 Z" style="transition:fill 0.5s;"/>` : ''}
+                        <g class="flower-head">
+                            <g fill="#f59e0b" stroke="#b45309">
+                                <ellipse cx="60" cy="48" rx="10" ry="24"/><ellipse cx="60" cy="112" rx="10" ry="24"/>
+                                <ellipse cx="28" cy="80" rx="24" ry="10"/><ellipse cx="92" cy="80" rx="24" ry="10"/>
+                                <ellipse cx="37" cy="57" rx="20" ry="9" transform="rotate(45 37 57)"/><ellipse cx="83" cy="103" rx="20" ry="9" transform="rotate(45 83 103)"/>
+                                <ellipse cx="83" cy="57" rx="20" ry="9" transform="rotate(-45 83 57)"/><ellipse cx="37" cy="103" rx="20" ry="9" transform="rotate(-45 37 103)"/>
+                            </g>
+                            <circle cx="60" cy="80" r="22" fill="#451a03" stroke="#78350f" stroke-width="3"/>
+                            <circle cx="53" cy="75" r="2.5" fill="#fde68a"/><circle cx="67" cy="75" r="2.5" fill="#fde68a"/>
+                            <path d="${f.bloomed ? 'M52 85 Q60 93 68 85' : 'M52 88 Q60 82 68 88'}" stroke="#fde68a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        </g>
+                    </svg>
+                    <div class="flower-label">${f.month}</div>
+                `;
+                cont.appendChild(div);
+            });
+            updateInspector();
+            renderRadar();
+        }
+
+        function updateInspector() {
+            const f = db.flowers[g_fIdx], l = f.leaves[g_lIdx];
+            document.getElementById('f-month').innerText = f.month.toUpperCase();
+            document.getElementById('f-title').innerText = f.title;
+            const b = document.getElementById('f-badge');
+            b.innerText = f.bloomed ? '✅ Sistema Estable' : '⚠️ Requiere Depuración';
+            b.style.borderColor = f.bloomed ? 'var(--green)' : 'var(--rose)';
+            b.style.color = f.bloomed ? '#4ade80' : '#fb7185';
+
+            const lCont = document.getElementById('leaves-buttons'); lCont.innerHTML = '';
+            f.leaves.forEach((leaf, i) => {
+                let btn = document.createElement('button');
+                btn.className = `tag interactive ${i===g_lIdx?'active':''}`;
+                btn.style.borderColor = leaf.healed ? 'var(--green)' : '';
+                btn.innerText = (leaf.healed?'🟢 ':'🔴 ') + leaf.name;
+                btn.onclick = () => { g_lIdx = i; updateInspector(); };
+                lCont.appendChild(btn);
+            });
+
+            document.getElementById('l-error').innerText = l.error;
+            document.getElementById('l-psych').innerText = l.psych;
+            document.getElementById('l-empathy').innerText = l.empathy;
+            document.getElementById('l-sol').innerText = l.sol;
+
+            document.getElementById('btn-heal').innerText = l.healed ? "🌿 Módulo Compilado (Deshacer)" : "🌿 Compilar Solución";
+            document.getElementById('btn-water').innerText = f.bloomed ? "✨ Girasol al 100%" : "💧 Ejecutar Girasol Completo";
+        }
+
+        function healLeaf() {
+            let f = db.flowers[g_fIdx]; f.leaves[g_lIdx].healed = !f.leaves[g_lIdx].healed;
+            f.bloomed = f.leaves.every(x => x.healed);
+            if(f.bloomed) rain();
+            updateAll();
+        }
+
+        function waterFlower() {
+            let f = db.flowers[g_fIdx]; f.bloomed = !f.bloomed;
+            f.leaves.forEach(x => x.healed = f.bloomed);
+            if(f.bloomed) rain();
+            updateAll();
+        }
+
+        // === GRÁFICAS Y DATOS LUNARES ===
+        function renderRadar() {
+            const svg = document.getElementById('radar-svg');
+            const lbls = ["Confianza", "Iniciativa", "Juego/Paz", "Escucha", "Presente"];
+            const cx = 100, cy = 80, r = 55;
+            let html = '', pts = [];
+            
+            [0.4, 0.7, 1].forEach(s => {
+                let p = lbls.map((_, i) => `${cx + Math.cos((Math.PI*2*i)/5 - Math.PI/2)*r*s},${cy + Math.sin((Math.PI*2*i)/5 - Math.PI/2)*r*s}`).join(' ');
+                html += `<polygon points="${p}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+            });
+
+            db.flowers.forEach((f, i) => {
+                const ratio = 0.4 + (f.leaves.filter(l=>l.healed).length / f.leaves.length)*0.6;
+                const a = (Math.PI*2*i)/5 - Math.PI/2;
+                pts.push(`${cx + Math.cos(a)*r*ratio},${cy + Math.sin(a)*r*ratio}`);
+                html += `<text x="${cx + Math.cos(a)*(r+20)}" y="${cy + Math.sin(a)*(r+12)}" fill="#94a3b8" font-size="8" font-weight="bold" text-anchor="middle">${lbls[i]}</text>`;
+            });
+            svg.innerHTML = html + `<polygon points="${pts.join(' ')}" fill="rgba(34,197,94,0.3)" stroke="#4ade80" stroke-width="2"/>`;
+        }
+
+        function updateLunar() {
+            const cycle = parseInt(document.getElementById('cycle-sel').value);
+            const base = new Date(2026, 8, 11); // 11 Sept
+            const diff = Math.floor((new Date() - base)/86400000);
+            const day = ((diff % cycle) + cycle) % cycle + 1;
+
+            let t="", d="", r="";
+            if(day<=5) { t="🌙 Fase Menstrual (Reset)"; d="Renovación física. Sensibilidad alta, energía física baja."; r="Receta: Chocolatito, cobijita, y puros mimos tiernos."; }
+            else if(day<=13) { t="🌱 Fase Folicular (Carga)"; d="Subida de energía para el Gym y proyectos (Piernita al fallo)."; r="Receta: Lasaña / Comida China + Noche de COD."; }
+            else if(day<=16) { t="☀️ Fase Ovulatoria (Pico)"; d="Deseo de conexión, plenitud y máxima interacción."; r="Receta: Enmoladas + Tepache + Fotos y llamadas largas."; }
+            else { t="🍂 Fase Lútea (Backup)"; d="Preparación del sistema. Necesidad de seguridad y afecto preventivo."; r="Receta: Pastel de Chocolate + Ver anime abrazados."; }
+
+            document.getElementById('phase-title').innerText = t + ` - Día ${day}`;
+            document.getElementById('phase-desc').innerText = d;
+            document.getElementById('phase-rec').innerText = r;
+
+            const svg = document.getElementById('lunar-wave');
+            let pD = "M 0 35 ";
+            for(let i=1; i<=cycle; i++) pD += `L ${(i/cycle)*300} ${35 - Math.sin(((i-6)/cycle)*Math.PI*2)*25} `;
+            const px = (day/cycle)*300, py = 35 - Math.sin(((day-6)/cycle)*Math.PI*2)*25;
+            
+            svg.innerHTML = `
+                <path d="${pD}" fill="none" stroke="#f43f5e" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="${px}" cy="${py}" r="6" fill="#fde68a" stroke="#fff" stroke-width="2"/>
+                <text x="${px}" y="${py-12}" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">Hoy</text>
+            `;
+        }
+
+        // === ACUERDOS Y SYNC ===
+        function renderPacts() {
+            const c = document.getElementById('pacts-container'); c.innerHTML = '';
+            db.pacts.forEach((p, i) => {
+                c.innerHTML += `
+                <label style="display:flex; gap:10px; align-items:center; background:var(--glass); padding:12px; border-radius:12px; border:1px solid var(--border); cursor:pointer;">
+                    <input type="checkbox" style="width:18px;height:18px;accent-color:#4ade80;" ${p.state ? 'checked':''} onchange="db.pacts[${i}].state=this.checked; updateAll();">
+                    <span style="font-size:0.85rem; font-weight:600;">${p.txt}</span>
+                </label>`;
+            });
+            updateHealth();
+        }
+
+        function updateHealth() {
+            let h = 0, t = 0;
+            db.flowers.forEach(f => f.leaves.forEach(l => { t++; if(l.healed) h++; }));
+            let pC = db.pacts.filter(x=>x.state).length;
+            let score = Math.round(((h/t)*70) + ((pC/4)*30));
+            document.getElementById('health-val').innerText = score + '%';
+            document.getElementById('health-fill').style.width = score + '%';
+        }
+
+        function updateAll() { renderFlowers(); updateHealth(); localStorage.setItem('eco_v4', JSON.stringify(db)); }
+        
+        function loadStorage() {
+            const saved = JSON.parse(localStorage.getItem('eco_v4'));
+            if(saved) {
+                saved.flowers.forEach((sf, i) => {
+                    db.flowers[i].bloomed = sf.bloomed;
+                    sf.leaves.forEach((sl, j) => db.flowers[i].leaves[j].healed = sl.healed);
+                });
+                saved.pacts.forEach((sp, i) => db.pacts[i].state = sp.state);
+            }
+        }
+
+        function syncData() {
+            let h=0; db.flowers.forEach(f=>f.leaves.forEach(l=>{if(l.healed)h++;}));
+            let txt = `💻 *Console.log(Nuestro_Ecosistema);*\n\nAmor, actualicé la base de datos:\n🌿 Errores compilados: ${h}/12\n✅ Acuerdos en true: ${db.pacts.filter(x=>x.state).length}/4\n\nwhile(vida>0){teAmo();}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
+        }
+
+        function switchTab(id, btn) {
+            document.querySelectorAll('.view-section').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+            document.getElementById('view-'+id).classList.add('active');
+            btn.classList.add('active');
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+
+        // Iniciar
+        window.addEventListener('DOMContentLoaded', runTerminal);
+    </script>
 </body>
 </html>
