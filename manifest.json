@@ -1,0 +1,18 @@
+{
+  "name": "Ecosistema Analy & Santana",
+  "short_name": "Nuestro Jardín",
+  "description": "Un jardín vivo sincronizado con nuestro cielo, tu ciclo y nuestras soluciones en el presente.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0c10",
+  "theme_color": "#ff3366",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://fonts.gstatic.com/s/e/notoemoji/latest/1f33b/512.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
