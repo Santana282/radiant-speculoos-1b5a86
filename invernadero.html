@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>El Invernadero</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: -apple-system, sans-serif; }
+        canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
+        
+        /* Interfaz Superior */
+        #ui-layer {
+            position: absolute; top: 20px; width: 100%; text-align: center; color: white;
+            z-index: 10; text-shadow: 0 0 10px rgba(255,255,255,0.5); pointer-events: none;
+        }
+        #ui-layer h2 { margin: 0; font-size: 1.2rem; font-weight: 300; letter-spacing: 2px; }
+        #ui-layer p { margin: 5px 0 0 0; font-size: 0.8rem; color: #aaa; }
+
+        /* Botones */
+        .btn-interact {
+            position: absolute; z-index: 20; padding: 12px 24px; font-size: 1rem;
+            color: #fff; background: rgba(0, 120, 215, 0.8); border: 2px solid #55FFFF;
+            border-radius: 8px; cursor: pointer; text-transform: uppercase; font-weight: bold;
+        }
+        #btn-start { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        #btn-back { top: 20px; left: 20px; font-size: 0.7rem; padding: 8px 15px; text-decoration: none; }
+
+        /* =========================================
+           ANIMACIÓN DE GIRASOLES (Adaptada de tu código)
+           ========================================= */
+        .flower-garden {
+            position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 300px; height: 250px; z-index: 5; pointer-events: none;
+        }
+
+        .plant { position: absolute; bottom: 0; width: 60px; height: 100%; }
+        .plant:nth-child(1) { left: 40px; transform: scale(0.7) rotate(-15deg); }
+        .plant:nth-child(2) { left: 120px; transform: scale(1); z-index: 2; }
+        .plant:nth-child(3) { left: 200px; transform: scale(0.7) rotate(15deg); }
+
+        .stem {
+            position: absolute; bottom: 0; left: 50%; margin-left: -3px;
+            width: 6px; height: 0px; background: linear-gradient(to top, #0f3814, #26a33a);
+            border-radius: 6px 6px 0 0; transform-origin: bottom center;
+            animation: sway 4s ease-in-out infinite alternate, growStem 2s ease-out forwards;
+        }
+        
+        .plant:nth-child(1) .stem { animation-delay: 0s, 0.5s; height: 120px; }
+        .plant:nth-child(2) .stem { animation-delay: 0s, 0s; height: 160px; }
+        .plant:nth-child(3) .stem { animation-delay: 0s, 1s; height: 110px; }
+
+        @keyframes growStem { 0% { height: 0; } 100% { height: inherit; } }
+        @keyframes sway { 0% { transform: rotate(-3deg); } 100% { transform: rotate(3deg); } }
+
+        .leaf { position: absolute; width: 30px; height: 18px; background: #26a33a; opacity: 0; animation: popLeaf 0.5s ease-out forwards; }
+        .leaf-left { left: -26px; bottom: 40px; border-radius: 30px 0 30px 0; transform-origin: right center; }
+        .leaf-right { right: -26px; bottom: 70px; border-radius: 0 30px 0 30px; transform-origin: left center; }
+        
+        .plant:nth-child(1) .leaf { animation-delay: 1.5s; }
+        .plant:nth-child(2) .leaf { animation-delay: 1s; }
+        .plant:nth-child(3) .leaf { animation-delay: 2s; }
+
+        @keyframes popLeaf { 0% { opacity: 0; transform: scale(0); } 100% { opacity: 1; transform: scale(1); } }
+
+        .flower-head { position: absolute; top: -15px; left: 50%; margin-left: -20px; width: 40px; height: 40px; }
+        
+        .petal {
+            position: absolute; top: 50%; left: 50%; width: 24px; height: 24px;
+            background: #FFD700; /* Amarillo Girasol */
+            border-radius: 24px 24px 0 24px; margin-top: -24px; margin-left: -24px;
+            transform-origin: 100% 100%; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); opacity: 0;
+            animation: bloom 1s ease-out forwards;
+        }
+
+        .plant:nth-child(2) .petal:nth-child(1) { animation-delay: 1.5s; }
+        .plant:nth-child(2) .petal:nth-child(2) { animation-delay: 1.7s; }
+        .plant:nth-child(2) .petal:nth-child(3) { animation-delay: 1.9s; }
+        .plant:nth-child(2) .petal:nth-child(4) { animation-delay: 2.1s; }
+        
+        .plant:nth-child(1) .petal { animation-delay: 2.5s; }
+        .plant:nth-child(3) .petal { animation-delay: 3s; }
+
+        .center {
+            position: absolute; top: 50%; left: 50%; width: 20px; height: 20px;
+            background: #3e2723; /* Centro oscuro del girasol */
+            border-radius: 50%; margin-top: -10px; margin-left: -10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 5; opacity: 0;
+            animation: bloomCenter 0.5s ease-out forwards;
+        }
+        
+        .plant:nth-child(2) .center { animation-delay: 2.4s; }
+        .plant:nth-child(1) .center { animation-delay: 2.8s; }
+        .plant:nth-child(3) .center { animation-delay: 3.3s; }
+
+        @keyframes bloom { 0% { opacity: 0; transform: scale(0) rotate(var(--rot, 0deg)); } 100% { opacity: 1; transform: scale(1) rotate(var(--rot, 0deg)); } }
+        @keyframes bloomCenter { 0% { opacity: 0; transform: scale(0); } 100% { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn-interact" id="btn-back">⬅ Volver al Menú</a>
+    
+    <div id="ui-layer">
+        <h2 id="fecha-hora"></h2>
+        <p>Conexión Cuántica Establecida 🐼💙</p>
+    </div>
+
+    <button class="btn-interact" id="btn-start">Activar Giroscopio</button>
+
+    <!-- Girasoles -->
+    <div class="flower-garden">
+        <div class="plant">
+            <div class="stem">
+                <div class="flower-head">
+                    <div class="petal" style="--rot: 0deg;"></div><div class="petal" style="--rot: 90deg;"></div>
+                    <div class="petal" style="--rot: 180deg;"></div><div class="petal" style="--rot: 270deg;"></div>
+                    <div class="center"></div>
+                </div>
+                <div class="leaf leaf-left"></div>
+            </div>
+        </div>
+        <div class="plant">
+            <div class="stem">
+                <div class="flower-head">
+                    <div class="petal" style="--rot: 0deg;"></div><div class="petal" style="--rot: 90deg;"></div>
+                    <div class="petal" style="--rot: 180deg;"></div><div class="petal" style="--rot: 270deg;"></div>
+                    <div class="center"></div>
+                </div>
+                <div class="leaf leaf-left"></div><div class="leaf leaf-right"></div>
+            </div>
+        </div>
+        <div class="plant">
+            <div class="stem">
+                <div class="flower-head">
+                    <div class="petal" style="--rot: 0deg;"></div><div class="petal" style="--rot: 90deg;"></div>
+                    <div class="petal" style="--rot: 180deg;"></div><div class="petal" style="--rot: 270deg;"></div>
+                    <div class="center"></div>
+                </div>
+                <div class="leaf leaf-right"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 3000;
+        const starArray = new Float32Array(starCount * 3);
+        for(let i = 0; i < starCount * 3; i++) {
+            starArray[i] = (Math.random() - 0.5) * 2000;
+        }
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(starArray, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0x55FFFF, size: 1.2 });
+        const starMesh = new THREE.Points(starGeometry, starMaterial);
+        scene.add(starMesh);
+
+        camera.position.z = 5;
+
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+
+        document.getElementById('btn-start').addEventListener('click', function() {
+            this.style.display = 'none';
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        });
+
+        function handleOrientation(event) {
+            const beta = event.beta; 
+            const gamma = event.gamma; 
+            if (beta !== null && gamma !== null) {
+                targetRotationX = THREE.MathUtils.degToRad(beta - 90) * 0.5; 
+                targetRotationY = THREE.MathUtils.degToRad(gamma) * 0.5;
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            camera.rotation.x += (targetRotationX - camera.rotation.x) * 0.05;
+            camera.rotation.y += (targetRotationY - camera.rotation.y) * 0.05;
+            starMesh.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('fecha-hora').innerText = now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }, 1000);
+    </script>
+</body>
+</html>
