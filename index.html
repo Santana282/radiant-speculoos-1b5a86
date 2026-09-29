@@ -3,237 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANALYS SERVER - Nuestro Ecosistema</title>
+    <title>ANALYS SERVER - Nuestro Ecosistema V2.0</title>
     <style>
         :root {
             --bg-main: #070a12;
-            --card-bg: rgba(15, 22, 36, 0.85);
-            --border-color: rgba(255, 255, 255, 0.08);
+            --panel-bg: rgba(11, 16, 29, 0.88);
+            --panel-border: rgba(255, 255, 255, 0.08);
             --accent-yellow: #ffd166;
             --accent-pink: #ff75a0;
             --accent-blue: #4cc9f0;
             --accent-green: #06d6a0;
-            --text-primary: #f8f9fa;
-            --text-secondary: #93a1b8;
+            --accent-orange: #ff9f1c;
+            --text-main: #f8f9fa;
+            --text-muted: #93a1b8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-primary); overflow-x: hidden; padding-bottom: 80px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-main); color: var(--text-main); overflow-x: hidden; padding-bottom: 90px; }
 
-        /* CANVAS GIROSCOPIO */
-        #space-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+        /* CANVAS ESPACIAL 3D */
+        #space-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
 
-        /* HEADER */
-        .header-status { background: rgba(10, 14, 23, 0.95); padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .location-tag { font-size: 0.75rem; color: var(--accent-yellow); background: rgba(255, 209, 102, 0.1); padding: 4px 8px; border-radius: 12px; }
-        .time-display { font-size: 1.4rem; font-weight: bold; font-family: monospace; color: var(--accent-yellow); margin: 6px 0; }
+        /* HEADER ATMOSFÉRICO */
+        .header-bar {
+            background: rgba(8, 11, 18, 0.95);
+            border-bottom: 1px solid var(--panel-border);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .weather-badge { font-size: 0.72rem; color: var(--accent-yellow); background: rgba(255, 209, 102, 0.12); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(255, 209, 102, 0.2); }
+        .clock-text { font-size: 1.3rem; font-weight: 800; font-family: 'Courier New', monospace; color: var(--accent-yellow); margin: 3px 0; text-shadow: 0 0 10px rgba(255,209,102,0.3); }
+        .sub-status { font-size: 0.7rem; color: var(--text-muted); }
+        .audio-btn { background: rgba(76, 201, 240, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
 
-        /* CONTENEDOR */
-        .container { max-width: 480px; margin: 0 auto; padding: 12px; }
-        .title-section { text-align: center; margin: 15px 0; }
-        .title-section h1 { font-size: 1.5rem; background: linear-gradient(45deg, var(--accent-yellow), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .title-section p { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+        /* MAIN CONTAINER */
+        .app-container { max-width: 500px; margin: 0 auto; padding: 14px; }
+        .hero-title { text-align: center; margin: 12px 0 18px 0; }
+        .hero-title h1 { font-size: 1.6rem; font-weight: 800; background: linear-gradient(45deg, var(--accent-yellow), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-title p { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
 
-        /* GRID METRICAS */
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-        .metric-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center; }
-        .metric-card label { font-size: 0.65rem; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-        .metric-card val { font-size: 0.8rem; font-weight: bold; color: var(--text-primary); }
+        /* METRIC CARDS GRID */
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+        .m-card { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 10px; padding: 10px 6px; text-align: center; backdrop-filter: blur(5px); }
+        .m-card label { font-size: 0.62rem; color: var(--text-muted); display: block; margin-bottom: 4px; font-weight: bold; }
+        .m-card val { font-size: 0.78rem; font-weight: 800; color: var(--text-main); }
 
-        /* SECCIONES Y TARJETAS */
-        .view-panel { display: none; }
-        .view-panel.active { display: block; }
-        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
-        .card-header { font-size: 0.85rem; font-weight: bold; color: var(--accent-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        /* PANELS & TABS */
+        .tab-panel { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* HOJAS Y DIAGNÓSTICO */
-        .leaf-box { background: rgba(0,0,0,0.3); border-left: 3px solid var(--accent-pink); padding: 8px; margin-bottom: 6px; border-radius: 4px; font-size: 0.75rem; }
-        .step-tag { font-size: 0.7rem; color: var(--accent-blue); font-weight: bold; margin-top: 6px; }
-        .step-desc { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.3; }
+        .card-box { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .card-box-title { font-size: 0.9rem; font-weight: bold; color: var(--accent-yellow); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
 
-        /* BUZÓN & TERMINAL */
-        textarea { width: 100%; height: 80px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: #fff; padding: 8px; border-radius: 6px; font-size: 0.8rem; resize: none; }
-        .btn-action { width: 100%; padding: 10px; background: var(--accent-blue); border: none; border-radius: 6px; color: #000; font-weight: bold; font-size: 0.8rem; margin-top: 8px; cursor: pointer; }
+        /* GIRASOLES & DIAGNÓSTICO */
+        .leaf-item { background: rgba(0,0,0,0.35); border-left: 3px solid var(--accent-pink); padding: 8px 10px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 6px; }
+        .diag-section { margin-top: 10px; }
+        .diag-tag { font-size: 0.68rem; font-weight: bold; color: var(--accent-blue); margin-top: 8px; text-transform: uppercase; }
+        .diag-text { font-size: 0.76rem; color: #d1d5db; line-height: 1.35; margin-top: 2px; }
 
-        /* BOTONERA NAVEGACIÓN INFERIOR (DOCK) */
-        .bottom-dock { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(8, 11, 18, 0.95); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 8px 4px; z-index: 100; overflow-x: auto; }
-        .dock-item { display: flex; flex-direction: column; align-items: center; font-size: 0.65rem; color: var(--text-secondary); border: none; background: none; cursor: pointer; min-width: 50px; }
-        .dock-item.active { color: var(--accent-yellow); }
-        .dock-icon { font-size: 1.1rem; margin-bottom: 2px; }
+        /* DIARIOS & BUZÓN */
+        textarea { width: 100%; height: 90px; background: rgba(0,0,0,0.5); border: 1px solid var(--panel-border); border-radius: 8px; color: #fff; padding: 10px; font-size: 0.8rem; resize: none; margin-top: 8px; }
+        textarea:focus { outline: none; border-color: var(--accent-pink); }
+        .action-btn { width: 100%; padding: 10px; background: linear-gradient(45deg, var(--accent-blue), #3a86ff); border: none; border-radius: 8px; color: #fff; font-weight: bold; font-size: 0.8rem; cursor: pointer; margin-top: 8px; box-shadow: 0 2px 10px rgba(76,201,240,0.3); }
+
+        /* TERMINAL STARK-OS */
+        .terminal-window { background: #050811; border: 1px solid #1e293b; border-radius: 8px; padding: 12px; font-family: 'Courier New', monospace; font-size: 0.72rem; color: var(--accent-green); overflow-x: auto; min-height: 140px; }
+
+        /* PAC-MAN & ARCADE */
+        canvas.game-canvas { background: #000; border: 2px solid var(--accent-yellow); border-radius: 8px; display: block; margin: 10px auto; width: 100%; max-width: 280px; }
+
+        /* DOCK DE NAVEGACIÓN INFERIOR */
+        .bottom-dock {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(8, 11, 18, 0.96); border-top: 1px solid var(--panel-border);
+            display: flex; justify-content: space-around; padding: 8px 2px;
+            z-index: 100; backdrop-filter: blur(12px); overflow-x: auto;
+        }
+        .dock-btn { display: flex; flex-direction: column; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 0.62rem; cursor: pointer; min-width: 48px; transition: 0.2s; }
+        .dock-btn.active { color: var(--accent-yellow); transform: translateY(-2px); }
+        .dock-icon { font-size: 1.15rem; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <canvas id="space-bg"></canvas>
+    <!-- CANVAS TRES.JS ESPACIO GIROSCÓPICO -->
+    <canvas id="space-canvas"></canvas>
 
-    <!-- HEADER ATMOSFÉRICO -->
-    <div class="header-status">
+    <!-- HEADER ATMOSFÉRICO RECTIFICADO -->
+    <div class="header-bar">
         <div>
-            <span class="location-tag">📍 Orizaba / Atlixco • Despejado</span>
-            <div class="time-display" id="clock">10:01:08 p.m.</div>
-            <div style="font-size: 0.7rem; color: var(--text-secondary);">🌙 Noche • Descansa mi amor, nos vemos en sueños</div>
+            <span class="weather-badge" id="weather-text">☀️ Orizaba / Atlixco • Despejado</span>
+            <div class="clock-text" id="live-clock">10:01:08 p.m.</div>
+            <div class="sub-status" id="sky-subtext">🌙 Noche • Descansa mi amor, nos vemos en sueños</div>
         </div>
-        <button onclick="toggleAudio()" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: #fff; padding: 6px 10px; border-radius: 12px; font-size: 0.7rem;">🎵 Música: ON</button>
+        <button class="audio-btn" id="music-btn" onclick="toggleAudio()">🎵 Música: OFF</button>
     </div>
 
-    <div class="container">
-        <div class="title-section">
+    <!-- MAIN CONTAINER -->
+    <div class="app-container">
+        
+        <div class="hero-title">
             <h1>Nuestro Ecosistema</h1>
             <p>Un jardín vivo sincronizado con nuestro cielo, tu ciclo, tus gustos y nuestras soluciones en el presente.</p>
         </div>
 
-        <!-- GRID DE MÉTRICAS GENERALES -->
-        <div class="grid-3">
-            <div class="metric-card">
+        <!-- METRIC CARDS ARRIBA -->
+        <div class="metrics-grid">
+            <div class="m-card">
                 <label>⏱️ TIEMPO JUNTOS</label>
-                <val id="together-counter">68d 22h</val>
+                <val id="timer-together">68d 22h 1m</val>
             </div>
-            <div class="metric-card">
+            <div class="m-card">
                 <label>🌱 VITALIDAD</label>
-                <val style="color:var(--accent-green);">10% (0/14)</val>
+                <val style="color:var(--accent-green);" id="vitality-val">10% (0/14)</val>
             </div>
-            <div class="metric-card">
+            <div class="m-card">
                 <label>🎃 PRÓXIMO ENCUENTRO</label>
-                <val style="color:var(--accent-pink);">Presente Activo</val>
+                <val style="color:var(--accent-pink);">Presente Activo 🎃</val>
             </div>
         </div>
 
-        <!-- TRES ELEMENTOS -->
-        <div class="grid-3">
-            <div class="metric-card" style="border-color: var(--accent-yellow);">
-                <label>☀️ EL SOL</label>
-                <val style="font-size: 0.65rem;">Tu Luz y Calor</val>
+        <!-- LOS TRES ELEMENTOS -->
+        <div class="metrics-grid">
+            <div class="m-card" style="border-color: var(--accent-yellow);">
+                <label>☀️️ EL SOL</label>
+                <val style="font-size:0.65rem;">Tu Luz y Calor</val>
             </div>
-            <div class="metric-card" style="border-color: var(--accent-blue);">
+            <div class="m-card" style="border-color: var(--accent-blue);">
                 <label>💧 EL AGUA</label>
-                <val style="font-size: 0.65rem;">Tu Amor 24/7</val>
+                <val style="font-size:0.65rem;">Tu Amor 24/7</val>
             </div>
-            <div class="metric-card" style="border-color: var(--accent-green);">
+            <div class="m-card" style="border-color: var(--accent-green);">
                 <label>🌱 LA TIERRA</label>
-                <val style="font-size: 0.65rem;">Raíz y Hogar</val>
+                <val style="font-size:0.65rem;">Raíz y Hogar</val>
             </div>
         </div>
 
-        <!-- VISTA 1: JARDÍN & GIRASOLES -->
-        <div id="view-jardin" class="view-panel active">
-            <div class="card">
-                <div class="card-header">🌻 Etapa 1 de 5: Girasol del Alba - Confianza Nocturna</div>
-                <div class="leaf-box">1. Madrugada en Discord</div>
-                <div class="leaf-box">2. Miedo a no ser prioridad</div>
-                <div class="leaf-box">3. Desvelos extremos</div>
+        <!-- PESTAÑA 1: JARDÍN Y SANACIÓN DE HOJAS -->
+        <div id="tab-jardin" class="tab-panel active">
+            <div class="card-box">
+                <div class="card-box-title">🌻 Etapa 1 de 5: Girasol del Alba - Confianza Nocturna</div>
+                
+                <div class="leaf-item">1. Madrugada en Discord / Pestaña reducida en COD</div>
+                <div class="leaf-item">2. Miedo a no ser prioridad o ser ocultada</div>
+                <div class="leaf-item">3. Desvelos extremos sin contexto previo</div>
 
-                <div style="margin-top: 10px;">
-                    <div class="step-tag">1. MI ERROR / LO QUE DAÑÓ LA HOJA</div>
-                    <div class="step-desc">Cuando cambiaron tus planes y me muteaste en Discord para no despertarme, me empecé de madrugada y me muteé como castigo.</div>
+                <div class="diag-section">
+                    <div class="diag-tag">1. MI ERROR / LO QUE DAÑÓ LA HOJA</div>
+                    <div class="diag-text">Apagar micrófono/cerrar la transmisión o actuar en silencio al estar abrumado por el lag o el cansancio de la escuela/panadería, dejando espacio a malentendidos.</div>
 
-                    <div class="step-tag">2. DIAGNÓSTICO PSICOLÓGICO</div>
-                    <div class="step-desc">Hipervigilancia afectiva: Ante un cambio imprevisto, mi mente activó defensas interpretando tu cuidado como ocultamiento.</div>
+                    <div class="diag-tag">2. DIAGNÓSTICO PSICOLÓGICO CLÍNICO</div>
+                    <div class="diag-text"><strong>Hipervigilancia vs. Retiro Defensivo:</strong> Ante la sobrecarga, activo una coraza de "puedo con todo solo". Analy, por falta de contexto, interpreta la distancia como desinterés. Ambos mecanismos colisionan.</div>
 
-                    <div class="step-tag">3. CÓMO TE HICE SENTIR</div>
-                    <div class="step-desc">Te hice sentir juzgada injustamente.</div>
+                    <div class="diag-tag">3. CÓMO TE HICE SENTIR (EMPATÍA RECURSIVA)</div>
+                    <div class="diag-text">Excluida, insegura de tu lugar en mi vida, y sintiendo que tus dudas no eran recibidas con calidez.</div>
 
-                    <div class="step-tag">4. NUEVO COMPROMISO</div>
-                    <div class="step-desc">Preguntar con ternura y jamás usar el silencio como castigo.</div>
+                    <div class="diag-tag">4. NUEVO COMPROMISO REALISTA</div>
+                    <div class="diag-text">Notificar proactivamente ("Mi amor, jugaré una partida, la red está lenta, te escribo al terminar") sin asumir que lo sabes ni usar el silencio.</div>
                 </div>
 
-                <button class="btn-action" style="background:var(--accent-yellow);">💧 Regar Girasol</button>
+                <button class="action-btn" style="background: linear-gradient(45deg, var(--accent-yellow), var(--accent-orange)); color:#000;" onclick="healLeaf()">💧 Regar Girasol / Sanar Hoja</button>
+            </div>
+
+            <!-- PROMESAS Y SOLUCIONES -->
+            <div class="card-box">
+                <div class="card-box-title" style="color:var(--accent-pink);">🤝 Promesas Incumplidas vs. Soluciones Reales</div>
+                <div class="diag-tag">PROMESA INSUSTENTABLE (PASADO)</div>
+                <div class="diag-text">Fijar fechas de visitas físicas sin respaldo financiero o en medio de temporadas de exámenes/trabajo.</div>
+                <div class="diag-tag">SOLUCIÓN EN EL PRESENTE (REAL)</div>
+                <div class="diag-text">Plan de Ahorro y Gestión de Tiempos transparente. Avances verificables sin falsas expectativas.</div>
             </div>
         </div>
 
-        <!-- VISTA 2: MONITOR HORMONAL & DIARIOS -->
-        <div id="view-dias" class="view-panel">
-            <div class="card">
-                <div class="card-header">🌸 Monitor Hormonal & Curva Lunar</div>
-                <div style="font-size: 0.75rem; color: var(--accent-pink); margin-bottom: 8px;">FASE FOLICULAR / ALTA ENERGÍA</div>
-                <div class="step-desc">Tu energía está subiendo. Es el mejor momento para disfrutar, reír y entrenar al fallo.</div>
+        <!-- PESTAÑA 2: TUS DÍAS & MONITOR HORMONAL -->
+        <div id="tab-dias" class="tab-panel">
+            <div class="card-box">
+                <div class="card-box-title" style="color:var(--accent-pink);">🌸 Monitor Hormonal & Curva Lunar</div>
+                <div style="font-size: 0.8rem; font-weight: bold; color: var(--accent-yellow);" id="cycle-phase">FASE FOLICULAR / ALTA ENERGÍA</div>
+                <div class="diag-text" style="margin-top:6px;" id="cycle-desc">
+                    Tu energía está subiendo. Es el mejor momento para disfrutar, reír, compartir proyectos y entrenar con intensidad.
+                </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">📖 Diario de Santana</div>
-                <div class="step-desc">Aislamiento por estrés financiero y escolar. Mi compromiso es comunicarme sin cerrarme.</div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">📕 Buzón de Analy</div>
-                <textarea id="analy-text" placeholder="Escribe aquí lo que sientes hoy..."></textarea>
-                <button class="btn-action" onclick="saveBuzon()">Guardar Nota Local</button>
+            <!-- MAPA DE GUSTOS DE ANALY -->
+            <div class="card-box">
+                <div class="card-box-title">🍪 El Mapa Exacto de Tus Gustos</div>
+                <div class="diag-tag">POSTRES Y BEBIDAS FAVORITAS</div>
+                <div class="diag-text">Pastel de Chocolate y 3 Leches, Arroz con Leche, Chocolatito caliente con pan, Michez/Cantaritos.</div>
+                <div class="diag-tag">PLATILLOS FAVORITOS</div>
+                <div class="diag-text">Lasaña, Comida China (Pollo agridulce), Mole con pollo, Enmoladas, Chilaquiles verdes/rojos.</div>
             </div>
         </div>
 
-        <!-- VISTA 3: TERMINAL ARCADE -->
-        <div id="view-arcade" class="view-panel">
-            <div class="card">
-                <div class="card-header">💻 Terminal Stark-OS</div>
-                <div style="font-family: monospace; font-size: 0.7rem; background: #000; padding: 10px; border-radius: 6px; color: var(--accent-green);">
+        <!-- PESTAÑA 3: DIARIOS BILATERALES & BUZÓN -->
+        <div id="tab-diarios" class="tab-panel">
+            <div class="card-box">
+                <div class="card-box-title" style="color:var(--accent-blue);">📘 Diario de Santana (Mi Situación Real)</div>
+                <div class="diag-text">
+                    La carga combinada del trabajo en la panadería, la presión académica y los problemas económicos a menudo saturan mi sistema nervioso. Mi silencio no es falta de amor ni ganas de ocultar algo: es una parálisis por estrés. Prometo abrir mi espacio vulnerable contigo en lugar de fingir que "todo está bajo control".
+                </div>
+            </div>
+
+            <div class="card-box">
+                <div class="card-box-title" style="color:var(--accent-pink);">📕 Diario & Buzón Directo de Analy</div>
+                <div class="diag-text">Un lugar seguro para escribir tus pensamientos, miedos o deseos cuando te cueste expresarlos en voz alta:</div>
+                <textarea id="analy-journal" placeholder="Escribe aquí lo que sientes o piensas hoy..."></textarea>
+                <button class="action-btn" onclick="saveJournal()">💾 Guardar en mi dispositivo</button>
+                <button class="action-btn" style="background:#25D366; color:#fff;" onclick="sendWhatsApp()">💬 Sincronizar por WhatsApp</button>
+            </div>
+        </div>
+
+        <!-- PESTAÑA 4: ARCADE (PAC-MAN, PING PONG & STARK-OS) -->
+        <div id="tab-arcade" class="tab-panel">
+            <div class="card-box">
+                <div class="card-box-title">🟡 Terminal Arcade: Pac-Man & Retro Games</div>
+                <canvas id="pacmanCanvas" class="game-canvas" width="240" height="240"></canvas>
+                <div style="text-align:center; margin-top:6px;">
+                    <button class="audio-btn" onclick="movePac('UP')">⬆️</button><br>
+                    <button class="audio-btn" onclick="movePac('LEFT')">⬅️</button>
+                    <button class="audio-btn" onclick="movePac('RIGHT')">➡️️</button><br>
+                    <button class="audio-btn" onclick="movePac('DOWN')">⬇️</button>
+                </div>
+            </div>
+
+            <!-- TERMINAL STARK-OS -->
+            <div class="card-box">
+                <div class="card-box-title">💻 Terminal Interactive (Stark-OS)</div>
+                <div class="terminal-window" id="terminal-out">
                     root@stark-os:~# python3 campo_flores.py<br>
-                    > Generando simulación de girasoles... OK<br>
-                    > Estado del servidor: Estable (0 errores)
+                    [SYSTEM]: Cargando semillas de girasol...<br>
+                    [SYSTEM]: Iluminando el cielo y cultivando tu campo.<br>
+                    > Estado: Servidor de Analy & Santana sincronizado.
                 </div>
+                <button class="action-btn" onclick="runScript()">▶️ Ejecutar Script: campo_flores.py</button>
             </div>
         </div>
+
     </div>
 
-    <!-- NAVEGACIÓN INFERIOR (DOCK) -->
+    <!-- DOCK DE NAVEGACIÓN INFERIOR EXPANDIDO -->
     <div class="bottom-dock">
-        <button class="dock-item active" onclick="switchView('view-jardin', this)"><span class="dock-icon">🌻</span>Jardín</button>
-        <button class="dock-item" onclick="switchView('view-dias', this)"><span class="dock-icon">🌙</span>Tus Días</button>
-        <button class="dock-item" onclick="switchView('view-arcade', this)"><span class="dock-icon">💻</span>Stark-OS</button>
+        <button class="dock-btn active" onclick="switchTab('tab-jardin', this)"><span class="dock-icon">🌻</span>Jardín</button>
+        <button class="dock-btn" onclick="switchTab('tab-dias', this)"><span class="dock-icon">🌙</span>Tus Días</button>
+        <button class="dock-btn" onclick="switchTab('tab-diarios', this)"><span class="dock-icon">📖</span>Diarios</button>
+        <button class="dock-btn" onclick="switchTab('tab-arcade', this)"><span class="dock-icon">👾</span>Arcade</button>
     </div>
 
+    <!-- AUDIO ELEMENT GENERATIVO / WEB AUDIO API ENGINE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // CONTADOR TIEMPO JUNTOS (Desde 22 Jul)
-        function updateCounter() {
-            const startDate = new Date(2026, 6, 22);
+        // 1. RELOJ & CONTADOR TIEMPO JUNTOS
+        function updateTimeEngine() {
             const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleTimeString('es-MX');
+
+            // Tiempo juntos desde 22 de Julio
+            const startDate = new Date(2026, 6, 22); 
             const diff = now - startDate;
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            document.getElementById('together-counter').innerText = `${days}d ${hours}h`;
-        }
-        setInterval(updateCounter, 1000); updateCounter();
+            const mins = Math.floor((diff / (1000 * 60)) % 60);
+            document.getElementById('timer-together').innerText = `${days}d ${hours}h ${mins}m`;
 
-        // NAVEGACIÓN VISTAS
-        function switchView(viewId, btn) {
-            document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.dock-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+            // Ciclo menstrual (Basado en el último periodo registrado)
+            const lastPeriod = new Date(2026, 8, 11);
+            const cycleDay = Math.floor((now - lastPeriod) / (1000 * 60 * 60 * 24)) % 28;
+            const phaseTitle = document.getElementById('cycle-phase');
+            const phaseDesc = document.getElementById('cycle-desc');
+
+            if(cycleDay <= 5) {
+                phaseTitle.innerText = "FASE MENSTRUAL / APAPACHO RENEGADO 🩸";
+                phaseDesc.innerText = "Momento de descanso absoluto, chocolatito caliente y confort. Cero presiones.";
+            } else if(cycleDay <= 12) {
+                phaseTitle.innerText = "FASE FOLICULAR / ALTA ENERGÍA ✨";
+                phaseDesc.innerText = "Tu energía está subiendo. Es el mejor momento para disfrutar, reír y entrenar al fallo.";
+            } else if(cycleDay <= 16) {
+                phaseTitle.innerText = "OVULACIÓN / MÁXIMA CONEXIÓN 🥚";
+                phaseDesc.innerText = "Pico alto de sociabilidad, afecto y cercanía emocional.";
+            } else {
+                phaseTitle.innerText = "FASE LÚTEA / PREPARACIÓN Y APAGADO 🌙";
+                phaseDesc.innerText = "Sensibilidad aumentada. Priorizar escucha activa, ternura y validación.";
+            }
+        }
+        setInterval(updateTimeEngine, 1000); updateTimeEngine();
+
+        // 2. NAVEGACIÓN DOCK
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
         }
 
-        // BUZÓN
-        function saveBuzon() {
-            const val = document.getElementById('analy-text').value;
-            localStorage.setItem('analy_note', val);
-            alert('Nota guardada en este dispositivo.');
+        // 3. SISTEMA DE AUDIO SINTETIZADO (WEB AUDIO API - SIN DEPENDER DE MP3 EXTERNO)
+        let audioCtx, oscillator, isAudioPlaying = false;
+        function toggleAudio() {
+            const btn = document.getElementById('music-btn');
+            if(!isAudioPlaying) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(220, audioCtx.currentTime); // Tono A3 suave ambiental
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime); // Volumen bajo no invasivo
+                oscillator.connect(gain);
+                gain.connect(audioCtx.destination);
+                oscillator.start();
+                btn.innerText = "🎵 Música: ON";
+                btn.style.background = "rgba(6, 214, 160, 0.25)";
+                btn.style.color = "var(--accent-green)";
+                isAudioPlaying = true;
+            } else {
+                if(audioCtx) audioCtx.close();
+                btn.innerText = "🎵 Música: OFF";
+                btn.style.background = "rgba(76, 201, 240, 0.15)";
+                btn.style.color = "var(--accent-blue)";
+                isAudioPlaying = false;
+            }
         }
 
-        // TRES.JS FONDO ESPACIAL CON GIROSCOPIO
+        // 4. DIARIO Y BUZÓN PERSISTENTE
+        const journalBox = document.getElementById('analy-journal');
+        journalBox.value = localStorage.getItem('analy_journal_note') || '';
+        function saveJournal() {
+            localStorage.setItem('analy_journal_note', journalBox.value);
+            alert('❤️ Nota guardada de forma segura en tu dispositivo.');
+        }
+        function sendWhatsApp() {
+            const text = encodeURIComponent("Hola mi amor, te escribo esto desde mi buzón en el servidor:\n\n" + journalBox.value);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        // 5. ACCIÓN HEAL LEAF
+        function healLeaf() {
+            document.getElementById('vitality-val').innerText = "25% (2/14)";
+            alert("🌻 Hoja regada: Se ha registrado la propuesta de empatía y compromiso.");
+        }
+
+        // 6. PAC-MAN MINI ENGINE
+        const canvas = document.getElementById('pacmanCanvas');
+        const ctx = canvas.getContext('2d');
+        let pacX = 120, pacY = 120, dir = 'RIGHT';
+        function drawPacman() {
+            ctx.fillStyle = '#000'; ctx.fillRect(0,0,240,240);
+            
+            // Comida
+            ctx.fillStyle = '#ffd166';
+            ctx.beginPath(); ctx.arc(60, 120, 4, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(180, 120, 4, 0, Math.PI*2); ctx.fill();
+
+            // Pac-Man
+            ctx.fillStyle = '#ffd166';
+            ctx.beginPath();
+            let start = 0.2, end = 1.8;
+            if(dir==='LEFT') { start = 1.2; end = 0.8; }
+            if(dir==='UP') { start = 1.7; end = 1.3; }
+            if(dir==='DOWN') { start = 0.7; end = 0.3; }
+            ctx.arc(pacX, pacY, 12, start * Math.PI, end * Math.PI);
+            ctx.lineTo(pacX, pacY); ctx.fill();
+        }
+        function movePac(d) {
+            dir = d;
+            if(d==='UP' && pacY > 20) pacY -= 15;
+            if(d==='DOWN' && pacY < 220) pacY += 15;
+            if(d==='LEFT' && pacX > 20) pacX -= 15;
+            if(d==='RIGHT' && pacX < 220) pacX += 15;
+            drawPacman();
+        }
+        drawPacman();
+
+        // 7. TERMINAL SCRIPT EXECUTOR
+        function runScript() {
+            const out = document.getElementById('terminal-out');
+            out.innerHTML += "<br>> Executing Python script...<br>🌻 [Girasol Alba]: 'Gracias por existir, Analy.'";
+        }
+
+        // 8. THREE.JS ESPACIO 3D CON AGUJERO NEGRO Y GIROSCÓPIO REAL
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-bg'), alpha: true });
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-canvas'), alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        const geo = new THREE.BufferGeometry();
-        const pos = new Float32Array(1500 * 3);
-        for(let i=0; i<4500; i++) pos[i] = (Math.random() - 0.5) * 800;
-        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        const stars = new THREE.Points(geo, new THREE.PointsMaterial({color: 0xffd166, size: 1.5}));
-        scene.add(stars); camera.position.z = 5;
+        // Estrellas
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = new Float32Array(1800 * 3);
+        for(let i=0; i<5400; i++) starPos[i] = (Math.random() - 0.5) * 1000;
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({color: 0x4cc9f0, size: 1.2});
+        const starField = new THREE.Points(starGeo, starMat);
+        scene.add(starField);
 
+        // Agujero Negro (Anillo de acreción)
+        const ringGeo = new THREE.RingGeometry(3, 6, 32);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xff75a0, side: THREE.DoubleSide });
+        const blackHole = new THREE.Mesh(ringGeo, ringMat);
+        blackHole.position.set(0, 0, -15);
+        scene.add(blackHole);
+        camera.position.z = 5;
+
+        // Giroscopio listener
         window.addEventListener('deviceorientation', (e) => {
             if(e.beta && e.gamma) {
-                stars.rotation.x = e.beta * 0.002;
-                stars.rotation.y = e.gamma * 0.002;
+                starField.rotation.x = e.beta * 0.0015;
+                starField.rotation.y = e.gamma * 0.0015;
+                blackHole.rotation.z = e.gamma * 0.003;
             }
         });
 
-        function animate() {
-            requestAnimationFrame(animate);
-            stars.rotation.z += 0.0002;
+        function animateSpace() {
+            requestAnimationFrame(animateSpace);
+            blackHole.rotation.z += 0.01;
+            starField.rotation.z += 0.0003;
             renderer.render(scene, camera);
         }
-        animate();
+        animateSpace();
     </script>
 </body>
 </html>
