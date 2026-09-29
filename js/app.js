@@ -4,24 +4,22 @@ import { DeviceOrientationControls } from 'three/addons/controls/DeviceOrientati
 let scene, camera, renderer, controls, starMesh, phoenixA, clock;
 let isEcosystemActive = false;
 
-// 1. Configurar el evento del botón de entrada (Crucial para iOS)
+// 1. Solicitud de Permisos para iOS (Giroscopio)
 document.getElementById('btn-enter').addEventListener('click', async () => {
-    // Si es un iPhone (iOS 13+), solicitar permiso explícito
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         try {
             const permissionState = await DeviceOrientationEvent.requestPermission();
             if (permissionState === 'granted') {
                 iniciarEcosistema();
             } else {
-                alert("Mi amor, necesito acceso a los sensores para que el universo gire contigo. Recarga la página y acepta. 🐼");
+                alert("Mi amor, necesito acceso a los sensores para que el universo gire contigo. 🐼");
             }
         } catch (error) {
             console.error(error);
-            iniciarEcosistema(); // Fallback
+            iniciarEcosistema(); // Forzar inicio en caso de error de API
         }
     } else {
-        // Android o PC
-        iniciarEcosistema();
+        iniciarEcosistema(); // Dispositivos Android o PC
     }
 });
 
@@ -29,13 +27,13 @@ function iniciarEcosistema() {
     if (isEcosystemActive) return;
     isEcosystemActive = true;
 
-    // Ocultar pantalla de inicio y mostrar UI
+    // Transición de Interfaz
     const startScreen = document.getElementById('start-screen');
     startScreen.style.opacity = '0';
     setTimeout(() => { startScreen.style.display = 'none'; }, 1000);
     document.getElementById('ui-layer').style.display = 'block';
 
-    // 2. Inicializar Three.js
+    // 2. Configuración de Three.js
     const container = document.getElementById('canvas-container');
     scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x0b0c10, 0.002);
@@ -48,10 +46,9 @@ function iniciarEcosistema() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Giroscopio
     controls = new DeviceOrientationControls(camera);
 
-    // 3. Estrellas y Nebulosa (Tonos rosas y verdes de sus gustos)
+    // 3. Generación de Galaxia (Tonos Rosas y Verdes)
     const starsGeometry = new THREE.BufferGeometry();
     const starsCount = 4000;
     const posArray = new Float32Array(starsCount * 3);
@@ -80,7 +77,7 @@ function iniciarEcosistema() {
     }));
     scene.add(starMesh);
 
-    // 4. Agujero Negro Básico
+    // 4. Agujero Negro Phoenix A (Modelo Matemático Básico)
     const blackHoleGeometry = new THREE.TorusGeometry(3, 0.8, 16, 100);
     phoenixA = new THREE.Mesh(blackHoleGeometry, new THREE.MeshBasicMaterial({ 
         color: 0xff3366, wireframe: true, transparent: true, opacity: 0.6
@@ -92,7 +89,6 @@ function iniciarEcosistema() {
     animate();
 }
 
-// 5. Bucle de Animación
 function animate() {
     requestAnimationFrame(animate);
     const elapsedTime = clock.getElapsedTime();
