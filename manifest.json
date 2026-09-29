@@ -1,8 +1,8 @@
 {
-  "name": "Ecosistema Analy & Santana",
+  "name": "Ecosistema Cuántico",
   "short_name": "Nuestro Jardín",
-  "description": "Un jardín vivo sincronizado con nuestro cielo, tu ciclo y nuestras soluciones en el presente.",
-  "start_url": "/",
+  "description": "Un jardín vivo sincronizado con nuestro cielo y el tiempo real.",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b0c10",
   "theme_color": "#ff3366",
