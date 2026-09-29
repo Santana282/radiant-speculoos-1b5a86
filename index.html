@@ -8,1507 +8,1265 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-
-<style>
+​<style>
 :root {
-    --gold: #fbbf24; --gold-dark: #b45309; 
-    --rose: #f43f5e; --pink: #fda4af; 
-    --green: #22c55e; --purple: #c084fc; 
-    --blue: #38bdf8; --bg-dark: #020308;
-    --glass-bg: rgba(10, 15, 30, 0.72); 
-    --glass-border: rgba(251, 191, 36, 0.25);
+--gold: #fbbf24; --gold-dark: #b45309;
+--rose: #f43f5e; --pink: #fda4af;
+--green: #22c55e; --purple: #c084fc;
+--blue: #38bdf8; --bg-dark: #020308;
+--glass-bg: rgba(10, 15, 30, 0.72);
+--glass-border: rgba(251, 191, 36, 0.25);
 }
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
-
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { 
-    background: var(--bg-dark); 
-    color: #f8fafc; 
-    font-family: 'Inter', sans-serif; 
-    overflow-x: hidden; 
-    min-height: 100vh;
-    touch-action: pan-y;
+​{ box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+background: var(--bg-dark);
+color: #f8fafc;
+font-family: 'Inter', sans-serif;
+overflow-x: hidden;
+min-height: 100vh;
+touch-action: pan-y;
 }
-
-#canvas-container { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+​#canvas-container { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 #weather-canvas { position: fixed; inset: 0; z-index: 2; pointer-events: none; mix-blend-mode: screen; opacity: 0.85; }
-
-.glass-panel { 
-    background: var(--glass-bg); 
-    backdrop-filter: blur(24px); 
-    -webkit-backdrop-filter: blur(24px); 
-    border: 1px solid var(--glass-border); 
-    border-radius: 24px; 
-    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.95); 
+​.glass-panel {
+background: var(--glass-bg);
+backdrop-filter: blur(24px);
+-webkit-backdrop-filter: blur(24px);
+border: 1px solid var(--glass-border);
+border-radius: 24px;
+box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.95);
 }
-
-.app-container { position: relative; z-index: 10; max-width: 1280px; margin: 0 auto; padding: 20px 15px 120px; display: none; }
+​.app-container { position: relative; z-index: 10; max-width: 1280px; margin: 0 auto; padding: 20px 15px 120px; display: none; }
 .app-container.active { display: block; animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
-
-h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.02em; }
+​h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.02em; }
 .text-gradient { background: linear-gradient(135deg, #fde68a 0%, #f59e0b 50%, #fb7185 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .text-gradient-purple { background: linear-gradient(135deg, #e9d5ff 0%, #c084fc 50%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .font-mono { font-family: 'Space Mono', monospace; }
-
-.btn-primary { 
-    background: linear-gradient(135deg, #f59e0b, #e11d48); 
-    color: white; font-weight: bold; padding: 12px 24px; 
-    border-radius: 99px; transition: all 0.2s ease; 
-    box-shadow: 0 10px 25px rgba(225, 29, 72, 0.35); 
-    border: 1px solid rgba(255,255,255,0.2); cursor: pointer; 
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+​.btn-primary {
+background: linear-gradient(135deg, #f59e0b, #e11d48);
+color: white; font-weight: bold; padding: 12px 24px;
+border-radius: 99px; transition: all 0.2s ease;
+box-shadow: 0 10px 25px rgba(225, 29, 72, 0.35);
+border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
+display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(225, 29, 72, 0.5); }
 .btn-primary:active { transform: scale(0.96); }
 .btn-primary:disabled { filter: grayscale(100%); opacity: 0.5; cursor: not-allowed; transform: none; }
-
-.view-section { display: none; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+​.view-section { display: none; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .view-section.active { display: block; }
-
-@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+​@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
-@keyframes pulseGlow { 0% { box-shadow: 0 0 10px rgba(251,191,36,0.2); } 50% { box-shadow: 0 0 25px rgba(251,191,36,0.5); } 100% { box-shadow: 0 0 10px rgba(251,191,36,0.2); } }
 @keyframes eqBar { 0%, 100% { height: 4px; } 50% { height: 16px; } }
-
-.eq-bar { width: 3px; background: var(--gold); border-radius: 2px; display: inline-block; animation: eqBar 0.8s ease-in-out infinite; }
+​.eq-bar { width: 3px; background: var(--gold); border-radius: 2px; display: inline-block; animation: eqBar 0.8s ease-in-out infinite; }
 .eq-bar:nth-child(1) { animation-delay: 0.1s; }
 .eq-bar:nth-child(2) { animation-delay: 0.3s; }
 .eq-bar:nth-child(3) { animation-delay: 0.2s; }
 .eq-bar:nth-child(4) { animation-delay: 0.4s; }
-
-.flower-unit { cursor: pointer; transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+​.flower-unit { cursor: pointer; transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .flower-unit:hover { transform: scale(1.08) translateY(-6px); }
 .flower-unit.selected { transform: scale(1.12) translateY(-10px); filter: drop-shadow(0 15px 25px rgba(251,191,36,0.4)); }
 .flower-unit.selected .f-label { background: var(--gold); color: black; font-weight: bold; }
-
-/* SVG Girasoles */
+​/* SVG Girasoles */
 .stem { transition: all 1s ease-in-out; }
 .petal { transition: all 1s ease-in-out; transform-origin: center; }
 .wilted .stem { stroke: #64748b; d: path('M50,200 Q75,130 85,75'); }
 .wilted .head-group { transform: translate(85px, 75px) rotate(48deg); }
 .wilted .petal { fill: #64748b; stroke: #475569; }
 .wilted .center { fill: #1e293b; }
-
-.healed .stem { stroke: #22c55e; d: path('M50,200 Q50,120 50,45'); }
+​.healed .stem { stroke: #22c55e; d: path('M50,200 Q50,120 50,45'); }
 .healed .head-group { transform: translate(50px, 45px) rotate(0deg); animation: float 4s ease-in-out infinite; }
 .healed .petal { fill: #fde68a; stroke: #f59e0b; }
 .healed .center { fill: #78350f; }
-
-.nav-bar { 
-    position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); 
-    width: 96%; max-width: 750px; z-index: 100; 
-    display: flex; justify-content: space-around; padding: 8px; 
-    border-radius: 99px; background: rgba(4, 8, 20, 0.88); 
-    border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(16px); 
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+​.nav-bar {
+position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+width: 96%; max-width: 750px; z-index: 100;
+display: flex; justify-content: space-around; padding: 8px;
+border-radius: 99px; background: rgba(4, 8, 20, 0.88);
+border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(16px);
+box-shadow: 0 20px 40px rgba(0,0,0,0.8);
 }
-.nav-item { 
-    flex: 1; display: flex; flex-direction: column; align-items: center; 
-    padding: 6px 2px; font-size: 0.6rem; font-weight: 800; color: #64748b; 
-    transition: all 0.3s; border-radius: 99px; cursor: pointer; text-transform: uppercase; tracking: 0.5px;
+.nav-item {
+flex: 1; display: flex; flex-direction: column; align-items: center;
+padding: 6px 2px; font-size: 0.6rem; font-weight: 800; color: #64748b;
+transition: all 0.3s; border-radius: 99px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;
 }
 .nav-item.active { background: rgba(251,191,36,0.15); color: var(--gold); }
 .nav-item span { font-size: 1.4rem; margin-bottom: 2px; filter: grayscale(80%) opacity(0.6); transition: all 0.3s; }
 .nav-item.active span { filter: grayscale(0%) opacity(1); transform: scale(1.15); }
-
-.custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+​.custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(251,191,36,0.3); border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(251,191,36,0.6); }
-
-.game-canvas-container { position: relative; width: 100%; max-width: 360px; margin: 0 auto; aspect-ratio: 1/1; }
+​.game-canvas-container { position: relative; width: 100%; max-width: 360px; margin: 0 auto; aspect-ratio: 1/1; }
 .game-canvas { background: #000; border: 2px solid var(--gold); border-radius: 16px; width: 100%; height: 100%; box-shadow: 0 0 30px rgba(251,191,36,0.15); display: block; }
 .dpad-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 200px; margin: 15px auto 0; }
 .dpad-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; aspect-ratio: 1/1; user-select: none; }
 .dpad-btn:active { background: var(--gold); color: black; }
-
-.terminal-container { background: #08080c; border-radius: 16px; overflow: hidden; border: 1px solid #222; }
+​.terminal-container { background: #08080c; border-radius: 16px; overflow: hidden; border: 1px solid #222; }
 .terminal-header { background: #121218; padding: 10px 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #222; }
 .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-/* Canvas de Curva Hormonal */
-#cycle-canvas { width: 100%; height: 180px; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid rgba(244,63,94,0.2); }
+​#cycle-canvas { width: 100%; height: 180px; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid rgba(244,63,94,0.2); }
 </style>
 </head>
 <body class="antialiased selection:bg-rose-500 selection:text-white">
-
-<div id="canvas-container"></div>
+​<div id="canvas-container"></div>
 <canvas id="weather-canvas"></canvas>
-
-<!-- Pantalla de Bienvenida y Autenticación -->
+​<!-- Pantalla de Bienvenida y Autenticación -->
 <div id="login-screen" class="fixed inset-0 z-[9999] bg-black/92 backdrop-blur-xl flex flex-col items-center justify-center p-4 transition-opacity duration-1000">
-    <div class="glass-panel p-8 md:p-12 text-center max-w-lg w-full relative z-10 border-gold/40 animate-[slideUp_0.8s_ease-out]">
-        <div class="text-6xl mb-4 animate-bounce">🔒</div>
-        <h1 class="text-3xl md:text-4xl font-bold text-white mb-1 font-mono">Stark-OS v4.0</h1>
-        <p class="text-xs text-gold mb-6 font-mono uppercase tracking-widest border-b border-gray-800 pb-3">Sistema de Almacenamiento Emocional & Resonancia Cuántica</p>
-        
-        <div class="text-left bg-black/50 p-4 rounded-xl border border-white/10 text-xs text-gray-300 space-y-2 mb-6 font-mono">
-            <p><span class="text-purple-400 font-bold">👨🏻‍💻 Programador:</span> Kevin Santana Ramírez (24 de Marzo, 2003 - 23 años)</p>
-            <p><span class="text-rose-400 font-bold">👩🏻‍🍳 La Chef / Mi Reina:</span> Analy Monserrat Vázquez Gómez (22 de Septiembre, 1998 - 28 años)</p>
-            <p><span class="text-blue-400 font-bold">📍 Coordenadas:</span> Orizaba, Ver. ⇄ Atlixco, Pue. (~150 km)</p>
-            <p><span class="text-amber-400 font-bold">🎵 Música de Fondo:</span> Sintetizador Ambiental Cuántico & Spotify</p>
-        </div>
-
-        <p class="text-xs text-gray-400 mb-6 leading-relaxed">
-            Este entorno fue programado por Kevin con obsesividad de detalle para registrar cada aprendizaje, corregir mis fallas lógicas, sanar nuestras heridas y celebrar la vida de Analy.
-        </p>
-        
-        <button onclick="authenticateUser()" class="btn-primary w-full text-base shadow-[0_0_20px_rgba(251,191,36,0.3)] group">
-            <span class="group-hover:rotate-12 transition-transform">🔑</span> Iniciar Sesión & Activar Música
-        </button>
-    </div>
+<div class="glass-panel p-8 md:p-12 text-center max-w-lg w-full relative z-10 border-gold/40 animate-[slideUp_0.8s_ease-out]">
+<div class="text-6xl mb-4 animate-bounce">🔒</div>
+<h1 class="text-3xl md:text-4xl font-bold text-white mb-1 font-mono">Stark-OS v4.0</h1>
+<p class="text-xs text-gold mb-6 font-mono uppercase tracking-widest border-b border-gray-800 pb-3">Sistema de Almacenamiento Emocional & Resonancia Cuántica</p>
+​<div class="text-left bg-black/50 p-4 rounded-xl border border-white/10 text-xs text-gray-300 space-y-2 mb-6 font-mono">
+<p><span class="text-purple-400 font-bold">👨🏻‍💻 Programador:</span> Kevin Santana Ramírez (24 de Marzo, 2003 - 23 años)</p>
+<p><span class="text-rose-400 font-bold">👩🏻‍🍳 La Chef / Mi Reina:</span> Analy Monserrat Vázquez Gómez (22 de Septiembre, 1998 - 28 años)</p>
+<p><span class="text-blue-400 font-bold">📍 Coordenadas:</span> Orizaba, Ver. ⇄ Atlixco, Pue. (~150 km)</p>
+<p><span class="text-amber-400 font-bold">🎵 Música de Fondo:</span> Sintetizador Ambiental Cuántico & Spotify</p>
 </div>
-
-<!-- Contenedor Principal de la Aplicación -->
+​<p class="text-xs text-gray-400 mb-6 leading-relaxed">
+Este entorno fue programado por Kevin con obsesividad de detalle para registrar cada aprendizaje, corregir mis fallas lógicas, sanar nuestras heridas y celebrar la vida de Analy.
+</p>
+​<button onclick="authenticateUser()" class="btn-primary w-full text-base shadow-[0_0_20px_rgba(251,191,36,0.3)] group">
+<span class="group-hover:rotate-12 transition-transform">🔑</span> Iniciar Sesión & Activar Música
+</button>
+</div>
+</div>
+​<!-- Contenedor Principal de la Aplicación -->
 <div class="app-container" id="app-main">
+​<!-- Header Principal con Contadores en Tiempo Real y Widget de Audio -->
+<header class="text-center mb-8 relative">
+<div class="flex flex-wrap justify-between items-center gap-3 mb-4 max-w-4xl mx-auto px-2">
+<div class="inline-flex items-center gap-2 bg-rose-500/10 border border-rose-500/40 text-rose-300 text-xs font-bold px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.2)]">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+</span>
+Entrelazamiento Cuántico Activo: Orizaba ⇄ Atlixco
+</div>
+​<!-- Floating Audio Control Badge -->
+<div class="inline-flex items-center gap-3 bg-black/60 border border-gold/40 px-3 py-1.5 rounded-full backdrop-blur-md">
+<div class="flex items-center gap-1 h-4 px-1" id="audio-eq-bars">
+<span class="eq-bar"></span>
+<span class="eq-bar"></span>
+<span class="eq-bar"></span>
+<span class="eq-bar"></span>
+</div>
+<span class="text-[0.65rem] font-mono text-gold font-bold uppercase tracking-wider" id="audio-status-text">Música: On</span>
+<button onclick="toggleAudio()" id="btn-toggle-audio" class="text-xs bg-gold/20 hover:bg-gold/40 text-gold px-2.5 py-0.5 rounded-full border border-gold/40 transition-all font-bold">
+🔊 Pausar
+</button>
+<input type="range" id="volume-slider" min="-35" max="-5" value="-18" class="w-16 h-1 accent-amber-400 bg-gray-700 rounded-lg cursor-pointer hidden md:inline-block" oninput="adjustVolume(this.value)">
+</div>
+</div>
+​<h1 class="text-4xl md:text-6xl text-gradient mb-2 drop-shadow-md">Nuestra Historia</h1>
+<p class="text-xs md:text-sm text-gray-400 font-mono mb-4">Kevin Santana Ramírez & Analy Monserrat Vázquez Gómez</p>
+​<!-- Banner de Métricas en Tiempo Real -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto font-mono">
+<div class="glass-panel p-3 border-t-2 border-t-gold">
+<div class="text-[0.65rem] text-gold uppercase font-bold">Reinicio de Relación</div>
+<div class="text-lg md:text-xl font-black text-white" id="uptime-counter">--d --h</div>
+<div class="text-[0.6rem] text-gray-500">Desde 22 Jul 2026</div>
+</div>
+​<div class="glass-panel p-3 border-t-2 border-t-rose-500">
+<div class="text-[0.65rem] text-rose-400 uppercase font-bold">Días Conociéndonos</div>
+<div class="text-lg md:text-xl font-black text-white" id="total-days-counter">-- Días</div>
+<div class="text-[0.6rem] text-gray-500">Desde el primer hola</div>
+</div>
+​<div class="glass-panel p-3 border-t-2 border-t-purple-500">
+<div class="text-[0.65rem] text-purple-400 uppercase font-bold">Edad de Kevin</div>
+<div class="text-lg md:text-xl font-black text-white" id="kevin-age">23 años</div>
+<div class="text-[0.6rem] text-gray-500">24/Marzo/2003</div>
+</div>
+​<div class="glass-panel p-3 border-t-2 border-t-blue-400">
+<div class="text-[0.65rem] text-blue-300 uppercase font-bold">Edad de Analy</div>
+<div class="text-lg md:text-xl font-black text-white" id="analy-age">28 años</div>
+<div class="text-[0.6rem] text-gray-500">22/Sept/1998</div>
+</div>
+</div>
+</header>
+​<!-- Red Atmosférica y Estado Emocional -->
+<div class="glass-panel p-5 mb-8 relative overflow-hidden">
+<div class="flex flex-col lg:flex-row justify-between items-stretch gap-6">
+<!-- Clima Abierto -->
+<div class="flex-1">
+<h3 class="text-xs font-bold text-blue-300 mb-3 uppercase tracking-widest flex justify-between items-center border-b border-blue-900/40 pb-2">
+<span>🛰️ Estación Meteorológica Orizaba - Atlixco</span>
+<span id="weather-sync-status" class="text-[0.65rem] bg-blue-900/40 px-2 py-0.5 rounded text-blue-200">Sincronizando...</span>
+</h3>
+​<div class="grid grid-cols-2 gap-3">
+<div class="bg-black/40 border border-white/5 rounded-2xl p-3 flex items-center gap-3">
+<span class="text-3xl" id="w-icon-ori">⌛</span>
+<div>
+<div class="text-xs text-gray-400 font-bold">📍 Orizaba (Kevin)</div>
+<div class="text-xl font-black text-white" id="w-temp-ori">--°C</div>
+<div class="text-[0.65rem] text-blue-200 capitalize" id="w-desc-ori">Cargando...</div>
+</div>
+</div>
+<div class="bg-black/40 border border-white/5 rounded-2xl p-3 flex items-center gap-3">
+<span class="text-3xl" id="w-icon-atl">⌛</span>
+<div>
+<div class="text-xs text-gray-400 font-bold">📍 Atlixco (Analy)</div>
+<div class="text-xl font-black text-white" id="w-temp-atl">--°C</div>
+<div class="text-[0.65rem] text-rose-200 capitalize" id="w-desc-atl">Cargando...</div>
+</div>
+</div>
+</div>
+</div>
+​<!-- Regla de Oro del Programador -->
+<div class="w-full lg:w-1/3 bg-purple-950/20 border border-purple-500/20 rounded-2xl p-4 flex flex-col justify-center">
+<h3 class="text-xs font-bold text-purple-300 mb-2 uppercase tracking-widest">💡 Regla del Sistema para Kevin</h3>
+<p class="text-xs text-gray-300 leading-relaxed italic">
+"Analy no necesita que resuelvas sus problemas como un bug en C++. Analy necesita que la escuches, la entiendas, sostengas su mano y la abraces en su vulnerabilidad."
+</p>
+</div>
+</div>
+</div>
+​<!-- SECCIÓN 1: JARDÍN DE CONFLICTOS -->
+<section id="view-garden" class="view-section active">
+<div class="grid lg:grid-cols-12 gap-6 items-start">
+​<!-- Invernadero Interactivo (7 cols) -->
+<div class="lg:col-span-7 glass-panel p-6 flex flex-col">
+<div class="text-center mb-6">
+<h2 class="text-2xl md:text-3xl font-black text-gold mb-2">Jardín de Conflictos & Sanación</h2>
+<p class="text-xs text-gray-300 leading-relaxed max-w-xl mx-auto">
+Cada girasol representa un conflicto real analizado minuciosamente desde las conversaciones. Toca cada girasol marchito, examina mi error, y presiona el botón de riego para sanar el ciclo.
+</p>
+</div>
+​<!-- SVG Container donde se renderizan los girasoles -->
+<div class="flex justify-around items-end h-64 border-b-4 border-amber-900/60 pb-2 relative px-2 overflow-x-auto custom-scrollbar gap-2" id="garden-container">
+<!-- JS inyecta los girasoles aquí -->
+</div>
+​<div class="mt-6 bg-black/40 p-4 rounded-xl border border-gold/20 flex justify-between items-center">
+<div>
+<div class="text-[0.65rem] text-gray-400 uppercase tracking-wider font-bold">Acción Restaurativa</div>
+<div class="text-xs text-white font-bold" id="selected-flower-title">Selecciona un girasol</div>
+</div>
+<button id="btn-water-all" class="btn-primary !px-4 !py-2 text-xs" onclick="healSelectedLeaf()" disabled>
+💦 Regar y Sanar Conflicto
+</button>
+</div>
+</div>
+​<!-- Panel Inspector de Detalles (5 cols) -->
+<div class="lg:col-span-5 glass-panel p-6 border-t-4 border-t-gold flex flex-col">
+<div class="flex justify-between items-start mb-4 border-b border-white/10 pb-3">
+<div>
+<div class="text-[0.65rem] text-gold uppercase font-bold tracking-widest" id="panel-month">Módulo Inspector</div>
+<h3 class="text-xl font-bold text-white" id="panel-title">Toca un girasol...</h3>
+</div>
+<div id="panel-badge" class="px-2.5 py-1 rounded-full text-[0.65rem] font-black bg-white/10 text-gray-400">--</div>
+</div>
+​<!-- Botones de las Fallas del Conflicto -->
+<div id="leaves-container" class="flex flex-wrap gap-2 mb-4">
+<div class="text-xs text-gray-500 italic">Haz clic en un girasol a la izquierda para inspeccionar las fallas específicas.</div>
+</div>
+​<!-- Desglose Clínico -->
+<div id="clinical-details" class="hidden flex-col gap-3">
+<div class="bg-purple-950/30 border-l-4 border-purple-500 p-3 rounded-r-xl">
+<h4 class="text-[0.65rem] font-bold text-purple-300 uppercase tracking-wider mb-1">⚙️ Mi Error (Kevin):</h4>
+<p class="text-xs text-gray-200 leading-relaxed font-mono" id="detail-my-error"></p>
+</div>
+​<div class="bg-rose-950/30 border-l-4 border-rose-500 p-3 rounded-r-xl">
+<h4 class="text-[0.65rem] font-bold text-rose-300 uppercase tracking-wider mb-1">💔 Tu Sentir & Dolor (Analy):</h4>
+<p class="text-xs text-gray-200 leading-relaxed font-mono" id="detail-her-pain"></p>
+</div>
+​<div class="bg-green-950/30 border-l-4 border-green-500 p-3 rounded-r-xl">
+<h4 class="text-[0.65rem] font-bold text-green-400 uppercase tracking-wider mb-1">🛠️ Compromiso & Solución:</h4>
+<p class="text-xs text-green-100 leading-relaxed font-mono" id="detail-solution"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+​<!-- SECCIÓN 2: PERFIL PSICOLÓGICO Y ANÁLISIS DE CONDUCTA -->
+<section id="view-analysis" class="view-section">
+<div class="mb-6 text-center">
+<h2 class="text-3xl font-black text-white">Análisis Psicológico Clínico de Ambos</h2>
+<p class="text-xs text-gray-400 mt-1 max-w-2xl mx-auto">
+Evaluación profunda de dinámicas de apego, detonantes emocionales, sesgos cognitivos y estrategias de autorregulación.
+</p>
+</div>
+​<div class="grid lg:grid-cols-2 gap-6">
+<!-- Perfil Psicologico de Kevin Santana -->
+<div class="glass-panel p-6 border-t-4 border-t-purple-500">
+<div class="flex items-center gap-4 mb-4 pb-3 border-b border-gray-800">
+<div class="w-14 h-14 rounded-full bg-purple-900/50 flex items-center justify-center text-2xl border border-purple-500/30">👨🏻‍💻</div>
+<div>
+<h3 class="text-xl font-bold text-purple-300">Kevin Santana Ramírez</h3>
+<p class="text-[0.65rem] text-gray-400 font-mono uppercase">23 años | Programador / Analista</p>
+</div>
+</div>
+​<div class="space-y-4 text-xs text-gray-300 leading-relaxed pr-2 custom-scrollbar max-h-[55vh] overflow-y-auto">
+<div>
+<h4 class="text-white font-bold mb-1 border-b border-purple-900/50 pb-1">1. Racionalización Defensiva e Intelectualización</h4>
+<p>Bajo estrés emocional o ante un reclamo, tiendo a refugiarme en explicaciones técnicas o lógicas ("es que el internet falló", "es que el ping estaba alto", "estaba arreglando la config"). Este mecanismo busca mitigar la culpa interior transformando un problema relacional en uno informático.</p>
+</div>
+​<div>
+<h4 class="text-white font-bold mb-1 border-b border-purple-900/50 pb-1">2. Conducta Evasiva y Aislamiento Digital</h4>
+<p>Cuando me siento abrumado o cuestionado, mi impulso primario es replegarme hacia entornos controlados (jugar COD en la madrugada, editar configs, borrar canales de Discord). En esos entornos, yo tengo el control total, a diferencia de la fragilidad impredecible de las emociones humanas.</p>
+</div>
+​<div>
+<h4 class="text-white font-bold mb-1 border-b border-purple-900/50 pb-1">3. Minimización de la Expresión Emocional</h4>
+<p>Al no saber procesar de inmediato la angustia de Analy, he cometido el error de catalogar sus sobrepensamientos como "exageraciones" o "ganas de pelear". Esto invalida su necesidad de afecto y genera la falsa impresión de que no me importa lo que siente.</p>
+</div>
+​<div class="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
+<strong class="text-purple-300 block mb-1 font-mono text-[0.65rem] uppercase">Plan de Modificación Conductual:</strong>
+1. Escuchar activamente sin interrumpir con excusas lógicas.
 
-    <!-- Header Principal con Contadores en Tiempo Real y Widget de Audio -->
-    <header class="text-center mb-8 relative">
-        <div class="flex flex-wrap justify-between items-center gap-3 mb-4 max-w-4xl mx-auto px-2">
-            <div class="inline-flex items-center gap-2 bg-rose-500/10 border border-rose-500/40 text-rose-300 text-xs font-bold px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.2)]">
-                <span class="relative flex h-2.5 w-2.5">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
-                </span>
-                Entrelazamiento Cuántico Activo: Orizaba ⇄ Atlixco
-            </div>
+2. Validar con fraseologia: "Entiendo por qué te duele y lamento habértelo provocado".
 
-            <!-- Floating Audio Control Badge -->
-            <div class="inline-flex items-center gap-3 bg-black/60 border border-gold/40 px-3 py-1.5 rounded-full backdrop-blur-md">
-                <div class="flex items-center gap-1 h-4 px-1" id="audio-eq-bars">
-                    <span class="eq-bar"></span>
-                    <span class="eq-bar"></span>
-                    <span class="eq-bar"></span>
-                    <span class="eq-bar"></span>
-                </div>
-                <span class="text-[0.65rem] font-mono text-gold font-bold uppercase tracking-wider" id="audio-status-text">Música: On</span>
-                <button onclick="toggleAudio()" id="btn-toggle-audio" class="text-xs bg-gold/20 hover:bg-gold/40 text-gold px-2.5 py-0.5 rounded-full border border-gold/40 transition-all font-bold">
-                    🔊 Pausar
-                </button>
-                <input type="range" id="volume-slider" min="-35" max="-5" value="-18" class="w-16 h-1 accent-amber-400 bg-gray-700 rounded-lg cursor-pointer hidden md:inline-block" oninput="adjustVolume(this.value)">
-            </div>
-        </div>
-        
-        <h1 class="text-4xl md:text-6xl text-gradient mb-2 drop-shadow-md">Nuestra Historia</h1>
-        <p class="text-xs md:text-sm text-gray-400 font-mono mb-4">Kevin Santana Ramírez & Analy Monserrat Vázquez Gómez</p>
+3. Priorizar la presencia afectiva sobre el aislamiento en videojuegos.
+</div>
+</div>
+</div>
+​<!-- Perfil Psicologico de Analy Monserrat -->
+<div class="glass-panel p-6 border-t-4 border-t-rose-500">
+<div class="flex items-center gap-4 mb-4 pb-3 border-b border-gray-800">
+<div class="w-14 h-14 rounded-full bg-rose-900/50 flex items-center justify-center text-2xl border border-rose-500/30">👩🏻‍🍳</div>
+<div>
+<h3 class="text-xl font-bold text-rose-300">Analy Monserrat Vázquez Gómez</h3>
+<p class="text-[0.65rem] text-gray-400 font-mono uppercase">28 años | Chef Profesional</p>
+</div>
+</div>
+​<div class="space-y-4 text-xs text-gray-300 leading-relaxed pr-2 custom-scrollbar max-h-[55vh] overflow-y-auto">
+<div>
+<h4 class="text-white font-bold mb-1 border-b border-rose-900/50 pb-1">1. Hipersensibilidad al Rechazo y Apego Ansioso</h4>
+<p>Como Chef, Analy posee una alta sensibilidad y perfeccionismo. En la relación, las ausencias prolongadas sin aviso o las respuestas cortas activan su sistema de alerta temprana de abandono, llevándola a sobrepensar escenarios donde es desplazada.</p>
+</div>
+​<div>
+<h4 class="text-white font-bold mb-1 border-b border-rose-900/50 pb-1">2. Sobrepensamiento Protector</h4>
+<p>Como expresó el 7 de Junio: "Los sobrepensamientos me queman... no es algo de apelante". Su mente anticipa la traición o el desinterés para intentar amortiguar el impacto emocional antes de que ocurra. No lo hace por molestarme, sino por proteger su corazón.</p>
+</div>
+​<div>
+<h4 class="text-white font-bold mb-1 border-b border-rose-900/50 pb-1">3. Miedo Inconsciente a ser "Opción Secundaria"</h4>
+<p>Si nota que dedico horas a juegos, Discord o tareas digitales mientras a ella le doy respuestas distantes, su mente interpreta que solo estoy con ella por inercia o por "insistencia", lastimando profundamente su autoestima relacional.</p>
+</div>
+​<div class="bg-rose-900/20 p-3 rounded-xl border border-rose-500/30">
+<strong class="text-rose-300 block mb-1 font-mono text-[0.65rem] uppercase">Garantía que Kevin Debe Proveer:</strong>
+1. Afecto proactivo sin necesidad de que ella lo suplique.
 
-        <!-- Banner de Métricas en Tiempo Real -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto font-mono">
-            <div class="glass-panel p-3 border-t-2 border-t-gold">
-                <div class="text-[0.65rem] text-gold uppercase font-bold">Reinicio de Relación</div>
-                <div class="text-lg md:text-xl font-black text-white" id="uptime-counter">--d --h</div>
-                <div class="text-[0.6rem] text-gray-500">Desde 22 Jul 2026</div>
-            </div>
+2. Transparencia total en tiempos de ocio y actividades.
 
-            <div class="glass-panel p-3 border-t-2 border-t-rose-500">
-                <div class="text-[0.65rem] text-rose-400 uppercase font-bold">Días Conociéndonos</div>
-                <div class="text-lg md:text-xl font-black text-white" id="total-days-counter">-- Días</div>
-                <div class="text-[0.6rem] text-gray-500">Desde el primer hola</div>
-            </div>
+3. Confirmación constante de que ella es la reina indiscutible de mi vida.
+</div>
+</div>
+</div>
+</div>
+</section>
+​<!-- SECCIÓN 3: DIARIOS INTIMOS Y BITÁCORA EMOCIONAL -->
+<section id="view-express" class="view-section">
+<div class="grid lg:grid-cols-2 gap-6">
+​<!-- Diario Personal de Kevin -->
+<div class="glass-panel p-6 border-t-4 border-t-purple-500">
+<div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
+<h3 class="text-xl font-bold text-purple-300 flex items-center gap-2"><span>📓</span> Mi Diario Intimo (Kevin)</h3>
+<span class="text-[0.65rem] font-mono bg-purple-950 px-2 py-1 rounded text-purple-200">Perspectiva Personal</span>
+</div>
+​<div class="space-y-4 text-xs text-gray-300 leading-relaxed pr-2 custom-scrollbar max-h-[50vh] overflow-y-auto">
+<div class="bg-black/30 p-3 rounded-xl border border-white/5">
+<div class="text-[0.6rem] text-purple-400 font-mono mb-1">ENTRADA 01 - El sesgo del ingeniero</div>
+<p>"A veces me detengo a pensar en cómo funciona mi cabeza. Cuando Analy me llama preocupada o me dice que algo no va bien, mi instinto programador busca corregir la variable del problema en lugar de abrazar su emoción. No me daba cuenta de cuánto la lastimaba al actuar como un robot frío cuando ella solo buscaba el calor de mi voz."</p>
+</div>
+​<div class="bg-black/30 p-3 rounded-xl border border-white/5">
+<div class="text-[0.6rem] text-purple-400 font-mono mb-1">ENTRADA 02 - El arrepentimiento de la madrugada</div>
+<p>"Aquella madrugada del 28 de Julio me quedé despierto hasta las 4 AM modificando menús de COD. Al día siguiente me di cuenta de la pendejada que hice. Analy había hecho un esfuerzo enorme por estar presente y yo le regalé mi tiempo a una pantalla vacía. Prometí no volver a cambiar una caricia o una charla con mi reina por un juego."</p>
+</div>
+​<div class="bg-black/30 p-3 rounded-xl border border-white/5">
+<div class="text-[0.6rem] text-purple-400 font-mono mb-1">ENTRADA 03 - La distancia Orizaba - Atlixco</div>
+<p>"Estar a 150 km de distancia me hace valorar cada llamada, cada sticker, cada mensaje de buenos días. Sé que no puedo darle un abrazo físico de inmediato, pero este sistema es mi manera de decirle que está presente en cada línea de código que escribo."</p>
+</div>
+</div>
+</div>
+​<!-- Bitácora Abierta de Analy (Interactive) -->
+<div class="glass-panel p-6 border-t-4 border-t-pink-500">
+<div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
+<h3 class="text-xl font-bold text-pink-400 flex items-center gap-2"><span>📝</span> Bitácora Emocional de Analy</h3>
+<span class="text-[0.65rem] font-mono bg-pink-950 px-2 py-1 rounded text-pink-200">Canal Directo</span>
+</div>
+​<p class="text-xs text-gray-300 mb-4">
+Analy, este espacio es tuyo. Todo lo que escribas aquí se guarda directamente en la memoria local encriptada para que me lo expreses sin filtro.
+</p>
+​<div class="mb-4">
+<textarea id="feedback-input" class="w-full bg-black/50 border border-pink-500/30 rounded-xl p-3 text-white text-xs font-mono focus:border-pink-500 outline-none resize-none" rows="3" placeholder="Escribe aquí tu sentir o lo que quieras decirme hoy..."></textarea>
+​<div class="flex justify-between items-center mt-2">
+<span class="text-[0.6rem] text-gray-500 font-mono">Almacenamiento local seguro</span>
+<button class="btn-primary !py-1.5 !px-4 text-xs" onclick="saveFeedback()">📡 Guardar Registro</button>
+</div>
+</div>
+​<div class="border-t border-gray-800 pt-4">
+<h4 class="text-[0.65rem] text-gray-400 uppercase font-bold font-mono mb-3">Registros de Analy:</h4>
+<div id="feedback-list" class="space-y-2 max-h-[25vh] overflow-y-auto pr-2 custom-scrollbar">
+<div class="text-center text-xs text-gray-600 italic py-2">No hay registros guardados aún.</div>
+</div>
+</div>
+</div>
+​</div>
+</section>
+​<!-- SECCIÓN 4: CALCULADORA DE CICLO HORMONAL & SALUD DE ANALY -->
+<section id="view-cycle" class="view-section">
+<div class="glass-panel p-6 border-t-4 border-t-rose-500 max-w-4xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+<div>
+<h2 class="text-2xl font-black text-rose-400 flex items-center gap-2"><span>🌸</span> Monitor de Ciclo Menstrual & Estado Emocional</h2>
+<p class="text-xs text-gray-400 mt-1">Calculadora biológica y gráfica sinusoidal de estado de ánimo prevista para Analy.</p>
+</div>
+<div class="bg-rose-950/60 border border-rose-500/30 p-2 rounded-xl text-center">
+<span class="text-[0.6rem] text-rose-300 font-mono uppercase block">Próxima Menstruación Est.</span>
+<span class="text-sm font-bold text-white font-mono" id="next-period-date">Calculando...</span>
+</div>
+</div>
+​<div class="grid md:grid-cols-3 gap-4 mb-6 text-xs">
+<div class="bg-black/40 p-3 rounded-xl border border-white/5">
+<div class="text-gray-400 font-bold mb-1">🩸 Duración Promedio</div>
+<div class="text-lg font-black text-rose-400 font-mono">28 - 30 Días</div>
+<p class="text-[0.65rem] text-gray-500 mt-1">Duración del periodo: ~5 días</p>
+</div>
+​<div class="bg-black/40 p-3 rounded-xl border border-white/5">
+<div class="text-gray-400 font-bold mb-1">📊 Fase Actual</div>
+<div class="text-lg font-black text-gold font-mono" id="current-phase-name">Fase Lútea</div>
+<p class="text-[0.65rem] text-gray-500 mt-1" id="phase-description">Sensibilidad emocional incrementada</p>
+</div>
+​<div class="bg-black/40 p-3 rounded-xl border border-white/5">
+<div class="text-gray-400 font-bold mb-1">🩺 Protocolo de Apoyo para Kevin</div>
+<div class="text-xs text-green-300 font-bold" id="kevin-action-advice">Comprar chocolates y dar apapacho extra</div>
+</div>
+</div>
+​<!-- Gráfica Sinusoidal Hormonal -->
+<div class="mb-4">
+<div class="flex justify-between items-center text-xs text-gray-400 mb-2 font-mono">
+<span>Curva Estimada de Fluctuación de Ánimo y Energía</span>
+<span class="text-rose-400">Día del Ciclo: <strong id="cycle-day-num">14</strong>/28</span>
+</div>
+<canvas id="cycle-canvas"></canvas>
+</div>
+​<div class="bg-rose-950/20 p-3 rounded-xl border border-rose-500/20 text-xs text-gray-300 flex items-start gap-3">
+<span class="text-2xl">🍫</span>
+<p>
+<strong>Nota del Desarrollador:</strong> En los días previos a su periodo (Fase Lútea tardía), la paciencia y el cariño de Kevin deben multiplicarse al 200%. Prohibido discutir por tonterías lógicas; prioridad absoluta a los mimos, tesitos calientes y masajitos.
+</p>
+</div>
+</div>
+</section>
+​<!-- SECCIÓN 5: PERFIL COMPLETO DE GUSTOS & PLAYLIST DEDICADA -->
+<section id="view-analy-profile" class="view-section">
+<div class="mb-6 text-center">
+<h2 class="text-3xl font-black text-gold">Inventario Obsesivo & Reproductor de Canciones</h2>
+<p class="text-xs text-gray-400 mt-1">Todo lo que he registrado sobre la mujer que amo y las canciones especiales dedicadas en nuestro chat.</p>
+</div>
+​<!-- Reproductor de Canciones Dedicadas de la Pareja -->
+<div class="glass-panel p-6 mb-8 border-t-4 border-t-rose-500">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-3 border-b border-gray-800">
+<div>
+<h3 class="text-xl font-bold text-rose-300 flex items-center gap-2"><span>🎵</span> Canciones Especiales & Dedicatorias</h3>
+<p class="text-xs text-gray-400">Las canciones que Kevin le ha dedicado a Analy en WhatsApp/Spotify.</p>
+</div>
+<div class="text-xs font-mono bg-rose-950/60 text-rose-300 px-3 py-1 rounded-full border border-rose-500/30">
+❤️ "Un romántico para su Reina"
+</div>
+</div>
+​<div class="grid md:grid-cols-2 gap-4">
+<!-- Track 1: Spotify Embed 1 -->
+<div class="bg-black/50 p-3 rounded-2xl border border-white/10 flex flex-col justify-between">
+<div class="mb-2">
+<span class="text-[0.6rem] font-mono text-gold uppercase block">Dedicatoria #1 (Spotify)</span>
+<h4 class="text-sm font-bold text-white">Canción Especial Dedicada</h4>
+<p class="text-xs text-gray-400">"Me gustan todos los temas que toca para describir sin duda necesito dedicártela..."</p>
+</div>
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3mK8uv2ajpUQkVD9iY2YfF?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
+​<!-- Track 2: Spotify Embed 2 -->
+<div class="bg-black/50 p-3 rounded-2xl border border-white/10 flex flex-col justify-between">
+<div class="mb-2">
+<span class="text-[0.6rem] font-mono text-rose-400 uppercase block">Dedicatoria #2 (Spotify)</span>
+<h4 class="text-sm font-bold text-white">Para Mi Reina</h4>
+<p class="text-xs text-gray-400">Compartida en nuestras conversaciones nocturnas.</p>
+</div>
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3679nxLpRn426cH9iYiL3Q?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
+</div>
+</div>
+​<div class="grid md:grid-cols-3 gap-6">
+<!-- Gastronomía y Pasión -->
+<div class="glass-panel p-5 border-t-4 border-t-amber-500">
+<div class="text-amber-400 font-bold text-base mb-3 flex items-center gap-2"><span>👩🏻‍🍳</span> Pasión & Gastronomía</div>
+<ul class="text-xs text-gray-300 space-y-2 font-mono">
+<li class="bg-black/30 p-2 rounded border border-white/5">🍳 <strong>Profesión:</strong> Chef Profesional talentosa.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">🍕 <strong>Sazones:</strong> Le encanta la cocina italiana, pastas y repostería fina.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">☕ <strong>Bebidas:</strong> Café bien preparado en mañanas frías.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">🍰 <strong>Postres:</strong> Detalles dulces que alegran su día.</li>
+</ul>
+</div>
+​<!-- Hobbies & Entretenimiento -->
+<div class="glass-panel p-5 border-t-4 border-t-rose-500">
+<div class="text-rose-400 font-bold text-base mb-3 flex items-center gap-2"><span>🎮</span> Hobbies & Juegos</div>
+<ul class="text-xs text-gray-300 space-y-2 font-mono">
+<li class="bg-black/30 p-2 rounded border border-white/5">🎲 <strong>Parchisi Star:</strong> Le gusta jugar partidas relajadas juntos.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">📱 <strong>Redes:</strong> Ver TikToks divertidos e interactuar.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">🎧 <strong>Llamadas:</strong> Dormirse escuchando mi voz por llamadas de Discord/WhatsApp.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">🌻 <strong>Flores:</strong> Fan incondicional de los girasoles y tonos cálidos.</li>
+</ul>
+</div>
+​<!-- Detalles Emocionales & Lenguaje del Amor -->
+<div class="glass-panel p-5 border-t-4 border-t-blue-400">
+<div class="text-blue-300 font-bold text-base mb-3 flex items-center gap-2"><span>💖</span> Lenguaje del Amor</div>
+<ul class="text-xs text-gray-300 space-y-2 font-mono">
+<li class="bg-black/30 p-2 rounded border border-white/5">⏳ <strong>Tiempo de Calidad:</strong> Prioridad absoluta a la presencia sin distracciones.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">💬 <strong>Palabras de Afirmación:</strong> Sentir certeza verbal constante de que la amo.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">🧸 <strong>Apapachos:</strong> Demostraciones cálidas que calmen sus sobrepensamientos.</li>
+<li class="bg-black/30 p-2 rounded border border-white/5">📍 <strong>Lugar Especial:</strong> Atlixco, Puebla (Ciudad de las Flores).</li>
+</ul>
+</div>
+</div>
+</section>
+​<!-- SECCIÓN 6: CONSOLA & JUEGOS RETRO -->
+<section id="view-system" class="view-section">
+<div class="grid lg:grid-cols-2 gap-6 items-start">
+​<!-- Pac-Man Game -->
+<div class="glass-panel p-6 flex flex-col items-center">
+<div class="w-full flex justify-between items-center mb-3">
+<h3 class="text-xl font-bold text-gold">Atrapando el Presente</h3>
+<div class="text-xs bg-black/50 px-3 py-1 rounded-full border border-gold/30 text-gold font-mono">
+Vidas: <span id="p-lives">❤️❤️❤️</span>
+</div>
+</div>
+​<p class="text-xs text-gray-300 mb-4 text-center">
+Tú (👩🏻‍🍳) atrapas las excusas lógicas y recolectas amor (🍓🍰🌻).
+</p>
+​<div class="game-canvas-container">
+<canvas id="pacman-canvas" class="game-canvas"></canvas>
+​<div id="pacman-overlay" class="absolute inset-0 bg-black/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center z-10">
+<h4 id="pm-title" class="text-2xl font-black text-white mb-2"></h4>
+<p id="pm-desc" class="text-xs text-gray-300 mb-4"></p>
+<button onclick="initPacmanMap()" class="btn-primary !py-2 !px-6">🎮 <span id="pm-btn-txt">Iniciar</span></button>
+</div>
+</div>
+​<div class="w-full flex justify-between items-center mt-3 font-mono text-xs font-bold text-gray-400">
+<div>Nivel: <span id="p-level" class="text-white">1</span></div>
+<div>Puntos: <span id="p-score" class="text-white">0</span></div>
+</div>
+​<div class="dpad-container w-full lg:hidden">
+<div></div>
+<button class="dpad-btn" onmousedown="setPacmanDir(0, -1)" ontouchstart="setPacmanDir(0, -1); event.preventDefault();">⬆️</button>
+<div></div>
+<button class="dpad-btn" onmousedown="setPacmanDir(-1, 0)" ontouchstart="setPacmanDir(-1, 0); event.preventDefault();">⬅️</button>
+<button class="dpad-btn" onmousedown="setPacmanDir(0, 1)" ontouchstart="setPacmanDir(0, 1); event.preventDefault();">⬇️</button>
+<button class="dpad-btn" onmousedown="setPacmanDir(1, 0)" ontouchstart="setPacmanDir(1, 0); event.preventDefault();">➡️</button>
+</div>
+</div>
+​<!-- Terminal OS & Pong -->
+<div class="glass-panel p-0 overflow-hidden flex flex-col h-[520px] border-gray-700 shadow-2xl">
+<div class="terminal-header">
+<div class="flex gap-1.5">
+<div class="terminal-dot bg-red-500"></div>
+<div class="terminal-dot bg-yellow-500"></div>
+<div class="terminal-dot bg-green-500"></div>
+</div>
+<span class="text-xs text-gray-400 font-mono ml-4 flex-1 text-center">stark-os@kevin-analy:~/root</span>
+</div>
+​<div class="flex-1 p-4 font-mono text-xs bg-[#06060a] text-green-400 overflow-y-auto custom-scrollbar relative" id="terminal-screen">
+<div id="term-output">
+Bienvenida al Kernel de Stark-OS.
 
-            <div class="glass-panel p-3 border-t-2 border-t-purple-500">
-                <div class="text-[0.65rem] text-purple-400 uppercase font-bold">Edad de Kevin</div>
-                <div class="text-lg md:text-xl font-black text-white" id="kevin-age">23 años</div>
-                <div class="text-[0.6rem] text-gray-500">24/Marzo/2003</div>
-            </div>
+Escribe <span class="text-blue-300">help</span> para comandos.
 
-            <div class="glass-panel p-3 border-t-2 border-t-blue-400">
-                <div class="text-[0.65rem] text-blue-300 uppercase font-bold">Edad de Analy</div>
-                <div class="text-lg md:text-xl font-black text-white" id="analy-age">28 años</div>
-                <div class="text-[0.6rem] text-gray-500">22/Sept/1998</div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Red Atmosférica y Estado Emocional -->
-    <div class="glass-panel p-5 mb-8 relative overflow-hidden">
-        <div class="flex flex-col lg:flex-row justify-between items-stretch gap-6">
-            <!-- Clima Abierto -->
-            <div class="flex-1">
-                <h3 class="text-xs font-bold text-blue-300 mb-3 uppercase tracking-widest flex justify-between items-center border-b border-blue-900/40 pb-2">
-                    <span>🛰️ Estación Meteorológica Orizaba - Atlixco</span>
-                    <span id="weather-sync-status" class="text-[0.65rem] bg-blue-900/40 px-2 py-0.5 rounded text-blue-200">Sincronizando...</span>
-                </h3>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-black/40 border border-white/5 rounded-2xl p-3 flex items-center gap-3">
-                        <span class="text-3xl" id="w-icon-ori">⌛</span>
-                        <div>
-                            <div class="text-xs text-gray-400 font-bold">📍 Orizaba (Kevin)</div>
-                            <div class="text-xl font-black text-white" id="w-temp-ori">--°C</div>
-                            <div class="text-[0.65rem] text-blue-200 capitalize" id="w-desc-ori">Cargando...</div>
-                        </div>
-                    </div>
-                    <div class="bg-black/40 border border-white/5 rounded-2xl p-3 flex items-center gap-3">
-                        <span class="text-3xl" id="w-icon-atl">⌛</span>
-                        <div>
-                            <div class="text-xs text-gray-400 font-bold">📍 Atlixco (Analy)</div>
-                            <div class="text-xl font-black text-white" id="w-temp-atl">--°C</div>
-                            <div class="text-[0.65rem] text-rose-200 capitalize" id="w-desc-atl">Cargando...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Regla de Oro del Programador -->
-            <div class="w-full lg:w-1/3 bg-purple-950/20 border border-purple-500/20 rounded-2xl p-4 flex flex-col justify-center">
-                <h3 class="text-xs font-bold text-purple-300 mb-2 uppercase tracking-widest">💡 Regla del Sistema para Kevin</h3>
-                <p class="text-xs text-gray-300 leading-relaxed italic">
-                    "Analy no necesita que resuelvas sus problemas como un bug en C++. Analy necesita que la escuches, la entiendas, sostengas su mano y la abraces en su vulnerabilidad."
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SECCIÓN 1: JARDÍN DE CONFLICTOS -->
-    <section id="view-garden" class="view-section active">
-        <div class="grid lg:grid-cols-12 gap-6 items-start">
-            
-            <!-- Invernadero Interactivo (7 cols) -->
-            <div class="lg:col-span-7 glass-panel p-6 flex flex-col">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl md:text-3xl font-black text-gold mb-2">Jardín de Conflictos & Sanación</h2>
-                    <p class="text-xs text-gray-300 leading-relaxed max-w-xl mx-auto">
-                        Cada girasol representa un conflicto real analizado minuciosamente desde las conversaciones. Toca cada girasol marchito, examina mi error, y presiona el botón de riego para sanar el ciclo.
-                    </p>
-                </div>
-                
-                <!-- SVG Container donde se renderizan los girasoles -->
-                <div class="flex justify-around items-end h-64 border-b-4 border-amber-900/60 pb-2 relative px-2 overflow-x-auto custom-scrollbar gap-2" id="garden-container">
-                    <!-- JS inyecta los girasoles aquí -->
-                </div>
-                
-                <div class="mt-6 bg-black/40 p-4 rounded-xl border border-gold/20 flex justify-between items-center">
-                    <div>
-                        <div class="text-[0.65rem] text-gray-400 uppercase tracking-wider font-bold">Acción Restaurativa</div>
-                        <div class="text-xs text-white font-bold" id="selected-flower-title">Selecciona un girasol</div>
-                    </div>
-                    <button id="btn-water-all" class="btn-primary !px-4 !py-2 text-xs" onclick="healSelectedLeaf()" disabled>
-                        💦 Regar y Sanar Conflicto
-                    </button>
-                </div>
-            </div>
-
-            <!-- Panel Inspector de Detalles (5 cols) -->
-            <div class="lg:col-span-5 glass-panel p-6 border-t-4 border-t-gold flex flex-col">
-                <div class="flex justify-between items-start mb-4 border-b border-white/10 pb-3">
-                    <div>
-                        <div class="text-[0.65rem] text-gold uppercase font-bold tracking-widest" id="panel-month">Módulo Inspector</div>
-                        <h3 class="text-xl font-bold text-white" id="panel-title">Toca un girasol...</h3>
-                    </div>
-                    <div id="panel-badge" class="px-2.5 py-1 rounded-full text-[0.65rem] font-black bg-white/10 text-gray-400">--</div>
-                </div>
-
-                <!-- Botones de las Fallas del Conflicto -->
-                <div id="leaves-container" class="flex flex-wrap gap-2 mb-4">
-                    <div class="text-xs text-gray-500 italic">Haz clic en un girasol a la izquierda para inspeccionar las fallas específicas.</div>
-                </div>
-
-                <!-- Desglose Clínico -->
-                <div id="clinical-details" class="hidden flex-col gap-3">
-                    <div class="bg-purple-950/30 border-l-4 border-purple-500 p-3 rounded-r-xl">
-                        <h4 class="text-[0.65rem] font-bold text-purple-300 uppercase tracking-wider mb-1">⚙️ Mi Error (Kevin):</h4>
-                        <p class="text-xs text-gray-200 leading-relaxed font-mono" id="detail-my-error"></p>
-                    </div>
-                    
-                    <div class="bg-rose-950/30 border-l-4 border-rose-500 p-3 rounded-r-xl">
-                        <h4 class="text-[0.65rem] font-bold text-rose-300 uppercase tracking-wider mb-1">💔 Tu Sentir & Dolor (Analy):</h4>
-                        <p class="text-xs text-gray-200 leading-relaxed font-mono" id="detail-her-pain"></p>
-                    </div>
-                    
-                    <div class="bg-green-950/30 border-l-4 border-green-500 p-3 rounded-r-xl">
-                        <h4 class="text-[0.65rem] font-bold text-green-400 uppercase tracking-wider mb-1">🛠️ Compromiso & Solución:</h4>
-                        <p class="text-xs text-green-100 leading-relaxed font-mono" id="detail-solution"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECCIÓN 2: PERFIL PSICOLÓGICO Y ANÁLISIS DE CONDUCTA -->
-    <section id="view-analysis" class="view-section">
-        <div class="mb-6 text-center">
-            <h2 class="text-3xl font-black text-white">Análisis Psicológico Clínico de Ambos</h2>
-            <p class="text-xs text-gray-400 mt-1 max-w-2xl mx-auto">
-                Evaluación profunda de dinámicas de apego, detonantes emocionales, sesgos cognitivos y estrategias de autorregulación.
-            </p>
-        </div>
-
-        <div class="grid lg:grid-cols-2 gap-6">
-            <!-- Perfil Psicologico de Kevin Santana -->
-            <div class="glass-panel p-6 border-t-4 border-t-purple-500">
-                <div class="flex items-center gap-4 mb-4 pb-3 border-b border-gray-800">
-                    <div class="w-14 h-14 rounded-full bg-purple-900/50 flex items-center justify-center text-2xl border border-purple-500/30">👨🏻‍💻</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-purple-300">Kevin Santana Ramírez</h3>
-                        <p class="text-[0.65rem] text-gray-400 font-mono uppercase">23 años | Programador / Analista</p>
-                    </div>
-                </div>
-                
-                <div class="space-y-4 text-xs text-gray-300 leading-relaxed pr-2 custom-scrollbar max-h-[55vh] overflow-y-auto">
-                    <div>
-                        <h4 class="text-white font-bold mb-1 border-b border-purple-900/50 pb-1">1. Racionalización Defensiva e Intelectualización</h4>
-                        <p>Bajo estrés emocional o ante un reclamo, tiendo a refugiarme en explicaciones técnicas o lógicas ("es que el internet falló", "es que el ping estaba alto", "estaba arreglando la config"). Este mecanismo busca mitigar la culpa interior transformando un problema relacional en uno informático.</p>
-                    </div>
-
-                    <div>
-                        <h4 class="text-white font-bold mb-1 border-b border-purple-900/50 pb-1">2. Conducta Evasiva y Aislamiento Digital</h4>
-                        <p>Cuando me siento abrumado o cuestionado, mi impulso primario es replegarme hacia entornos controlados (jugar COD en la madrugada, editar configs, borrar canales de Discord). En esos entornos, yo tengo el control total, a diferencia de la fragilidad impredecible de las emociones humanas.</p>
-                    </div>
-
-                    <div>
-                        <h4 class="text-white font-bold mb-1 border-b border-purple-900/50 pb-1">3. Minimización de la Expresión Emocional</h4>
-                        <p>Al no saber procesar de inmediato la angustia de Analy, he cometido el error de catalogar sus sobrepensamientos como "exageraciones" o "ganas de pelear". Esto invalida su necesidad de afecto y genera la falsa impresión de que no me importa lo que siente.</p>
-                    </div>
-
-                    <div class="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
-                        <strong class="text-purple-300 block mb-1 font-mono text-[0.65rem] uppercase">Plan de Modificación Conductual:</strong>
-                        1. Escuchar activamente sin interrumpir con excusas lógicas.<br>
-                        2. Validar con fraseologia: "Entiendo por qué te duele y lamento habértelo provocado".<br>
-                        3. Priorizar la presencia afectiva sobre el aislamiento en videojuegos.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Perfil Psicologico de Analy Monserrat -->
-            <div class="glass-panel p-6 border-t-4 border-t-rose-500">
-                <div class="flex items-center gap-4 mb-4 pb-3 border-b border-gray-800">
-                    <div class="w-14 h-14 rounded-full bg-rose-900/50 flex items-center justify-center text-2xl border border-rose-500/30">👩🏻‍🍳</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-rose-300">Analy Monserrat Vázquez Gómez</h3>
-                        <p class="text-[0.65rem] text-gray-400 font-mono uppercase">28 años | Chef Profesional</p>
-                    </div>
-                </div>
-                
-                <div class="space-y-4 text-xs text-gray-300 leading-relaxed pr-2 custom-scrollbar max-h-[55vh] overflow-y-auto">
-                    <div>
-                        <h4 class="text-white font-bold mb-1 border-b border-rose-900/50 pb-1">1. Hipersensibilidad al Rechazo y Apego Ansioso</h4>
-                        <p>Como Chef, Analy posee una alta sensibilidad y perfeccionismo. En la relación, las ausencias prolongadas sin aviso o las respuestas cortas activan su sistema de alerta temprana de abandono, llevándola a sobrepensar escenarios donde es desplazada.</p>
-                    </div>
-
-                    <div>
-                        <h4 class="text-white font-bold mb-1 border-b border-rose-900/50 pb-1">2. Sobrepensamiento Protector</h4>
-                        <p>Como expresó el 7 de Junio: "Los sobrepensamientos me queman... no es algo de apenas". Su mente anticipa la traición o el desinterés para intentar amortiguar el impacto emocional antes de que ocurra. No lo hace por molestarme, sino por proteger su corazón.</p>
-                    </div>
-
-                    <div>
-                        <h4 class="text-white font-bold mb-1 border-b border-rose-900/50 pb-1">3. Miedo Inconsciente a ser "Opción Secundaria"</h4>
-                        <p>Si nota que dedico horas a juegos, Discord o tareas digitales mientras a ella le doy respuestas distantes, su mente interpreta que solo estoy con ella por inercia o por "insistencia", lastimando profundamente su autoestima relacional.</p>
-                    </div>
-
-                    <div class="bg-rose-900/20 p-3 rounded-xl border border-rose-500/30">
-                        <strong class="text-rose-300 block mb-1 font-mono text-[0.65rem] uppercase">Garantía que Kevin Debe Proveer:</strong>
-                        1. Afecto proactivo sin necesidad de que ella lo suplique.<br>
-                        2. Transparencia total en tiempos de ocio y actividades.<br>
-                        3. Confirmación constante de que ella es la reina indiscutible de mi vida.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECCIÓN 3: DIARIOS INTIMOS Y BITÁCORA EMOCIONAL -->
-    <section id="view-express" class="view-section">
-        <div class="grid lg:grid-cols-2 gap-6">
-            
-            <!-- Diario Personal de Kevin -->
-            <div class="glass-panel p-6 border-t-4 border-t-purple-500">
-                <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-                    <h3 class="text-xl font-bold text-purple-300 flex items-center gap-2"><span>📓</span> Mi Diario Intimo (Kevin)</h3>
-                    <span class="text-[0.65rem] font-mono bg-purple-950 px-2 py-1 rounded text-purple-200">Perspectiva Personal</span>
-                </div>
-                
-                <div class="space-y-4 text-xs text-gray-300 leading-relaxed pr-2 custom-scrollbar max-h-[50vh] overflow-y-auto">
-                    <div class="bg-black/30 p-3 rounded-xl border border-white/5">
-                        <div class="text-[0.6rem] text-purple-400 font-mono mb-1">ENTRADA 01 - El sesgo del ingeniero</div>
-                        <p>"A veces me detengo a pensar en cómo funciona mi cabeza. Cuando Analy me llama preocupada o me dice que algo no va bien, mi instinto programador busca corregir la variable del problema en lugar de abrazar su emoción. No me daba cuenta de cuánto la lastimaba al actuar como un robot frío cuando ella solo buscaba el calor de mi voz."</p>
-                    </div>
-
-                    <div class="bg-black/30 p-3 rounded-xl border border-white/5">
-                        <div class="text-[0.6rem] text-purple-400 font-mono mb-1">ENTRADA 02 - El arrepentimiento de la madrugada</div>
-                        <p>"Aquella madrugada del 28 de Julio me quedé despierto hasta las 4 AM modificando menús de COD. Al día siguiente me di cuenta de la pendejada que hice. Analy había hecho un esfuerzo enorme por estar presente y yo le regalé mi tiempo a una pantalla vacía. Prometí no volver a cambiar una caricia o una charla con mi reina por un juego."</p>
-                    </div>
-
-                    <div class="bg-black/30 p-3 rounded-xl border border-white/5">
-                        <div class="text-[0.6rem] text-purple-400 font-mono mb-1">ENTRADA 03 - La distancia Orizaba - Atlixco</div>
-                        <p>"Estar a 150 km de distancia me hace valorar cada llamada, cada sticker, cada mensaje de buenos días. Sé que no puedo darle un abrazo físico de inmediato, pero este sistema es mi manera de decirle que está presente en cada línea de código que escribo."</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bitácora Abierta de Analy (Interactive) -->
-            <div class="glass-panel p-6 border-t-4 border-t-pink-500">
-                <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-                    <h3 class="text-xl font-bold text-pink-400 flex items-center gap-2"><span>📝</span> Bitácora Emocional de Analy</h3>
-                    <span class="text-[0.65rem] font-mono bg-pink-950 px-2 py-1 rounded text-pink-200">Canal Directo</span>
-                </div>
-
-                <p class="text-xs text-gray-300 mb-4">
-                    Analy, este espacio es tuyo. Todo lo que escribas aquí se guarda directamente en la memoria local encriptada para que me lo expreses sin filtro.
-                </p>
-
-                <div class="mb-4">
-                    <textarea id="feedback-input" class="w-full bg-black/50 border border-pink-500/30 rounded-xl p-3 text-white text-xs font-mono focus:border-pink-500 outline-none resize-none" rows="3" placeholder="Escribe aquí tu sentir o lo que quieras decirme hoy..."></textarea>
-                    
-                    <div class="flex justify-between items-center mt-2">
-                        <span class="text-[0.6rem] text-gray-500 font-mono">Almacenamiento local seguro</span>
-                        <button class="btn-primary !py-1.5 !px-4 text-xs" onclick="saveFeedback()">📡 Guardar Registro</button>
-                    </div>
-                </div>
-
-                <div class="border-t border-gray-800 pt-4">
-                    <h4 class="text-[0.65rem] text-gray-400 uppercase font-bold font-mono mb-3">Registros de Analy:</h4>
-                    <div id="feedback-list" class="space-y-2 max-h-[25vh] overflow-y-auto pr-2 custom-scrollbar">
-                        <div class="text-center text-xs text-gray-600 italic py-2">No hay registros guardados aún.</div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- SECCIÓN 4: CALCULADORA DE CICLO HORMONAL & SALUD DE ANALY -->
-    <section id="view-cycle" class="view-section">
-        <div class="glass-panel p-6 border-t-4 border-t-rose-500 max-w-4xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-gray-800 pb-4">
-                <div>
-                    <h2 class="text-2xl font-black text-rose-400 flex items-center gap-2"><span>🌸</span> Monitor de Ciclo Menstrual & Estado Emocional</h2>
-                    <p class="text-xs text-gray-400 mt-1">Calculadora biológica y gráfica sinusoidal de estado de ánimo prevista para Analy.</p>
-                </div>
-                <div class="bg-rose-950/60 border border-rose-500/30 p-2 rounded-xl text-center">
-                    <span class="text-[0.6rem] text-rose-300 font-mono uppercase block">Próxima Menstruación Est.</span>
-                    <span class="text-sm font-bold text-white font-mono" id="next-period-date">Calculando...</span>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-4 mb-6 text-xs">
-                <div class="bg-black/40 p-3 rounded-xl border border-white/5">
-                    <div class="text-gray-400 font-bold mb-1">🩸 Duración Promedio</div>
-                    <div class="text-lg font-black text-rose-400 font-mono">28 - 30 Días</div>
-                    <p class="text-[0.65rem] text-gray-500 mt-1">Duración del periodo: ~5 días</p>
-                </div>
-
-                <div class="bg-black/40 p-3 rounded-xl border border-white/5">
-                    <div class="text-gray-400 font-bold mb-1">📊 Fase Actual</div>
-                    <div class="text-lg font-black text-gold font-mono" id="current-phase-name">Fase Lútea</div>
-                    <p class="text-[0.65rem] text-gray-500 mt-1" id="phase-description">Sensibilidad emocional incrementada</p>
-                </div>
-
-                <div class="bg-black/40 p-3 rounded-xl border border-white/5">
-                    <div class="text-gray-400 font-bold mb-1">🩺 Protocolo de Apoyo para Kevin</div>
-                    <div class="text-xs text-green-300 font-bold" id="kevin-action-advice">Comprar chocolates y dar apapacho extra</div>
-                </div>
-            </div>
-
-            <!-- Gráfica Sinusoidal Hormonal -->
-            <div class="mb-4">
-                <div class="flex justify-between items-center text-xs text-gray-400 mb-2 font-mono">
-                    <span>Curva Estimada de Fluctuación de Ánimo y Energía</span>
-                    <span class="text-rose-400">Día del Ciclo: <strong id="cycle-day-num">14</strong>/28</span>
-                </div>
-                <canvas id="cycle-canvas"></canvas>
-            </div>
-
-            <div class="bg-rose-950/20 p-3 rounded-xl border border-rose-500/20 text-xs text-gray-300 flex items-start gap-3">
-                <span class="text-2xl">🍫</span>
-                <p>
-                    <strong>Nota del Desarrollador:</strong> En los días previos a su periodo (Fase Lútea tardía), la paciencia y el cariño de Kevin deben multiplicarse al 200%. Prohibido discutir por tonterías lógicas; prioridad absoluta a los mimos, tesitos calientes y masajitos.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECCIÓN 5: PERFIL COMPLETO DE GUSTOS & PLAYLIST DEDICADA -->
-    <section id="view-analy-profile" class="view-section">
-        <div class="mb-6 text-center">
-            <h2 class="text-3xl font-black text-gold">Inventario Obsesivo & Reproductor de Canciones</h2>
-            <p class="text-xs text-gray-400 mt-1">Todo lo que he registrado sobre la mujer que amo y las canciones especiales dedicadas en nuestro chat.</p>
-        </div>
-
-        <!-- Reproductor de Canciones Dedicadas de la Pareja -->
-        <div class="glass-panel p-6 mb-8 border-t-4 border-t-rose-500">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-3 border-b border-gray-800">
-                <div>
-                    <h3 class="text-xl font-bold text-rose-300 flex items-center gap-2"><span>🎵</span> Canciones Especiales & Dedicatorias</h3>
-                    <p class="text-xs text-gray-400">Las canciones que Kevin le ha dedicado a Analy en WhatsApp/Spotify.</p>
-                </div>
-                <div class="text-xs font-mono bg-rose-950/60 text-rose-300 px-3 py-1 rounded-full border border-rose-500/30">
-                    ❤️ "Un romántico para su Reina"
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-4">
-                <!-- Track 1: Spotify Embed 1 -->
-                <div class="bg-black/50 p-3 rounded-2xl border border-white/10 flex flex-col justify-between">
-                    <div class="mb-2">
-                        <span class="text-[0.6rem] font-mono text-gold uppercase block">Dedicatoria #1 (Spotify)</span>
-                        <h4 class="text-sm font-bold text-white">Canción Especial Dedicada</h4>
-                        <p class="text-xs text-gray-400">"Me gustan todos los temas que toca para describir sin duda necesito dedicártela..."</p>
-                    </div>
-                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3mK8uv2ajpUQkVD9iY2YfF?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                </div>
-
-                <!-- Track 2: Spotify Embed 2 -->
-                <div class="bg-black/50 p-3 rounded-2xl border border-white/10 flex flex-col justify-between">
-                    <div class="mb-2">
-                        <span class="text-[0.6rem] font-mono text-rose-400 uppercase block">Dedicatoria #2 (Spotify)</span>
-                        <h4 class="text-sm font-bold text-white">Para Mi Reina</h4>
-                        <p class="text-xs text-gray-400">Compartida en nuestras conversaciones nocturnas.</p>
-                    </div>
-                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3679nxLpRn426cH9iYiL3Q?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-6">
-            <!-- Gastronomía y Pasión -->
-            <div class="glass-panel p-5 border-t-4 border-t-amber-500">
-                <div class="text-amber-400 font-bold text-base mb-3 flex items-center gap-2"><span>👩🏻‍🍳</span> Pasión & Gastronomía</div>
-                <ul class="text-xs text-gray-300 space-y-2 font-mono">
-                    <li class="bg-black/30 p-2 rounded border border-white/5">🍳 <strong>Profesión:</strong> Chef Profesional talentosa.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">🍕 <strong>Sazones:</strong> Le encanta la cocina italiana, pastas y repostería fina.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">☕ <strong>Bebidas:</strong> Café bien preparado en mañanas frías.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">🍰 <strong>Postres:</strong> Detalles dulces que alegran su día.</li>
-                </ul>
-            </div>
-
-            <!-- Hobbies & Entretenimiento -->
-            <div class="glass-panel p-5 border-t-4 border-t-rose-500">
-                <div class="text-rose-400 font-bold text-base mb-3 flex items-center gap-2"><span>🎮</span> Hobbies & Juegos</div>
-                <ul class="text-xs text-gray-300 space-y-2 font-mono">
-                    <li class="bg-black/30 p-2 rounded border border-white/5">🎲 <strong>Parchisi Star:</strong> Le gusta jugar partidas relajadas juntos.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">📱 <strong>Redes:</strong> Ver TikToks divertidos e interactuar.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">🎧 <strong>Llamadas:</strong> Dormirse escuchando mi voz por llamadas de Discord/WhatsApp.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">🌻 <strong>Flores:</strong> Fan incondicional de los girasoles y tonos cálidos.</li>
-                </ul>
-            </div>
-
-            <!-- Detalles Emocionales & Lenguaje del Amor -->
-            <div class="glass-panel p-5 border-t-4 border-t-blue-400">
-                <div class="text-blue-300 font-bold text-base mb-3 flex items-center gap-2"><span>💖</span> Lenguaje del Amor</div>
-                <ul class="text-xs text-gray-300 space-y-2 font-mono">
-                    <li class="bg-black/30 p-2 rounded border border-white/5">⏳ <strong>Tiempo de Calidad:</strong> Prioridad absoluta a la presencia sin distracciones.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">💬 <strong>Palabras de Afirmación:</strong> Sentir certeza verbal constante de que la amo.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">🧸 <strong>Apapachos:</strong> Demostraciones cálidas que calmen sus sobrepensamientos.</li>
-                    <li class="bg-black/30 p-2 rounded border border-white/5">📍 <strong>Lugar Especial:</strong> Atlixco, Puebla (Ciudad de las Flores).</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECCIÓN 6: CONSOLA & JUEGOS RETRO -->
-    <section id="view-system" class="view-section">
-        <div class="grid lg:grid-cols-2 gap-6 items-start">
-            
-            <!-- Pac-Man Game -->
-            <div class="glass-panel p-6 flex flex-col items-center">
-                <div class="w-full flex justify-between items-center mb-3">
-                    <h3 class="text-xl font-bold text-gold">Atrapando el Presente</h3>
-                    <div class="text-xs bg-black/50 px-3 py-1 rounded-full border border-gold/30 text-gold font-mono">
-                        Vidas: <span id="p-lives">❤️❤️❤️</span>
-                    </div>
-                </div>
-                
-                <p class="text-xs text-gray-300 mb-4 text-center">
-                    Tú (👩🏻‍🍳) atrapas las excusas lógicas y recolectas amor (🍓🍰🌻).
-                </p>
-                
-                <div class="game-canvas-container">
-                    <canvas id="pacman-canvas" class="game-canvas"></canvas>
-                    
-                    <div id="pacman-overlay" class="absolute inset-0 bg-black/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center z-10">
-                        <h4 id="pm-title" class="text-2xl font-black text-white mb-2"></h4>
-                        <p id="pm-desc" class="text-xs text-gray-300 mb-4"></p>
-                        <button onclick="initPacmanMap()" class="btn-primary !py-2 !px-6">🎮 <span id="pm-btn-txt">Iniciar</span></button>
-                    </div>
-                </div>
-
-                <div class="w-full flex justify-between items-center mt-3 font-mono text-xs font-bold text-gray-400">
-                    <div>Nivel: <span id="p-level" class="text-white">1</span></div>
-                    <div>Puntos: <span id="p-score" class="text-white">0</span></div>
-                </div>
-
-                <div class="dpad-container w-full lg:hidden">
-                    <div></div>
-                    <button class="dpad-btn" onmousedown="setPacmanDir(0, -1)" ontouchstart="setPacmanDir(0, -1); event.preventDefault();">⬆️</button>
-                    <div></div>
-                    <button class="dpad-btn" onmousedown="setPacmanDir(-1, 0)" ontouchstart="setPacmanDir(-1, 0); event.preventDefault();">⬅️</button>
-                    <button class="dpad-btn" onmousedown="setPacmanDir(0, 1)" ontouchstart="setPacmanDir(0, 1); event.preventDefault();">⬇️</button>
-                    <button class="dpad-btn" onmousedown="setPacmanDir(1, 0)" ontouchstart="setPacmanDir(1, 0); event.preventDefault();">➡️</button>
-                </div>
-            </div>
-
-            <!-- Terminal OS & Pong -->
-            <div class="glass-panel p-0 overflow-hidden flex flex-col h-[520px] border-gray-700 shadow-2xl">
-                <div class="terminal-header">
-                    <div class="flex gap-1.5">
-                        <div class="terminal-dot bg-red-500"></div>
-                        <div class="terminal-dot bg-yellow-500"></div>
-                        <div class="terminal-dot bg-green-500"></div>
-                    </div>
-                    <span class="text-xs text-gray-400 font-mono ml-4 flex-1 text-center">stark-os@kevin-analy:~/root</span>
-                </div>
-                
-                <div class="flex-1 p-4 font-mono text-xs bg-[#06060a] text-green-400 overflow-y-auto custom-scrollbar relative" id="terminal-screen">
-                    <div id="term-output">
-                        Bienvenida al Kernel de Stark-OS.<br>
-                        Escribe <span class="text-blue-300">help</span> para comandos.<br>
-                        Ejecuta <span class="text-rose-400 font-bold bg-rose-900/30 px-1">play_pong</span> para juego retro.<br>
-                    </div>
-                    <div class="flex mt-2">
-                        <span class="mr-2 text-gray-500">$</span>
-                        <input type="text" id="term-input" class="flex-1 bg-transparent border-none outline-none text-green-300" autocomplete="off" onkeydown="handleTermEnter(event)">
-                    </div>
-
-                    <!-- Pong Canvas dentro de la terminal -->
-                    <div id="pong-container" class="absolute inset-0 bg-black z-20 hidden flex-col">
-                        <div class="bg-gray-900 text-[0.65rem] text-gray-400 font-mono p-1 text-center border-b border-gray-700 flex justify-between px-3">
-                            <span>Comando: play_pong</span>
-                            <button onclick="exitPong()" class="text-rose-400 font-bold">[Cerrar]</button>
-                        </div>
-                        <canvas id="pong-canvas" class="flex-1 w-full" onmousemove="movePongPaddleMouse(event)" ontouchmove="movePongPaddleTouch(event)"></canvas>
-                    </div>
-                </div>
-
-                <div class="p-2.5 bg-gray-900 border-t border-gray-800 grid grid-cols-2 gap-2 text-[0.65rem] font-mono">
-                    <button onclick="injectCmd('ping_heart')" class="bg-black/50 border border-gray-700 p-1.5 rounded text-left hover:bg-gray-800 text-gray-300">> ping_heart</button>
-                    <button onclick="injectCmd('deploy_hug')" class="bg-black/50 border border-gray-700 p-1.5 rounded text-left hover:bg-gray-800 text-rose-300">> deploy_hug</button>
-                    <button onclick="injectCmd('analyze_love')" class="bg-black/50 border border-gray-700 p-1.5 rounded text-left hover:bg-gray-800 text-blue-300">> analyze_love</button>
-                    <button onclick="injectCmd('play_pong')" class="bg-rose-900/30 border border-rose-500/50 p-1.5 rounded text-left hover:bg-rose-900/50 text-rose-200 font-bold">> play_pong</button>
-                </div>
-            </div>
-
-        </div>
-    </section>
+Ejecuta <span class="text-rose-400 font-bold bg-rose-900/30 px-1">play_pong</span> para juego retro.
 
 </div>
-
-<!-- Barra de Navegación Inferior -->
+<div class="flex mt-2">
+<span class="mr-2 text-gray-500">$</span>
+<input type="text" id="term-input" class="flex-1 bg-transparent border-none outline-none text-green-300" autocomplete="off" onkeydown="handleTermEnter(event)">
+</div>
+​<!-- Pong Canvas dentro de la terminal -->
+<div id="pong-container" class="absolute inset-0 bg-black z-20 hidden flex-col">
+<div class="bg-gray-900 text-[0.65rem] text-gray-400 font-mono p-1 text-center border-b border-gray-700 flex justify-between px-3">
+<span>Comando: play_pong</span>
+<button onclick="exitPong()" class="text-rose-400 font-bold">[Cerrar]</button>
+</div>
+<canvas id="pong-canvas" class="flex-1 w-full" onmousemove="movePongPaddleMouse(event)" ontouchmove="movePongPaddleTouch(event)"></canvas>
+</div>
+</div>
+​<div class="p-2.5 bg-gray-900 border-t border-gray-800 grid grid-cols-2 gap-2 text-[0.65rem] font-mono">
+<button onclick="injectCmd('ping_heart')" class="bg-black/50 border border-gray-700 p-1.5 rounded text-left hover:bg-gray-800 text-gray-300">> ping_heart</button>
+<button onclick="injectCmd('deploy_hug')" class="bg-black/50 border border-gray-700 p-1.5 rounded text-left hover:bg-gray-800 text-rose-300">> deploy_hug</button>
+<button onclick="injectCmd('analyze_love')" class="bg-black/50 border border-gray-700 p-1.5 rounded text-left hover:bg-gray-800 text-blue-300">> analyze_love</button>
+<button onclick="injectCmd('play_pong')" class="bg-rose-900/30 border border-rose-500/50 p-1.5 rounded text-left hover:bg-rose-900/50 text-rose-200 font-bold">> play_pong</button>
+</div>
+</div>
+​</div>
+</section>
+​</div>
+​<!-- Barra de Navegación Inferior -->
 <nav class="nav-bar hidden" id="main-nav">
-    <button class="nav-item active" onclick="switchTab('view-garden', this)">
-        <span>🌻</span> Jardín
-    </button>
-    <button class="nav-item" onclick="switchTab('view-analysis', this)">
-        <span>🧠</span> Clínica
-    </button>
-    <button class="nav-item" onclick="switchTab('view-express', this)">
-        <span>📖</span> Diarios
-    </button>
-    <button class="nav-item" onclick="switchTab('view-cycle', this)">
-        <span>🌸</span> Salud
-    </button>
-    <button class="nav-item" onclick="switchTab('view-analy-profile', this)">
-        <span>🎨</span> Analy
-    </button>
-    <button class="nav-item" onclick="switchTab('view-system', this)">
-        <span>🕹️</span> Sistema
-    </button>
+<button class="nav-item active" onclick="switchTab('view-garden', this)">
+<span>🌻</span> Jardín
+</button>
+<button class="nav-item" onclick="switchTab('view-analysis', this)">
+<span>🧠</span> Clínica
+</button>
+<button class="nav-item" onclick="switchTab('view-express', this)">
+<span>📖</span> Diarios
+</button>
+<button class="nav-item" onclick="switchTab('view-cycle', this)">
+<span>🌸</span> Salud
+</button>
+<button class="nav-item" onclick="switchTab('view-analy-profile', this)">
+<span>🎨</span> Analy
+</button>
+<button class="nav-item" onclick="switchTab('view-system', this)">
+<span>🕹️</span> Sistema
+</button>
 </nav>
-
-<script>
-// BASE DE DATOS EXTENSIVA DE CONFLICTOS Y GIRASOLES EXTRAÍDA DE LAS CONVERSACIONES
+​<script>
 const clinicalData = [
-    {
-        month: "Mayo 2026",
-        title: "Inicios y Desconexión Digital",
-        leaves: [
-            {
-                name: "El Router vs La Empatía",
-                myError: "Cuando tu internet fallo, mi cerebro de programador busco arreglar el router y medir megas en lugar de entender tu necesidad de acompañamiento.",
-                herPain: "Te sentiste rechazada e invalidada, pensando que si la conexion no era perfecta yo no queria estar contigo.",
-                solution: "Priorizar la presencia emocional sin importar fallas tecnicas. Llamar o estar presente incondicionalmente.",
-                healed: false
-            },
-            {
-                name: "Respuestas Tardias en Discord",
-                myError: "Borrar canales de voz de Discord o responder frio por estar distraido en mis asuntos tecnicos.",
-                herPain: "Sentiste que eras tomada 'a largo' y que eras una opcion secundaria.",
-                solution: "Dar certezas continuas y comunicacion clara cuando deba ausentarme.",
-                healed: false
-            }
-        ]
-    },
-    {
-        month: "Junio 2026",
-        title: "Sobrepensamiento y Distancia",
-        leaves: [
-            {
-                name: "Invalidez del Sobrepensamiento",
-                myError: "Minimizar tus dudas llamandolas 'ganas de pelear' en lugar de calmar tu mente con amor.",
-                herPain: "Expresaste: 'Los sobrepensamientos me queman... llevo años asi'. Mi frialdad aumento tu ansiedad.",
-                solution: "Escuchar activamente, abrazar tus miedos y darte paz verbal constante.",
-                healed: false
-            },
-            {
-                name: "Falta de Atencion en Parchisi/Llamadas",
-                myError: "Estar jugando o viendo materias mientras estabamos en llamada sin darte mi 100%.",
-                herPain: "Sentir que insistias por mi tiempo y que yo respondia por compromiso.",
-                solution: "Dedicar tiempo de calidad exclusivo sin multitareas cuando hablemos.",
-                healed: false
-            }
-        ]
-    },
-    {
-        month: "Julio 2026",
-        title: "Madrugadas y Desconexión",
-        leaves: [
-            {
-                name: "El Incidente de COD (4 AM)",
-                myError: "El 28 de Julio jugue COD hasta las 4 AM modificando HUDs sabiendo que estabas cansada y querias tiempo conmigo.",
-                herPain: "Te hizo sentir que un juego virtual tenia mas prioridad que nuestro vinculo real.",
-                solution: "Eliminar el egoismo digital. Si hay insomnio, dedicarlo a leer o escribirte detalles.",
-                healed: false
-            },
-            {
-                name: "Decisiones Unilaterales",
-                myError: "Borrar perfiles o limpiar configuraciones de forma impulsiva por mis propios agobios.",
-                herPain: "Quedar a ciegas en la oscuridad preguntandote que estaba sucediendo.",
-                solution: "Transparencia absoluta y consulta mutua antes de cualquier decision.",
-                healed: false
-            }
-        ]
-    },
-    {
-        month: "Agosto - Septiembre 2026",
-        title: "Reinicio y Madurez Cuántica",
-        leaves: [
-            {
-                name: "Racionalizacion de Errores",
-                myError: "Buscar excusas lógicas extensas para justificar fallas en vez de pedir disculpas sinceras.",
-                herPain: "Sentir que discutias con un abogado o ingeniero en lugar de con tu pareja.",
-                solution: "Pedir perdon con humildad, reconocer la falta e implementar soluciones inmediatas.",
-                healed: false
-            }
-        ]
-    }
+{
+month: "Mayo 2026",
+title: "Inicios y Desconexión Digital",
+leaves: [
+{
+name: "El Router vs La Empatía",
+myError: "Cuando tu internet falló, mi cerebro de programador buscó arreglar el router y medir megas en lugar de entender tu necesidad de acompañamiento.",
+herPain: "Te sentiste rechazada e invalidada, pensando que si la conexión no era perfecta yo no quería estar contigo.",
+solution: "Priorizar la presencia emocional sin importar fallas técnicas. Llamar o estar presente incondicionalmente.",
+healed: false
+},
+{
+name: "Respuestas Tardías en Discord",
+myError: "Borrar canales de voz de Discord o responder frío por estar distraído en mis asuntos técnicos.",
+herPain: "Sentiste que eras tomada 'a la larga' y que eras una opción secundaria.",
+solution: "Dar certezas continuas y comunicación clara cuando deba ausentarme.",
+healed: false
+}
+]
+},
+{
+month: "Junio 2026",
+title: "Sobrepensamiento y Distancia",
+leaves: [
+{
+name: "Invalidez del Sobrepensamiento",
+myError: "Minimizar tus dudas llamándolas 'ganas de pelear' en lugar de calmar tu mente con amor.",
+herPain: "Expresaste: 'Los sobrepensamientos me queman... llevo años así'. Mi frialdad aumentó tu ansiedad.",
+solution: "Escuchar activamente, abrazar tus miedos y darte paz verbal constante.",
+healed: false
+},
+{
+name: "Falta de Atención en Parchisi/Llamadas",
+myError: "Estar jugando o viendo materias mientras estábamos en llamada sin darte mi 100%.",
+herPain: "Sentir que insistías por mi tiempo y que yo respondía por compromiso.",
+solution: "Dedicar tiempo de calidad exclusivo sin multitareas cuando hablemos.",
+healed: false
+}
+]
+},
+{
+month: "Julio 2026",
+title: "Madrugadas y Desconexión",
+leaves: [
+{
+name: "El Incidente de COD (4 AM)",
+myError: "El 28 de Julio jugué COD hasta las 4 AM modificando HUDs sabiendo que estabas cansada y querías tiempo conmigo.",
+herPain: "Te hizo sentir que un juego virtual tenía más prioridad que nuestro vínculo real.",
+solution: "Eliminar el egoísmo digital. Si hay insomnio, dedicarlo a leer o escribirte detalles.",
+healed: false
+},
+{
+name: "Decisiones Unilaterales",
+myError: "Borrar perfiles o limpiar configuraciones de forma impulsiva por mis propios agobios.",
+herPain: "Quedar a ciegas en la oscuridad preguntándote qué estaba sucediendo.",
+solution: "Transparencia absoluta y consulta mutua antes de cualquier decisión.",
+healed: false
+}
+]
+},
+{
+month: "Agosto - Septiembre 2026",
+title: "Reinicio y Madurez Cuántica",
+leaves: [
+{
+name: "Racionalización de Errores",
+myError: "Buscar excusas lógicas extensas para justificar fallas en vez de pedir disculpas sinceras.",
+herPain: "Sentir que discutías con un abogado o ingeniero en lugar de con tu pareja.",
+solution: "Pedir perdón con humildad, reconocer la falta e implementar soluciones inmediatas.",
+healed: false
+}
+]
+}
 ];
-
-let selectedMonthIdx = null;
+​let selectedMonthIdx = null;
 let selectedLeafIdx = null;
-
-async function authenticateUser() {
-    const screen = document.getElementById('login-screen');
-    const btn = screen.querySelector('button');
-    btn.innerHTML = '<span class="animate-spin text-xl">⏳</span> Inicializando Motor Cuántico & Audio...';
-    btn.classList.add('pointer-events-none');
-    
-    await initAudioContext();
-    
-    setTimeout(() => {
-        screen.classList.add('opacity-0');
-        setTimeout(() => {
-            screen.style.display = 'none';
-            document.getElementById('app-main').classList.add('active');
-            document.getElementById('main-nav').classList.remove('hidden');
-            document.getElementById('main-nav').classList.add('flex');
-            
-            initThreeJSGalaxy();
-            initWeather();
-            initGarden();
-            loadFeedback();
-            startUptimeCounter();
-            initCycleTracker();
-            
-            printTerm("Autenticación exitosa. Kevin Santana & Analy Monserrat entrelazados.", "text-rose-400 font-bold");
-        }, 1000);
-    }, 1200);
+​async function authenticateUser() {
+const screen = document.getElementById('login-screen');
+const btn = screen.querySelector('button');
+btn.innerHTML = '<span class="animate-spin text-xl">⏳</span> Inicializando Motor Cuántico & Audio...';
+btn.classList.add('pointer-events-none');
+​await initAudioContext();
+​setTimeout(() => {
+screen.classList.add('opacity-0');
+setTimeout(() => {
+screen.style.display = 'none';
+document.getElementById('app-main').classList.add('active');
+document.getElementById('main-nav').classList.remove('hidden');
+document.getElementById('main-nav').classList.add('flex');
+​initThreeJSGalaxy();
+initWeather();
+initGarden();
+loadFeedback();
+startUptimeCounter();
+initCycleTracker();
+​printTerm("Autenticación exitosa. Kevin Santana & Analy Monserrat entrelazados.", "text-rose-400 font-bold");
+}, 1000);
+}, 1200);
 }
-
-// MOTOR DE MÚSICA DE FONDO AMBIENTAL (SINTETIZADOR SINE EN TONE.JS)
+​// MOTOR DE MÚSICA DE FONDO AMBIENTAL (SINTETIZADOR SINE EN TONE.JS)
 let synth, isAudioPlaying = false;
-
-async function initAudioContext() {
-    try {
-        await Tone.start();
-        const reverb = new Tone.Reverb({ decay: 6, preDelay: 0.2 }).toDestination();
-        const delay = new Tone.FeedbackDelay("8n", 0.3).connect(reverb);
-        
-        synth = new Tone.PolySynth(Tone.Oscillator, {
-            oscillator: { type: "sine" },
-            envelope: { attack: 2.5, decay: 1.5, sustain: 0.7, release: 3.5 }
-        }).connect(delay);
-        
-        synth.volume.value = -18;
-
-        const chords = [
-            ["C4", "E4", "G4", "B4"],
-            ["A3", "C4", "E4", "G4"],
-            ["F3", "A3", "C4", "E4"],
-            ["G3", "B3", "D4", "F#4"]
-        ];
-        
-        let step = 0;
-        Tone.Transport.scheduleRepeat(time => {
-            if(synth) {
-                synth.triggerAttackRelease(chords[step % chords.length], "2m", time);
-            }
-            step++;
-        }, "2m");
-
-        Tone.Transport.bpm.value = 52;
-        Tone.Transport.start();
-        isAudioPlaying = true;
-        updateAudioUIState();
-    } catch(e) { 
-        console.error("Audio init error:", e); 
-    }
+​async function initAudioContext() {
+try {
+await Tone.start();
+const reverb = new Tone.Reverb({ decay: 6, preDelay: 0.2 }).toDestination();
+const delay = new Tone.FeedbackDelay("8n", 0.3).connect(reverb);
+​synth = new Tone.PolySynth(Tone.Oscillator, {
+oscillator: { type: "sine" },
+envelope: { attack: 2.5, decay: 1.5, sustain: 0.7, release: 3.5 }
+}).connect(delay);
+​synth.volume.value = -18;
+​const chords = [
+["C4", "E4", "G4", "B4"],
+["A3", "C4", "E4", "G4"],
+["F3", "A3", "C4", "E4"],
+["G3", "B3", "D4", "F#4"]
+];
+​let step = 0;
+Tone.Transport.scheduleRepeat(time => {
+if(synth) {
+synth.triggerAttackRelease(chords[step % chords.length], "2m", time);
 }
-
-function toggleAudio() {
-    if(!synth) return;
-    if(isAudioPlaying) {
-        Tone.Transport.pause();
-        isAudioPlaying = false;
-    } else {
-        Tone.Transport.start();
-        isAudioPlaying = true;
-    }
-    updateAudioUIState();
+step++;
+}, "2m");
+​Tone.Transport.bpm.value = 52;
+Tone.Transport.start();
+isAudioPlaying = true;
+updateAudioUIState();
+} catch(e) {
+console.error("Audio init error:", e);
 }
-
-function adjustVolume(val) {
-    if(synth) {
-        synth.volume.value = parseFloat(val);
-    }
 }
-
-function updateAudioUIState() {
-    const btn = document.getElementById('btn-toggle-audio');
-    const txt = document.getElementById('audio-status-text');
-    const bars = document.getElementById('audio-eq-bars');
-
-    if(isAudioPlaying) {
-        btn.innerText = "🔊 Pausar";
-        btn.className = "text-xs bg-gold/20 hover:bg-gold/40 text-gold px-2.5 py-0.5 rounded-full border border-gold/40 transition-all font-bold";
-        txt.innerText = "Música: On";
-        bars.style.opacity = "1";
-    } else {
-        btn.innerText = "🔇 Reproducir";
-        btn.className = "text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-0.5 rounded-full border border-gray-600 transition-all font-bold";
-        txt.innerText = "Música: Off";
-        bars.style.opacity = "0.2";
-    }
+​function toggleAudio() {
+if(!synth) return;
+if(isAudioPlaying) {
+Tone.Transport.pause();
+isAudioPlaying = false;
+} else {
+Tone.Transport.start();
+isAudioPlaying = true;
 }
-
-function startUptimeCounter() {
-    const startReboot = new Date('2026-07-22T00:00:00');
-    const startFirstHello = new Date('2026-05-13T00:00:00');
-    
-    setInterval(() => {
-        const now = new Date();
-        
-        // Reboot Counter
-        let diffR = now - startReboot;
-        let dR = Math.floor(diffR / (1000 * 60 * 60 * 24));
-        let hR = Math.floor((diffR / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
-        let mR = Math.floor((diffR / 1000 / 60) % 60).toString().padStart(2, '0');
-        document.getElementById('uptime-counter').innerText = `${dR}d ${hR}:${mR}h`;
-        
-        // Total Days Counter
-        let diffTotal = Math.floor((now - startFirstHello) / (1000 * 60 * 60 * 24));
-        document.getElementById('total-days-counter').innerText = `${diffTotal} Días`;
-
-        // Exact Age Calculations
-        const calcAge = (birth) => {
-            let age = now.getFullYear() - birth.getFullYear();
-            let m = now.getMonth() - birth.getMonth();
-            if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
-            return age;
-        };
-        
-        document.getElementById('kevin-age').innerText = `${calcAge(new Date('2003-03-24'))} años`;
-        document.getElementById('analy-age').innerText = `${calcAge(new Date('1998-09-22'))} años`;
-    }, 1000);
+updateAudioUIState();
 }
-
-function switchTab(tabId, btnEl) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    
-    document.getElementById(tabId).classList.add('active');
-    if(btnEl) btnEl.classList.add('active');
-    
-    if(tabId !== 'view-system') {
-        pActive = false;
-        pongActive = false;
-    }
+​function adjustVolume(val) {
+if(synth) {
+synth.volume.value = parseFloat(val);
 }
-
-async function initWeather() {
-    const status = document.getElementById('weather-sync-status');
-    try {
-        const urls = [
-            'https://api.open-meteo.com/v1/forecast?latitude=18.85&longitude=-97.10&current_weather=true',
-            'https://api.open-meteo.com/v1/forecast?latitude=18.90&longitude=-98.43&current_weather=true'
-        ];
-        
-        const [resOri, resAtl] = await Promise.all(urls.map(u => fetch(u)));
-        const [dataOri, dataAtl] = await Promise.all([resOri.json(), resAtl.json()]);
-
-        const mapW = (code, isDay) => {
-            if (code <= 1) return { icon: isDay ? '☀️' : '🌕', text: 'Despejado', type: isDay ? 'sun' : 'moon' };
-            if (code <= 3) return { icon: isDay ? '⛅' : '☁️', text: 'Nublado', type: 'cloud' };
-            if (code <= 67) return { icon: '🌧️', text: 'Lluvia', type: 'rain' };
-            return { icon: '⛈️', text: 'Tormenta', type: 'rain' };
-        };
-
-        const wO = mapW(dataOri.current_weather.weathercode, dataOri.current_weather.is_day);
-        const wA = mapW(dataAtl.current_weather.weathercode, dataAtl.current_weather.is_day);
-
-        document.getElementById('w-icon-ori').innerText = wO.icon;
-        document.getElementById('w-temp-ori').innerText = `${Math.round(dataOri.current_weather.temperature)}°C`;
-        document.getElementById('w-desc-ori').innerText = wO.text;
-
-        document.getElementById('w-icon-atl').innerText = wA.icon;
-        document.getElementById('w-temp-atl').innerText = `${Math.round(dataAtl.current_weather.temperature)}°C`;
-        document.getElementById('w-desc-atl').innerText = wA.text;
-
-        status.innerText = "Sincronizado";
-        status.className = "text-[0.65rem] bg-green-900/50 px-2 py-0.5 rounded text-green-300 font-bold";
-        
-        startWeatherCanvas(wO.type === 'rain' || wA.type === 'rain', dataOri.current_weather.is_day);
-    } catch (e) {
-        status.innerText = "Modo Offline";
-        startWeatherCanvas(false, 0);
-    }
 }
-
-function startWeatherCanvas(isRaining, isDay) {
-    const cvs = document.getElementById('weather-canvas');
-    const ctx = cvs.getContext('2d');
-    function resize() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; }
-    window.addEventListener('resize', resize);
-    resize();
-
-    let raindrops = [];
-    if(isRaining) {
-        for(let i=0; i<80; i++) raindrops.push({x: Math.random()*cvs.width, y: Math.random()*cvs.height, l: Math.random()*15+10, v: Math.random()*8+4});
-    }
-
-    function animate() {
-        ctx.clearRect(0,0,cvs.width,cvs.height);
-        if(isRaining) {
-            ctx.strokeStyle = 'rgba(186, 230, 253, 0.35)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            raindrops.forEach(r => {
-                ctx.moveTo(r.x, r.y);
-                ctx.lineTo(r.x - r.l*0.1, r.y + r.l);
-                r.y += r.v;
-                if(r.y > cvs.height) r.y = -20;
-            });
-            ctx.stroke();
-        }
-        requestAnimationFrame(animate);
-    }
-    animate();
+​function updateAudioUIState() {
+const btn = document.getElementById('btn-toggle-audio');
+const txt = document.getElementById('audio-status-text');
+const bars = document.getElementById('audio-eq-bars');
+​if(isAudioPlaying) {
+btn.innerText = "🔊 Pausar";
+btn.className = "text-xs bg-gold/20 hover:bg-gold/40 text-gold px-2.5 py-0.5 rounded-full border border-gold/40 transition-all font-bold";
+txt.innerText = "Música: On";
+bars.style.opacity = "1";
+} else {
+btn.innerText = "🔇 Reproducir";
+btn.className = "text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-0.5 rounded-full border border-gray-600 transition-all font-bold";
+txt.innerText = "Música: Off";
+bars.style.opacity = "0.2";
 }
-
-function initThreeJSGalaxy() {
-    const container = document.getElementById('canvas-container');
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x020308, 0.0008);
-
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3500);
-    camera.position.z = 900;
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    container.appendChild(renderer.domElement);
-
-    // Partículas de Estrellas Exponenciadas (4000 estrellas)
-    const starCount = 4000;
-    const starGeo = new THREE.BufferGeometry();
-    const starPos = new Float32Array(starCount * 3);
-    const starColors = new Float32Array(starCount * 3);
-
-    const colorBlue = new THREE.Color('#38bdf8');
-    const colorPink = new THREE.Color('#fb7185');
-    const colorGold = new THREE.Color('#fbbf24');
-    const colorPurple = new THREE.Color('#c084fc');
-
-    for(let i=0; i<starCount*3; i+=3) {
-        starPos[i] = (Math.random() - 0.5) * 3500;
-        starPos[i+1] = (Math.random() - 0.5) * 3500;
-        starPos[i+2] = (Math.random() - 0.5) * 3500;
-
-        let mixedColor = colorBlue.clone();
-        const rnd = Math.random();
-        if(rnd > 0.75) mixedColor = colorGold;
-        else if(rnd > 0.5) mixedColor = colorPink;
-        else if(rnd > 0.25) mixedColor = colorPurple;
-
-        starColors[i] = mixedColor.r;
-        starColors[i+1] = mixedColor.g;
-        starColors[i+2] = mixedColor.b;
-    }
-
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
-
-    const createStarTexture = () => {
-        const matCvs = document.createElement('canvas'); matCvs.width = 64; matCvs.height = 64;
-        const matCtx = matCvs.getContext('2d');
-        matCtx.beginPath(); matCtx.arc(32, 32, 28, 0, Math.PI*2);
-        matCtx.fillStyle = 'white'; matCtx.fill();
-        return new THREE.CanvasTexture(matCvs);
-    };
-
-    const starMat = new THREE.PointsMaterial({
-        size: 7, map: createStarTexture(), transparent: true, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false
-    });
-
-    const starMesh = new THREE.Points(starGeo, starMat);
-    scene.add(starMesh);
-
-    // Agujero Negro Central y Disco de Acreción
-    const bhGeo = new THREE.SphereGeometry(120, 32, 32);
-    const bhMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-    const blackHole = new THREE.Mesh(bhGeo, bhMat);
-    scene.add(blackHole);
-
-    // Disco de acreción brillante
-    const diskGeo = new THREE.RingGeometry(130, 380, 64);
-    const diskCvs = document.createElement('canvas'); diskCvs.width = 512; diskCvs.height = 512;
-    const diskCtx = diskCvs.getContext('2d');
-    const grad = diskCtx.createRadialGradient(256, 256, 120, 256, 256, 256);
-    grad.addColorStop(0, 'rgba(251, 191, 36, 0.9)');
-    grad.addColorStop(0.4, 'rgba(244, 63, 94, 0.6)');
-    grad.addColorStop(0.8, 'rgba(192, 132, 252, 0.2)');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    diskCtx.fillStyle = grad; diskCtx.fillRect(0,0,512,512);
-
-    const diskMat = new THREE.MeshBasicMaterial({
-        map: new THREE.CanvasTexture(diskCvs), side: THREE.DoubleSide, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
-    });
-    const disk = new THREE.Mesh(diskGeo, diskMat);
-    disk.rotation.x = Math.PI / 2.5;
-    scene.add(disk);
-
-    let mouseX = 0, mouseY = 0;
-    window.addEventListener('mousemove', (e) => {
-        mouseX = (e.clientX - window.innerWidth/2) * 0.0008;
-        mouseY = (e.clientY - window.innerHeight/2) * 0.0008;
-    });
-
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    const clock = new THREE.Clock();
-    function animate() {
-        requestAnimationFrame(animate);
-        const delta = clock.getDelta();
-
-        starMesh.rotation.y += 0.03 * delta;
-        disk.rotation.z += 0.2 * delta;
-
-        camera.position.x += (mouseX * 600 - camera.position.x) * 0.05;
-        camera.position.y += (-mouseY * 600 - camera.position.y) * 0.05;
-        camera.lookAt(scene.position);
-
-        renderer.render(scene, camera);
-    }
-    animate();
 }
-
-function initGarden() {
-    const container = document.getElementById('garden-container');
-    container.innerHTML = '';
-    
-    clinicalData.forEach((data, mIdx) => {
-        let unhealed = data.leaves.filter(l => !l.healed).length;
-        let isWilted = unhealed > 0;
-        
-        let unit = document.createElement('div');
-        unit.className = `flower-unit flex flex-col items-center flex-shrink-0 group`;
-        unit.onclick = () => selectFlower(mIdx, unit);
-        
-        let svgClass = isWilted ? 'wilted' : 'healed';
-        let svg = `
-        <svg viewBox="0 0 100 200" class="w-16 h-32 md:w-20 md:h-40 drop-shadow-xl ${svgClass}">
-            ${isWilted ? '<path d="M50,150 Q25,130 15,160 Q45,180 50,150" fill="#64748b" />' 
-                       : '<path d="M50,130 Q15,100 25,70 Q65,90 50,130" fill="#22c55e" />'}
-            <path class="stem" fill="none" stroke-width="5" stroke-linecap="round" />
-            <g class="head-group">
-                <circle cx="0" cy="-25" r="8" class="petal"/> <circle cx="20" cy="-15" r="8" class="petal"/>
-                <circle cx="25" cy="5" r="8" class="petal"/>  <circle cx="15" cy="20" r="8" class="petal"/>
-                <circle cx="-15" cy="20" r="8" class="petal"/> <circle cx="-25" cy="5" r="8" class="petal"/>
-                <circle cx="-20" cy="-15" r="8" class="petal"/>
-                <circle cx="0" cy="0" r="16" class="center stroke-black stroke-2"/>
-            </g>
-        </svg>
-        <div class="f-label mt-2 px-2.5 py-0.5 rounded-lg bg-black/80 border border-white/10 text-[0.6rem] whitespace-nowrap text-gray-300">
-            ${isWilted ? '🥀' : '🌻'} ${data.month}
-        </div>`;
-        
-        unit.innerHTML = svg;
-        container.appendChild(unit);
-    });
+​function startUptimeCounter() {
+const startReboot = new Date('2026-07-22T00:00:00');
+const startFirstHello = new Date('2026-05-13T00:00:00');
+​setInterval(() => {
+const now = new Date();
+​let diffR = now - startReboot;
+let dR = Math.floor(diffR / (1000 * 60 * 60 * 24));
+let hR = Math.floor((diffR / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+let mR = Math.floor((diffR / 1000 / 60) % 60).toString().padStart(2, '0');
+document.getElementById('uptime-counter').innerText = ${dR}d ${hR}:${mR}h;
+​let diffTotal = Math.floor((now - startFirstHello) / (1000 * 60 * 60 * 24));
+document.getElementById('total-days-counter').innerText = ${diffTotal} Días;
+​const calcAge = (birth) => {
+let age = now.getFullYear() - birth.getFullYear();
+let m = now.getMonth() - birth.getMonth();
+if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
+return age;
+};
+​document.getElementById('kevin-age').innerText = ${calcAge(new Date('2003-03-24'))} años;
+document.getElementById('analy-age').innerText = ${calcAge(new Date('1998-09-22'))} años;
+}, 1000);
 }
-
-function selectFlower(mIdx, unitEl) {
-    document.querySelectorAll('.flower-unit').forEach(el => el.classList.remove('selected'));
-    unitEl.classList.add('selected');
-    
-    selectedMonthIdx = mIdx;
-    let data = clinicalData[mIdx];
-    let unhealedCount = data.leaves.filter(l=>!l.healed).length;
-    
-    document.getElementById('panel-month').innerText = `Ciclo: ${data.month}`;
-    document.getElementById('panel-title').innerText = data.title;
-    document.getElementById('selected-flower-title').innerText = data.title;
-    document.getElementById('panel-badge').innerText = unhealedCount === 0 ? 'Sanado ✨' : `${unhealedCount} Fallas`;
-    document.getElementById('panel-badge').className = `px-2.5 py-1 rounded-full text-[0.65rem] font-black ${unhealedCount === 0 ? 'bg-green-500/20 text-green-400' : 'bg-rose-500/20 text-rose-400'}`;
-    
-    let leavesCont = document.getElementById('leaves-container');
-    leavesCont.innerHTML = '';
-    
-    data.leaves.forEach((leaf, lIdx) => {
-        let btn = document.createElement('button');
-        let cl = leaf.healed ? 'bg-green-900/40 border-green-500 text-green-300' : 'bg-rose-900/40 border-rose-500 text-rose-200 hover:bg-rose-800/60';
-        btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${cl}`;
-        btn.innerText = `${leaf.healed ? '🌿' : '🥀'} ${leaf.name}`;
-        btn.onclick = () => selectErrorLeaf(mIdx, lIdx, btn);
-        leavesCont.appendChild(btn);
-    });
-    
-    document.getElementById('clinical-details').classList.add('hidden');
-    document.getElementById('btn-water-all').disabled = true;
+​function switchTab(tabId, btnEl) {
+document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+​document.getElementById(tabId).classList.add('active');
+if(btnEl) btnEl.classList.add('active');
+​if(tabId !== 'view-system') {
+pActive = false;
+pongActive = false;
 }
-
-function selectErrorLeaf(mIdx, lIdx, btnEl) {
-    const btns = document.getElementById('leaves-container').children;
-    for(let i=0; i<btns.length; i++) btns[i].classList.remove('ring-2', 'ring-white');
-    btnEl.classList.add('ring-2', 'ring-white');
-
-    selectedLeafIdx = lIdx;
-    let leaf = clinicalData[mIdx].leaves[lIdx];
-    
-    document.getElementById('clinical-details').classList.remove('hidden');
-    document.getElementById('clinical-details').classList.add('flex');
-    
-    document.getElementById('detail-my-error').innerText = leaf.myError;
-    document.getElementById('detail-her-pain').innerText = leaf.herPain;
-    document.getElementById('detail-solution').innerText = leaf.solution;
-    
-    let btnWater = document.getElementById('btn-water-all');
-    if(leaf.healed) {
-        btnWater.innerText = "✨ Conflicto Sanado";
-        btnWater.disabled = true;
-    } else {
-        btnWater.innerText = "💦 Regar y Sanar";
-        btnWater.disabled = false;
-    }
 }
-
-function healSelectedLeaf() {
-    if(selectedMonthIdx !== null && selectedLeafIdx !== null) {
-        clinicalData[selectedMonthIdx].leaves[selectedLeafIdx].healed = true;
-        initGarden();
-        const units = document.querySelectorAll('.flower-unit');
-        if(units[selectedMonthIdx]) selectFlower(selectedMonthIdx, units[selectedMonthIdx]);
-        printTerm(`> Conflicto '${clinicalData[selectedMonthIdx].leaves[selectedLeafIdx].name}' sanado exitosamente.`, 'text-green-400 font-bold');
-    }
+​async function initWeather() {
+const status = document.getElementById('weather-sync-status');
+try {
+const urls = [
+'https://api.open-meteo.com/v1/forecast?latitude=18.85&longitude=-97.10&current_weather=true',
+'https://api.open-meteo.com/v1/forecast?latitude=18.90&longitude=-98.43&current_weather=true'
+];
+​const [resOri, resAtl] = await Promise.all(urls.map(u => fetch(u)));
+const [dataOri, dataAtl] = await Promise.all([resOri.json(), resAtl.json()]);
+​const mapW = (code, isDay) => {
+if (code <= 1) return { icon: isDay ? '☀️' : '🌕', text: 'Despejado', type: isDay ? 'sun' : 'moon' };
+if (code <= 3) return { icon: isDay ? '⛅' : '☁️', text: 'Nublado', type: 'cloud' };
+if (code <= 67) return { icon: '🌧️', text: 'Lluvia', type: 'rain' };
+return { icon: '⛈️', text: 'Tormenta', type: 'rain' };
+};
+​const wO = mapW(dataOri.current_weather.weathercode, dataOri.current_weather.is_day);
+const wA = mapW(dataAtl.current_weather.weathercode, dataAtl.current_weather.is_day);
+​document.getElementById('w-icon-ori').innerText = wO.icon;
+document.getElementById('w-temp-ori').innerText = ${Math.round(dataOri.current_weather.temperature)}°C;
+document.getElementById('w-desc-ori').innerText = wO.text;
+​document.getElementById('w-icon-atl').innerText = wA.icon;
+document.getElementById('w-temp-atl').innerText = ${Math.round(dataAtl.current_weather.temperature)}°C;
+document.getElementById('w-desc-atl').innerText = wA.text;
+​status.innerText = "Sincronizado";
+status.className = "text-[0.65rem] bg-green-900/50 px-2 py-0.5 rounded text-green-300 font-bold";
+​startWeatherCanvas(wO.type === 'rain' || wA.type === 'rain', dataOri.current_weather.is_day);
+} catch (e) {
+status.innerText = "Modo Offline";
+startWeatherCanvas(false, 0);
 }
-
-function saveFeedback() {
-    const input = document.getElementById('feedback-input');
-    const text = input.value.trim();
-    if(!text) return;
-
-    let history = JSON.parse(localStorage.getItem('stark_os_feedback_v4') || '[]');
-    let entry = { date: new Date().toLocaleString(), text: text };
-    history.unshift(entry);
-    localStorage.setItem('stark_os_feedback_v4', JSON.stringify(history));
-    
-    input.value = '';
-    loadFeedback();
 }
-
-function loadFeedback() {
-    const list = document.getElementById('feedback-list');
-    let history = JSON.parse(localStorage.getItem('stark_os_feedback_v4') || '[]');
-    
-    if(history.length === 0) {
-        list.innerHTML = '<div class="text-center text-xs text-gray-600 italic py-2">No hay registros guardados aún.</div>';
-        return;
-    }
-    
-    list.innerHTML = '';
-    history.forEach(item => {
-        let div = document.createElement('div');
-        div.className = "bg-white/5 border border-white/10 rounded-xl p-2.5 mb-2";
-        div.innerHTML = `
-            <div class="text-[0.55rem] text-pink-400 font-mono mb-1">${item.date}</div>
-            <p class="text-xs text-gray-200 break-words">${item.text}</p>
-        `;
-        list.appendChild(div);
-    });
+​function startWeatherCanvas(isRaining, isDay) {
+const cvs = document.getElementById('weather-canvas');
+const ctx = cvs.getContext('2d');
+function resize() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; }
+window.addEventListener('resize', resize);
+resize();
+​let raindrops = [];
+if(isRaining) {
+for(let i=0; i<80; i++) raindrops.push({x: Math.random()*cvs.width, y: Math.random()*cvs.height, l: Math.random()*15+10, v: Math.random()*8+4});
 }
-
-function initCycleTracker() {
-    const cycleLength = 28;
-    const lastPeriodStart = new Date('2026-09-10'); // Fecha base estimada
-    const today = new Date();
-    
-    let diffDays = Math.floor((today - lastPeriodStart) / (1000 * 60 * 60 * 24)) % cycleLength;
-    if(diffDays < 0) diffDays += cycleLength;
-    
-    document.getElementById('cycle-day-num').innerText = diffDays + 1;
-    
-    let nextPeriod = new Date(lastPeriodStart);
-    nextPeriod.setDate(nextPeriod.getDate() + cycleLength);
-    document.getElementById('next-period-date').innerText = nextPeriod.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
-    
-    let phaseName = "Fase Folicular";
-    let phaseDesc = "Energía estable y buen ánimo";
-    let advice = "Ideal para hacer planes juntos y conversar";
-
-    if(diffDays >= 0 && diffDays <= 5) {
-        phaseName = "🩸 Menstruación";
-        phaseDesc = "Cólicos y sensibilidad física";
-        advice = "Te de manzanilla, tecito caliente y apapacho ilimitado";
-    } else if(diffDays > 5 && diffDays <= 13) {
-        phaseName = "🌱 Fase Folicular";
-        phaseDesc = "Aumento de estrógenos y vitalidad";
-        advice = "Aprovechar para jugar Parchisi y compartir risas";
-    } else if(diffDays > 13 && diffDays <= 16) {
-        phaseName = "✨ Ovulación";
-        phaseDesc = "Pico de energía y empatía";
-        advice = "Expresarle lo hermosa e importante que es";
-    } else {
-        phaseName = "🌙 Fase Lútea / SPM";
-        phaseDesc = "Sensibilidad emocional y cansancio";
-        advice = "Cero discusiones lógicas, comprar chocolates y dar masajes";
-    }
-
-    document.getElementById('current-phase-name').innerText = phaseName;
-    document.getElementById('phase-description').innerText = phaseDesc;
-    document.getElementById('kevin-action-advice').innerText = advice;
-
-    // Render Canvas de Curva Sinusoidal Hormonal
-    const cvs = document.getElementById('cycle-canvas');
-    const ctx = cvs.getContext('2d');
-    cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
-
-    ctx.clearRect(0, 0, cvs.width, cvs.height);
-    
-    // Dibujar Curva Sinusoidal
-    ctx.beginPath();
-    ctx.strokeStyle = '#f43f5e';
-    ctx.lineWidth = 3;
-
-    for (let x = 0; x < cvs.width; x++) {
-        let dayRatio = x / cvs.width;
-        let angle = dayRatio * Math.PI * 2;
-        // Curva ajustada para reflejar humor/energía
-        let y = (cvs.height / 2) - Math.sin(angle) * (cvs.height / 3);
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-
-    // Dibujar Indicador del Día Actual
-    let currentX = (diffDays / cycleLength) * cvs.width;
-    let currentAngle = (diffDays / cycleLength) * Math.PI * 2;
-    let currentY = (cvs.height / 2) - Math.sin(currentAngle) * (cvs.height / 3);
-
-    ctx.beginPath();
-    ctx.arc(currentX, currentY, 8, 0, Math.PI * 2);
-    ctx.fillStyle = '#fbbf24';
-    ctx.fill();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+​function animate() {
+ctx.clearRect(0,0,cvs.width,cvs.height);
+if(isRaining) {
+ctx.strokeStyle = 'rgba(186, 230, 253, 0.35)';
+ctx.lineWidth = 1;
+ctx.beginPath();
+raindrops.forEach(r => {
+ctx.moveTo(r.x, r.y);
+ctx.lineTo(r.x - r.l*0.1, r.y + r.l);
+r.y += r.v;
+if(r.y > cvs.height) r.y = -20;
+});
+ctx.stroke();
 }
-
-// PACMAN ENGINE SIMPLIFIED
+requestAnimationFrame(animate);
+}
+animate();
+}
+​function initThreeJSGalaxy() {
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x020308, 0.0008);
+​const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3500);
+camera.position.z = 900;
+​const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+container.appendChild(renderer.domElement);
+​const starCount = 4000;
+const starGeo = new THREE.BufferGeometry();
+const starPos = new Float32Array(starCount * 3);
+const starColors = new Float32Array(starCount * 3);
+​const colorBlue = new THREE.Color('#38bdf8');
+const colorPink = new THREE.Color('#fb7185');
+const colorGold = new THREE.Color('#fbbf24');
+const colorPurple = new THREE.Color('#c084fc');
+​for(let i=0; i<starCount*3; i+=3) {
+starPos[i] = (Math.random() - 0.5) * 3500;
+starPos[i+1] = (Math.random() - 0.5) * 3500;
+starPos[i+2] = (Math.random() - 0.5) * 3500;
+​let mixedColor = colorBlue.clone();
+const rnd = Math.random();
+if(rnd > 0.75) mixedColor = colorGold;
+else if(rnd > 0.5) mixedColor = colorPink;
+else if(rnd > 0.25) mixedColor = colorPurple;
+​starColors[i] = mixedColor.r;
+starColors[i+1] = mixedColor.g;
+starColors[i+2] = mixedColor.b;
+}
+​starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+​const createStarTexture = () => {
+const matCvs = document.createElement('canvas'); matCvs.width = 64; matCvs.height = 64;
+const matCtx = matCvs.getContext('2d');
+matCtx.beginPath(); matCtx.arc(32, 32, 28, 0, Math.PI*2);
+matCtx.fillStyle = 'white'; matCtx.fill();
+return new THREE.CanvasTexture(matCvs);
+};
+​const starMat = new THREE.PointsMaterial({
+size: 7, map: createStarTexture(), transparent: true, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false
+});
+​const starMesh = new THREE.Points(starGeo, starMat);
+scene.add(starMesh);
+​const bhGeo = new THREE.SphereGeometry(120, 32, 32);
+const bhMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+const blackHole = new THREE.Mesh(bhGeo, bhMat);
+scene.add(blackHole);
+​const diskGeo = new THREE.RingGeometry(130, 380, 64);
+const diskCvs = document.createElement('canvas'); diskCvs.width = 512; diskCvs.height = 512;
+const diskCtx = diskCvs.getContext('2d');
+const grad = diskCtx.createRadialGradient(256, 256, 120, 256, 256, 256);
+grad.addColorStop(0, 'rgba(251, 191, 36, 0.9)');
+grad.addColorStop(0.4, 'rgba(244, 63, 94, 0.6)');
+grad.addColorStop(0.8, 'rgba(192, 132, 252, 0.2)');
+grad.addColorStop(1, 'rgba(0,0,0,0)');
+diskCtx.fillStyle = grad; diskCtx.fillRect(0,0,512,512);
+​const diskMat = new THREE.MeshBasicMaterial({
+map: new THREE.CanvasTexture(diskCvs), side: THREE.DoubleSide, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
+});
+const disk = new THREE.Mesh(diskGeo, diskMat);
+disk.rotation.x = Math.PI / 2.5;
+scene.add(disk);
+​let mouseX = 0, mouseY = 0;
+window.addEventListener('mousemove', (e) => {
+mouseX = (e.clientX - window.innerWidth/2) * 0.0008;
+mouseY = (e.clientY - window.innerHeight/2) * 0.0008;
+});
+​window.addEventListener('resize', () => {
+camera.aspect = window.innerWidth / window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth, window.innerHeight);
+});
+​const clock = new THREE.Clock();
+function animate() {
+requestAnimationFrame(animate);
+const delta = clock.getDelta();
+​starMesh.rotation.y += 0.03 * delta;
+disk.rotation.z += 0.2 * delta;
+​camera.position.x += (mouseX * 600 - camera.position.x) * 0.05;
+camera.position.y += (-mouseY * 600 - camera.position.y) * 0.05;
+camera.lookAt(scene.position);
+​renderer.render(scene, camera);
+}
+animate();
+}
+​function initGarden() {
+const container = document.getElementById('garden-container');
+container.innerHTML = '';
+​clinicalData.forEach((data, mIdx) => {
+let unhealed = data.leaves.filter(l => !l.healed).length;
+let isWilted = unhealed > 0;
+​let unit = document.createElement('div');
+unit.className = flower-unit flex flex-col items-center flex-shrink-0 group;
+unit.onclick = () => selectFlower(mIdx, unit);
+​let svgClass = isWilted ? 'wilted' : 'healed';
+let svg =  <svg viewBox="0 0 100 200" class="w-16 h-32 md:w-20 md:h-40 drop-shadow-xl ${svgClass}"> ${isWilted ? '<path d="M50,150 Q25,130 15,160 Q45,180 50,150" fill="#64748b" />'  : '<path d="M50,130 Q15,100 25,70 Q65,90 50,130" fill="#22c55e" />'} <path class="stem" fill="none" stroke-width="5" stroke-linecap="round" /> <g class="head-group"> <circle cx="0" cy="-25" r="8" class="petal"/> <circle cx="20" cy="-15" r="8" class="petal"/> <circle cx="25" cy="5" r="8" class="petal"/>  <circle cx="15" cy="20" r="8" class="petal"/> <circle cx="-15" cy="20" r="8" class="petal"/> <circle cx="-25" cy="5" r="8" class="petal"/> <circle cx="-20" cy="-15" r="8" class="petal"/> <circle cx="0" cy="0" r="16" class="center stroke-black stroke-2"/> </g> </svg> <div class="f-label mt-2 px-2.5 py-0.5 rounded-lg bg-black/80 border border-white/10 text-[0.6rem] whitespace-nowrap text-gray-300"> ${isWilted ? '🥀' : '🌻'} ${data.month} </div>;
+​unit.innerHTML = svg;
+container.appendChild(unit);
+});
+}
+​function selectFlower(mIdx, unitEl) {
+document.querySelectorAll('.flower-unit').forEach(el => el.classList.remove('selected'));
+unitEl.classList.add('selected');
+​selectedMonthIdx = mIdx;
+let data = clinicalData[mIdx];
+let unhealedCount = data.leaves.filter(l=>!l.healed).length;
+​document.getElementById('panel-month').innerText = Ciclo: ${data.month};
+document.getElementById('panel-title').innerText = data.title;
+document.getElementById('selected-flower-title').innerText = data.title;
+document.getElementById('panel-badge').innerText = unhealedCount === 0 ? 'Sanado ✨' : ${unhealedCount} Fallas;
+document.getElementById('panel-badge').className = px-2.5 py-1 rounded-full text-[0.65rem] font-black ${unhealedCount === 0 ? 'bg-green-500/20 text-green-400' : 'bg-rose-500/20 text-rose-400'};
+​let leavesCont = document.getElementById('leaves-container');
+leavesCont.innerHTML = '';
+​data.leaves.forEach((leaf, lIdx) => {
+let btn = document.createElement('button');
+let cl = leaf.healed ? 'bg-green-900/40 border-green-500 text-green-300' : 'bg-rose-900/40 border-rose-500 text-rose-200 hover:bg-rose-800/60';
+btn.className = px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${cl};
+btn.innerText = ${leaf.healed ? '🌿' : '🥀'} ${leaf.name};
+btn.onclick = () => selectErrorLeaf(mIdx, lIdx, btn);
+leavesCont.appendChild(btn);
+});
+​document.getElementById('clinical-details').classList.add('hidden');
+document.getElementById('btn-water-all').disabled = true;
+}
+​function selectErrorLeaf(mIdx, lIdx, btnEl) {
+const btns = document.getElementById('leaves-container').children;
+for(let i=0; i<btns.length; i++) btns[i].classList.remove('ring-2', 'ring-white');
+btnEl.classList.add('ring-2', 'ring-white');
+​selectedLeafIdx = lIdx;
+let leaf = clinicalData[mIdx].leaves[lIdx];
+​document.getElementById('clinical-details').classList.remove('hidden');
+document.getElementById('clinical-details').classList.add('flex');
+​document.getElementById('detail-my-error').innerText = leaf.myError;
+document.getElementById('detail-her-pain').innerText = leaf.herPain;
+document.getElementById('detail-solution').innerText = leaf.solution;
+​let btnWater = document.getElementById('btn-water-all');
+if(leaf.healed) {
+btnWater.innerText = "✨ Conflicto Sanado";
+btnWater.disabled = true;
+} else {
+btnWater.innerText = "💦 Regar y Sanar";
+btnWater.disabled = false;
+}
+}
+​function healSelectedLeaf() {
+if(selectedMonthIdx !== null && selectedLeafIdx !== null) {
+clinicalData[selectedMonthIdx].leaves[selectedLeafIdx].healed = true;
+initGarden();
+const units = document.querySelectorAll('.flower-unit');
+if(units[selectedMonthIdx]) selectFlower(selectedMonthIdx, units[selectedMonthIdx]);
+printTerm(> Conflicto '${clinicalData[selectedMonthIdx].leaves[selectedLeafIdx].name}' sanado exitosamente., 'text-green-400 font-bold');
+}
+}
+​function saveFeedback() {
+const input = document.getElementById('feedback-input');
+const text = input.value.trim();
+if(!text) return;
+​let history = JSON.parse(localStorage.getItem('stark_os_feedback_v4') || '[]');
+let entry = { date: new Date().toLocaleString(), text: text };
+history.unshift(entry);
+localStorage.setItem('stark_os_feedback_v4', JSON.stringify(history));
+​input.value = '';
+loadFeedback();
+}
+​function loadFeedback() {
+const list = document.getElementById('feedback-list');
+let history = JSON.parse(localStorage.getItem('stark_os_feedback_v4') || '[]');
+​if(history.length === 0) {
+list.innerHTML = '<div class="text-center text-xs text-gray-600 italic py-2">No hay registros guardados aún.</div>';
+return;
+}
+​list.innerHTML = '';
+history.forEach(item => {
+let div = document.createElement('div');
+div.className = "bg-white/5 border border-white/10 rounded-xl p-2.5 mb-2";
+div.innerHTML = <div class="text-[0.55rem] text-pink-400 font-mono mb-1">${item.date}</div> <p class="text-xs text-gray-200 break-words">${item.text}</p>;
+list.appendChild(div);
+});
+}
+​function initCycleTracker() {
+const cycleLength = 28;
+const lastPeriodStart = new Date('2026-09-10');
+const today = new Date();
+​let diffDays = Math.floor((today - lastPeriodStart) / (1000 * 60 * 60 * 24)) % cycleLength;
+if(diffDays < 0) diffDays += cycleLength;
+​document.getElementById('cycle-day-num').innerText = diffDays + 1;
+​let nextPeriod = new Date(lastPeriodStart);
+nextPeriod.setDate(nextPeriod.getDate() + cycleLength);
+document.getElementById('next-period-date').innerText = nextPeriod.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+​let phaseName = "Fase Folicular";
+let phaseDesc = "Energía estable y buen ánimo";
+let advice = "Ideal para hacer planes juntos y conversar";
+​if(diffDays >= 0 && diffDays <= 5) {
+phaseName = "🩸 Menstruación";
+phaseDesc = "Cólicos y sensibilidad física";
+advice = "Té de manzanilla, tecito caliente y apapacho ilimitado";
+} else if(diffDays > 5 && diffDays <= 13) {
+phaseName = "🌱 Fase Folicular";
+phaseDesc = "Aumento de estrógenos y vitalidad";
+advice = "Aprovechar para jugar Parchisi y compartir risas";
+} else if(diffDays > 13 && diffDays <= 16) {
+phaseName = "✨ Ovulación";
+phaseDesc = "Pico de energía y empatía";
+advice = "Expresarle lo hermosa e importante que es";
+} else {
+phaseName = "🌙 Fase Lútea / SPM";
+phaseDesc = "Sensibilidad emocional y cansancio";
+advice = "Cero discusiones lógicas, comprar chocolates y dar masajes";
+}
+​document.getElementById('current-phase-name').innerText = phaseName;
+document.getElementById('phase-description').innerText = phaseDesc;
+document.getElementById('kevin-action-advice').innerText = advice;
+​const cvs = document.getElementById('cycle-canvas');
+const ctx = cvs.getContext('2d');
+cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
+​ctx.clearRect(0, 0, cvs.width, cvs.height);
+​ctx.beginPath();
+ctx.strokeStyle = '#f43f5e';
+ctx.lineWidth = 3;
+​for (let x = 0; x < cvs.width; x++) {
+let dayRatio = x / cvs.width;
+let angle = dayRatio * Math.PI * 2;
+let y = (cvs.height / 2) - Math.sin(angle) * (cvs.height / 3);
+if (x === 0) ctx.moveTo(x, y);
+else ctx.lineTo(x, y);
+}
+ctx.stroke();
+​let currentX = (diffDays / cycleLength) * cvs.width;
+let currentAngle = (diffDays / cycleLength) * Math.PI * 2;
+let currentY = (cvs.height / 2) - Math.sin(currentAngle) * (cvs.height / 3);
+​ctx.beginPath();
+ctx.arc(currentX, currentY, 8, 0, Math.PI * 2);
+ctx.fillStyle = '#fbbf24';
+ctx.fill();
+ctx.strokeStyle = '#ffffff';
+ctx.lineWidth = 2;
+ctx.stroke();
+}
+​// PACMAN ENGINE
 let pmCvs, pmCtx, pmSize;
 const pCols = 15, pRows = 15;
 let pGrid = [];
 let chef = {c:1, r:1, dc:0, dr:0, nDc:0, nDr:0, cFloat:1, rFloat:1};
 let ghosts = [];
 let pScore = 0, pLives = 3, pLevel = 1, pActive = false, pmLoop;
-
-const mapLayout = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
-    [0,1,0,0,1,0,1,0,1,0,1,0,0,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,0,0,1,0,0,0,0,0,1,0,0,1,0],
-    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
-    [0,0,0,0,1,0,2,2,2,0,1,0,0,0,0],
-    [2,2,2,2,1,0,2,0,2,0,1,2,2,2,2],
-    [0,0,0,0,1,0,2,2,2,0,1,0,0,0,0],
-    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
-    [0,1,0,0,1,0,0,0,0,0,1,0,0,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,0,0,1,0,1,0,1,0,1,0,0,1,0],
-    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+​const mapLayout = [
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+[0,1,0,0,1,0,1,0,1,0,1,0,0,1,0],
+[0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+[0,1,0,0,1,0,0,0,0,0,1,0,0,1,0],
+[0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+[0,0,0,0,1,0,2,2,2,0,1,0,0,0,0],
+[2,2,2,2,1,0,2,0,2,0,1,2,2,2,2],
+[0,0,0,0,1,0,2,2,2,0,1,0,0,0,0],
+[0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+[0,1,0,0,1,0,0,0,0,0,1,0,0,1,0],
+[0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+[0,1,0,0,1,0,1,0,1,0,1,0,0,1,0],
+[0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ];
-
-function initPacmanMap() {
-    document.getElementById('pacman-overlay').classList.add('hidden');
-    pmCvs = document.getElementById('pacman-canvas');
-    pmCtx = pmCvs.getContext('2d');
-    
-    pmCvs.width = 300; pmCvs.height = 300; 
-    pmSize = pmCvs.width / pCols;
-    
-    if(pLives <= 0) { pLives = 3; pScore = 0; pLevel = 1; }
-    document.getElementById('p-lives').innerText = '❤️'.repeat(pLives);
-    document.getElementById('p-score').innerText = pScore;
-    document.getElementById('p-level').innerText = pLevel;
-    
-    pGrid = [];
-    for(let r=0; r<pRows; r++) pGrid.push([...mapLayout[r]]);
-    
-    chef = {c:1, r:1, dc:0, dr:0, nDc:0, nDr:0, cFloat:1, rFloat:1};
-    ghosts = [
-        {c:7, r:7, dc:0, dr:-1, color: '#f43f5e', name: 'Ego'},
-        {c:6, r:7, dc:1, dr:0, color: '#c084fc', name: 'Frialdad'}
-    ];
-    
-    pActive = true;
-    if(pmLoop) cancelAnimationFrame(pmLoop);
-    lastTime = performance.now();
-    pmLoop = requestAnimationFrame(pacmanTick);
+​function initPacmanMap() {
+document.getElementById('pacman-overlay').classList.add('hidden');
+pmCvs = document.getElementById('pacman-canvas');
+pmCtx = pmCvs.getContext('2d');
+​pmCvs.width = 300; pmCvs.height = 300;
+pmSize = pmCvs.width / pCols;
+​if(pLives <= 0) { pLives = 3; pScore = 0; pLevel = 1; }
+document.getElementById('p-lives').innerText = '❤️'.repeat(pLives);
+document.getElementById('p-score').innerText = pScore;
+document.getElementById('p-level').innerText = pLevel;
+​pGrid = [];
+for(let r=0; r<pRows; r++) pGrid.push([...mapLayout[r]]);
+​chef = {c:1, r:1, dc:0, dr:0, nDc:0, nDr:0, cFloat:1, rFloat:1};
+ghosts = [
+{c:7, r:7, dc:0, dr:-1, color: '#f43f5e', name: 'Ego'},
+{c:6, r:7, dc:1, dr:0, color: '#c084fc', name: 'Frialdad'}
+];
+​pActive = true;
+if(pmLoop) cancelAnimationFrame(pmLoop);
+lastTime = performance.now();
+pmLoop = requestAnimationFrame(pacmanTick);
 }
-
-function setPacmanDir(dc, dr) { if(pActive) { chef.nDc = dc; chef.nDr = dr; } }
-
-let lastTime = 0;
+​function setPacmanDir(dc, dr) { if(pActive) { chef.nDc = dc; chef.nDr = dr; } }
+​let lastTime = 0;
 function pacmanTick(now) {
-    if(!pActive) return;
-    const dt = (now - lastTime) / 1000;
-    lastTime = now;
-    
-    const margin = 0.1;
-    if(Math.abs(chef.cFloat - chef.c) < margin && Math.abs(chef.rFloat - chef.r) < margin) {
-        chef.cFloat = chef.c; chef.rFloat = chef.r;
-        let nc = chef.c + chef.nDc, nr = chef.r + chef.nDr;
-        if(pGrid[nr] && pGrid[nr][nc] !== 0) { chef.dc = chef.nDc; chef.dr = chef.nDr; }
-        
-        nc = chef.c + chef.dc; nr = chef.r + chef.dr;
-        if(pGrid[nr] && pGrid[nr][nc] !== 0) { chef.c = nc; chef.r = nr; }
-        else { chef.dc = 0; chef.dr = 0; }
-    }
-    
-    chef.cFloat += chef.dc * 3.5 * dt;
-    chef.rFloat += chef.dr * 3.5 * dt;
-
-    if(pGrid[chef.r][chef.c] === 1) {
-        pGrid[chef.r][chef.c] = 2;
-        pScore += 10;
-        document.getElementById('p-score').innerText = pScore;
-    }
-    
-    drawPacman();
-    if(pActive) requestAnimationFrame(pacmanTick);
+if(!pActive) return;
+const dt = (now - lastTime) / 1000;
+lastTime = now;
+​const margin = 0.1;
+if(Math.abs(chef.cFloat - chef.c) < margin && Math.abs(chef.rFloat - chef.r) < margin) {
+chef.cFloat = chef.c; chef.rFloat = chef.r;
+let nc = chef.c + chef.nDc, nr = chef.r + chef.nDr;
+if(pGrid[nr] && pGrid[nr][nc] !== 0) { chef.dc = chef.nDc; chef.dr = chef.nDr; }
+​nc = chef.c + chef.dc; nr = chef.r + chef.dr;
+if(pGrid[nr] && pGrid[nr][nc] !== 0) { chef.c = nc; chef.r = nr; }
+else { chef.dc = 0; chef.dr = 0; }
 }
-
-function drawPacman() {
-    pmCtx.fillStyle = '#06060a';
-    pmCtx.fillRect(0,0,pmCvs.width,pmCvs.height);
-    
-    for(let r=0; r<pRows; r++){
-        for(let c=0; c<pCols; c++){
-            if(pGrid[r][c] === 0) {
-                pmCtx.fillStyle = 'rgba(56, 189, 248, 0.15)';
-                pmCtx.fillRect(c*pmSize, r*pmSize, pmSize, pmSize);
-            } else if(pGrid[r][c] === 1) {
-                pmCtx.font = `${pmSize*0.6}px Arial`; pmCtx.textAlign="center"; pmCtx.textBaseline="middle";
-                pmCtx.fillText('🍓', c*pmSize+pmSize/2, r*pmSize+pmSize/2);
-            }
-        }
-    }
-    
-    pmCtx.font = `${pmSize*0.85}px Arial`;
-    pmCtx.fillText("👩🏻‍🍳", chef.cFloat*pmSize+pmSize/2, chef.rFloat*pmSize+pmSize/2);
+​chef.cFloat += chef.dc * 3.5 * dt;
+chef.rFloat += chef.dr * 3.5 * dt;
+​if(pGrid[chef.r][chef.c] === 1) {
+pGrid[chef.r][chef.c] = 2;
+pScore += 10;
+document.getElementById('p-score').innerText = pScore;
 }
-
-function printTerm(text, cls='text-gray-300') {
-    const out = document.getElementById('term-output');
-    out.innerHTML += `<div class="${cls}">${text}</div>`;
-    const sc = document.getElementById('terminal-screen');
-    sc.scrollTop = sc.scrollHeight;
+​drawPacman();
+if(pActive) requestAnimationFrame(pacmanTick);
 }
-
-function handleTermEnter(e) {
-    if(e.key === 'Enter') {
-        const val = e.target.value.trim();
-        e.target.value = '';
-        if(val) injectCmd(val);
-    }
+​function drawPacman() {
+pmCtx.fillStyle = '#06060a';
+pmCtx.fillRect(0,0,pmCvs.width,pmCvs.height);
+​for(let r=0; r<pRows; r++){
+for(let c=0; c<pCols; c++){
+if(pGrid[r][c] === 0) {
+pmCtx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+pmCtx.fillRect(cpmSize, rpmSize, pmSize, pmSize);
+} else if(pGrid[r][c] === 1) {
+pmCtx.font = ${pmSize*0.6}px Arial; pmCtx.textAlign="center"; pmCtx.textBaseline="middle";
+pmCtx.fillText('🍓', cpmSize+pmSize/2, rpmSize+pmSize/2);
 }
-
-function injectCmd(cmd) {
-    printTerm(`$ ${cmd}`, 'text-gray-500');
-    if(cmd === 'help') printTerm("Comandos disponibles: ping_heart, deploy_hug, analyze_love, play_pong, clear");
-    else if(cmd === 'clear') document.getElementById('term-output').innerHTML = '';
-    else if(cmd === 'ping_heart') printTerm("Conexión estable Orizaba-Atlixco: Latencia 0ms. Amor al 100%.", 'text-green-400');
-    else if(cmd === 'deploy_hug') printTerm("(づ￣ ³￣)づ ¡Apapacho gigante enviado a Analy!", 'text-2xl text-pink-300');
-    else if(cmd === 'analyze_love') printTerm("Dictamen: Kevin promete ser el mejor compañero para Analy.", 'text-gold font-bold');
-    else if(cmd === 'play_pong') startPong();
-    else printTerm(`Comando no reconocido: ${cmd}`, 'text-red-400');
 }
-
-let pongCvs, pongCtx, pongActive = false, pongLoop;
+}
+​pmCtx.font = ${pmSize*0.85}px Arial;
+pmCtx.fillText("👩🏻‍🍳", chef.cFloatpmSize+pmSize/2, chef.rFloatpmSize+pmSize/2);
+}
+​function printTerm(text, cls='text-gray-300') {
+const out = document.getElementById('term-output');
+out.innerHTML += <div class="${cls}">${text}</div>;
+const sc = document.getElementById('terminal-screen');
+sc.scrollTop = sc.scrollHeight;
+}
+​function handleTermEnter(e) {
+if(e.key === 'Enter') {
+const val = e.target.value.trim();
+e.target.value = '';
+if(val) injectCmd(val);
+}
+}
+​function injectCmd(cmd) {
+printTerm($ ${cmd}, 'text-gray-500');
+if(cmd === 'help') printTerm("Comandos disponibles: ping_heart, deploy_hug, analyze_love, play_pong, clear");
+else if(cmd === 'clear') document.getElementById('term-output').innerHTML = '';
+else if(cmd === 'ping_heart') printTerm("Conexión estable Orizaba-Atlixco: Latencia 0ms. Amor al 100%.", 'text-green-400');
+else if(cmd === 'deploy_hug') printTerm("(づ￣ ³￣)づ ¡Apapacho gigante enviado a Analy!", 'text-2xl text-pink-300');
+else if(cmd === 'analyze_love') printTerm("Dictamen: Kevin promete ser el mejor compañero para Analy.", 'text-gold font-bold');
+else if(cmd === 'play_pong') startPong();
+else printTerm(Comando no reconocido: ${cmd}, 'text-red-400');
+}
+​let pongCvs, pongCtx, pongActive = false, pongLoop;
 let paddleMe = {x: 10, y: 50, w: 5, h: 35}, paddleAI = {x: 285, y: 50, w: 5, h: 35};
 let ball = {x: 150, y: 75, r: 4, dx: 2.5, dy: 2.5};
-
-function startPong() {
-    const pCont = document.getElementById('pong-container');
-    pCont.classList.remove('hidden'); pCont.classList.add('flex');
-    pongCvs = document.getElementById('pong-canvas');
-    pongCtx = pongCvs.getContext('2d');
-    pongCvs.width = 300; pongCvs.height = 150;
-    pongActive = true;
-    pongTick();
+​function startPong() {
+const pCont = document.getElementById('pong-container');
+pCont.classList.remove('hidden'); pCont.classList.add('flex');
+pongCvs = document.getElementById('pong-canvas');
+pongCtx = pongCvs.getContext('2d');
+pongCvs.width = 300; pongCvs.height = 150;
+pongActive = true;
+pongTick();
 }
-
-function exitPong() {
-    pongActive = false;
-    document.getElementById('pong-container').classList.add('hidden');
+​function exitPong() {
+pongActive = false;
+document.getElementById('pong-container').classList.add('hidden');
 }
-
-function pongTick() {
-    if(!pongActive) return;
-    if(paddleAI.y + paddleAI.h/2 < ball.y) paddleAI.y += 1.8;
-    else paddleAI.y -= 1.8;
-    
-    ball.x += ball.dx; ball.y += ball.dy;
-    if(ball.y - ball.r <= 0 || ball.y + ball.r >= pongCvs.height) ball.dy *= -1;
-    
-    if(ball.x - ball.r <= paddleMe.x + paddleMe.w && ball.y >= paddleMe.y && ball.y <= paddleMe.y + paddleMe.h) ball.dx = Math.abs(ball.dx);
-    if(ball.x + ball.r >= paddleAI.x && ball.y >= paddleAI.y && ball.y <= paddleAI.y + paddleAI.h) ball.dx = -Math.abs(ball.dx);
-    
-    if(ball.x < 0 || ball.x > pongCvs.width) { ball.x = 150; ball.y = 75; ball.dx = 2.5; }
-    
-    pongCtx.fillStyle = '#06060a'; pongCtx.fillRect(0,0,pongCvs.width,pongCvs.height);
-    pongCtx.fillStyle = '#22c55e';
-    pongCtx.fillRect(paddleMe.x, paddleMe.y, paddleMe.w, paddleMe.h);
-    pongCtx.fillRect(paddleAI.x, paddleAI.y, paddleAI.w, paddleAI.h);
-    pongCtx.beginPath(); pongCtx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); pongCtx.fill();
-    
-    pongLoop = requestAnimationFrame(pongTick);
+​function pongTick() {
+if(!pongActive) return;
+if(paddleAI.y + paddleAI.h/2 < ball.y) paddleAI.y += 1.8;
+else paddleAI.y -= 1.8;
+​ball.x += ball.dx; ball.y += ball.dy;
+if(ball.y - ball.r <= 0 || ball.y + ball.r >= pongCvs.height) ball.dy *= -1;
+​if(ball.x - ball.r <= paddleMe.x + paddleMe.w && ball.y >= paddleMe.y && ball.y <= paddleMe.y + paddleMe.h) ball.dx = Math.abs(ball.dx);
+if(ball.x + ball.r >= paddleAI.x && ball.y >= paddleAI.y && ball.y <= paddleAI.y + paddleAI.h) ball.dx = -Math.abs(ball.dx);
+​if(ball.x < 0 || ball.x > pongCvs.width) { ball.x = 150; ball.y = 75; ball.dx = 2.5; }
+​pongCtx.fillStyle = '#06060a'; pongCtx.fillRect(0,0,pongCvs.width,pongCvs.height);
+pongCtx.fillStyle = '#22c55e';
+pongCtx.fillRect(paddleMe.x, paddleMe.y, paddleMe.w, paddleMe.h);
+pongCtx.fillRect(paddleAI.x, paddleAI.y, paddleAI.w, paddleAI.h);
+pongCtx.beginPath(); pongCtx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); pongCtx.fill();
+​pongLoop = requestAnimationFrame(pongTick);
 }
-
-function movePongPaddleMouse(e) {
-    if(!pongActive) return;
-    const rect = pongCvs.getBoundingClientRect();
-    paddleMe.y = (e.clientY - rect.top) * (pongCvs.height / rect.height) - paddleMe.h/2;
+​function movePongPaddleMouse(e) {
+if(!pongActive) return;
+const rect = pongCvs.getBoundingClientRect();
+paddleMe.y = (e.clientY - rect.top) * (pongCvs.height / rect.height) - paddleMe.h/2;
 }
 function movePongPaddleTouch(e) {
-    if(!pongActive) return;
-    const rect = pongCvs.getBoundingClientRect();
-    paddleMe.y = (e.touches[0].clientY - rect.top) * (pongCvs.height / rect.height) - paddleMe.h/2;
+if(!pongActive) return;
+const rect = pongCvs.getBoundingClientRect();
+paddleMe.y = (e.touches[0].clientY - rect.top) * (pongCvs.height / rect.height) - paddleMe.h/2;
 }
 </script>
 </body>
