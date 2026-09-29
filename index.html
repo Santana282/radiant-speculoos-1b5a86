@@ -1,692 +1,1374 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Nuestro Ecosistema 🌻</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Stark-OS: Entrelazamiento Cuántico 🌻</title>
+<meta name="theme-color" content="#020308">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
 <style>
-:root{--bg1:#090d16;--bg2:#161f33;--bg3:#231917;--gold:#fbbf24;--amber:#f59e0b;--rose:#f43f5e;--pink:#fda4af;--green:#22c55e;--purple:#c084fc;--blue:#38bdf8;--card:rgba(15,23,42,0.88);--glass:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.14);--txt:#f8fafc;--muted:#cbd5e1}
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 60%,var(--bg3) 100%);color:var(--txt);min-height:100vh;overflow-x:hidden;position:relative;line-height:1.55; -webkit-overflow-scrolling: touch;}
-.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.particle{position:absolute;border-radius:50%;background:rgba(251,191,36,0.55);box-shadow:0 0 12px var(--gold);animation:floatUp linear infinite}
-@keyframes floatUp{0%{transform:translateY(100vh) scale(.4);opacity:0}50%{opacity:.85}100%{transform:translateY(-10vh) scale(1.2);opacity:0}}
-.rain-drop{position:fixed;top:-20px;width:2px;height:18px;background:linear-gradient(transparent,#38bdf8);z-index:99;pointer-events:none;animation:rainFall .7s linear forwards}
-@keyframes rainFall{to{transform:translateY(105vh);opacity:0}}
+:root {
+    --gold: #fbbf24; --gold-dark: #b45309; 
+    --rose: #f43f5e; --pink: #fda4af; 
+    --green: #22c55e; --purple: #c084fc; 
+    --blue: #38bdf8; --bg-dark: #020308;
+    --glass-bg: rgba(10, 15, 30, 0.65); 
+    --glass-border: rgba(251, 191, 36, 0.25);
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
-/* Optimizaciones iOS y contenedor principal */
-.app-container{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 14px calc(90px + env(safe-area-inset-bottom))}
-header{text-align:center;margin-bottom:24px; position:relative;}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { 
+    background: var(--bg-dark); 
+    color: #f8fafc; 
+    font-family: 'Inter', sans-serif; 
+    overflow-x: hidden; 
+    min-height: 100vh;
+    touch-action: pan-y; /* Prevenir pull-to-refresh en móvil */
+}
 
-/* Botón de Música */
-#music-toggle { position: absolute; top: 0; right: 0; background: var(--glass); border: 1px solid var(--border); color: var(--gold); padding: 8px 12px; border-radius: 99px; font-size: 0.8rem; font-weight: bold; cursor: pointer; backdrop-filter: blur(10px); z-index: 10; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s ease; }
-#music-toggle.playing { background: rgba(251,191,36,0.15); border-color: var(--gold); box-shadow: 0 0 15px rgba(251,191,36,0.4); }
+#canvas-container { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+#weather-canvas { position: fixed; inset: 0; z-index: 2; pointer-events: none; mix-blend-mode: screen; opacity: 0.8; }
 
-.badge-date{display:inline-block;background:rgba(251,191,36,0.14);border:1px solid rgba(251,191,36,0.4);color:var(--gold);padding:6px 16px;border-radius:99px;font-size:.8rem;font-weight:700;letter-spacing:.4px;margin-bottom:10px}
-h1{font-size:clamp(1.8rem,5vw,3rem);font-weight:900;background:linear-gradient(90deg,#fde68a,#f59e0b,#fb7185,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px; line-height:1.2;}
-.subtitle{color:var(--muted);max-width:780px;margin:0 auto;font-size:.94rem}
-.health-bar-wrapper{max-width:560px;margin:18px auto 0;background:rgba(15,23,42,0.8);padding:14px 18px;border-radius:18px;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,0.35)}
-.health-header{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:8px;font-weight:700}
-.progress-track{width:100%;height:12px;background:rgba(0,0,0,0.5);border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,0.08)}
-.progress-fill{height:100%;width:15%;background:linear-gradient(90deg,#f43f5e,#f59e0b,#22c55e);border-radius:99px;transition:width .7s cubic-bezier(.4,0,.2,1)}
-.elements-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin:22px 0}
-.element-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;cursor:pointer;transition:transform .25s,border-color .25s;position:relative;overflow:hidden}
-.element-card:active{transform:scale(.98)}
-.element-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.element-icon{font-size:1.8rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--glass);border:1px solid var(--border)}
-.element-title{font-weight:800;font-size:1rem;color:#fff}
-.element-role{font-size:.7rem;color:var(--gold);text-transform:uppercase;font-weight:700;letter-spacing:.5px}
-.element-desc{font-size:.84rem;color:var(--muted)}
-.nav-tabs{display:flex;justify-content:center;gap:8px;margin:22px 0;flex-wrap:wrap; position: sticky; top: env(safe-area-inset-top); z-index: 50; padding: 10px 0; background: rgba(9, 13, 22, 0.8); backdrop-filter: blur(10px);}
-.tab-btn{background:rgba(15,23,42,0.75);border:1px solid var(--border);color:var(--txt);padding:10px 16px;border-radius:99px;cursor:pointer;font-weight:700;font-size:.83rem;transition:all .25s}
-.tab-btn.active{background:linear-gradient(135deg,#f59e0b,#e11d48);border-color:transparent;box-shadow:0 6px 18px rgba(225,29,72,0.45)}
-.view-section{display:none;animation:fadeIn .35s ease}.view-section.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.garden-layout,.care-layout{display:grid;grid-template-columns:1.05fr 1.15fr;gap:18px;align-items:start}
-@media(max-width:920px){.garden-layout,.care-layout{grid-template-columns:1fr}}
-.garden-stage{background:radial-gradient(circle at 50% 18%,rgba(251,191,36,0.15),rgba(15,23,42,0.95) 72%);border:1px solid var(--border);border-radius:22px;padding:16px 8px 0;min-height:430px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
-.stage-instruction{text-align:center;font-size:.79rem;color:var(--muted);background:rgba(0,0,0,0.45);padding:8px 12px;border-radius:12px;margin:0 auto 10px;border:1px solid var(--border)}
-.flowers-row{display:flex;justify-content:space-around;align-items:flex-end;padding:12px 2px 0;min-height:280px;flex-wrap:wrap;gap:4px}
-.flower-unit{display:flex;flex-direction:column;align-items:center;cursor:pointer;width:18.5%;min-width:62px;transition:transform .25s}
-.flower-unit.selected .flower-label{background:var(--gold);color:#090d16;font-weight:800;box-shadow:0 0 12px var(--gold)}
-.flower-svg{width:100%;max-width:92px;height:195px;overflow:visible;transform-origin:bottom center;animation:sway 5s ease-in-out infinite}
-@keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
-.flower-unit.wilted .flower-head{transform:translateY(16px) rotate(26deg);transform-origin:60px 90px;filter:grayscale(75%) brightness(.7);transition:all .7s ease}
-.flower-unit.bloomed .flower-head{transform:translateY(0) rotate(0deg);filter:drop-shadow(0 0 12px rgba(251,191,36,0.65));transition:all .7s ease}
-.flower-unit.wilted .stem-path{stroke:#64748b; stroke-width: 4;}
-.flower-unit.bloomed .stem-path{stroke:#22c55e; stroke-width: 4;}
-.leaf-svg-item{transition:fill .4s}
-.soil-bed{height:40px;background:linear-gradient(180deg,#451a03 0%,#1f0b01 100%);margin:0 -8px;border-top:3px solid #78350f;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fde68a;font-weight:600;text-align:center;padding:0 8px}
-.flower-label{margin:4px 0 10px;background:rgba(15,23,42,0.92);border:1px solid var(--border);padding:4px 6px;border-radius:99px;font-size:.65rem;text-align:center;white-space:nowrap}
-.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px}
-.wilted .status-dot{background:#ef4444}.bloomed .status-dot{background:#22c55e}
-.inspector-panel,.lunar-card,.likes-panel,.greenhouse-box,.mirror-card,.sos-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 12px 30px rgba(0,0,0,0.3)}
-.inspector-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);padding-bottom:10px}
-.inspector-title{font-size:1.12rem;font-weight:800;color:#fde68a}
-.inspector-status{padding:4px 10px;border-radius:99px;font-size:.68rem;font-weight:800;white-space:nowrap}
-.status-wilted{background:rgba(239,68,68,0.2);color:#fca5a5;border:1px solid rgba(239,68,68,0.4)}
-.status-bloomed{background:rgba(34,197,94,0.2);color:#86efac;border:1px solid rgba(34,197,94,0.4)}
-.leaves-selector,.tag-cloud{display:flex;gap:6px;flex-wrap:wrap}
-.leaf-btn{background:var(--glass);border:1px solid var(--border);color:var(--txt);padding:8px 11px;border-radius:10px;cursor:pointer;font-size:.77rem;transition:all .2s}
-.leaf-btn.active{background:rgba(251,191,36,0.22);border-color:var(--gold);color:#fde68a;font-weight:700}
-.leaf-btn.healed-leaf{border-color:rgba(34,197,94,0.5);color:#86efac}
-.info-box{background:rgba(0,0,0,0.32);border-radius:12px;padding:12px;border-left:4px solid var(--rose)}
-.info-box.psych{background:rgba(192,132,252,0.08);border-left-color:var(--purple)}
-.info-box.empathy{background:rgba(56,189,248,0.08);border-left-color:var(--blue)}
-.box-label{font-size:.69rem;text-transform:uppercase;font-weight:800;margin-bottom:4px;display:block;letter-spacing:.4px}
-.box-text{font-size:.85rem;color:#e2e8f0;line-height:1.5}
-.proposals-grid,.likes-categories,.mirror-grid,.sos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
-.proposal-card,.like-category-box{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px}
-.proposal-card.broken{border-top:3px solid #64748b}.proposal-card.new-prop{border-top:3px solid var(--green);background:rgba(34,197,94,0.06)}
-.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
-@media(max-width:520px){.action-row{grid-template-columns:1fr}}
-.water-btn{width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#0284c7,#2563eb);color:#fff;font-weight:800;font-size:.84rem;cursor:pointer; transition: transform 0.1s;}
-.water-btn:active { transform: scale(0.97); }
-.water-btn.secondary{background:linear-gradient(135deg,#d97706,#b45309)}
-.water-btn.healed{background:linear-gradient(135deg,#16a34a,#059669); opacity: 0.8; cursor: default;}
-.mirror-intro{background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);border-radius:16px;padding:15px;margin-bottom:16px;font-size:.88rem}
-.phase-banner{background:linear-gradient(135deg,rgba(244,63,94,0.18),rgba(192,132,252,0.18));border:1px solid rgba(244,63,94,0.4);border-radius:14px;padding:14px}
-.cycle-controls,.date-pill,.pact-item{display:flex;justify-content:space-between;align-items:center;background:var(--glass);border:1px solid var(--border);padding:10px 12px;border-radius:12px;font-size:.81rem;gap:8px;flex-wrap:wrap}
-.pact-item{justify-content:flex-start;align-items:flex-start}
-.cycle-select{background:#090d16;color:#fde68a;border:1px solid var(--border);padding:5px 8px;border-radius:8px;font-weight:700}
-.taste-tag{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#fef3c7;padding:5px 10px;border-radius:99px;font-size:.75rem}
-.taste-tag.pink{background:rgba(244,63,94,0.14);border-color:rgba(244,63,94,0.35);color:#ffe4e6}
-.taste-tag.blue{background:rgba(56,189,248,0.14);border-color:rgba(56,189,248,0.35);color:#e0f2fe}
-.taste-tag.green{background:rgba(34,197,94,0.14);border-color:rgba(34,197,94,0.35);color:#dcfce7}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);display:none;align-items:center;justify-content:center;z-index:100;padding:16px; backdrop-filter: blur(5px);}
-.modal-overlay.open{display:flex}
-.modal-card{background:#161f33;border:1px solid var(--border);border-radius:20px;max-width:520px;width:100%;padding:24px;position:relative}
-.close-modal{position:absolute;top:12px;right:12px;background:var(--glass);border:1px solid var(--border);color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer; display: flex; align-items: center; justify-content: center;}
+.glass-panel { 
+    background: var(--glass-bg); 
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px); 
+    border: 1px solid var(--glass-border); 
+    border-radius: 24px; 
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.9); 
+}
+
+.app-container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 20px 15px 120px; display: none; }
+.app-container.active { display: block; animation: fadeIn 1.5s ease-out; }
+
+h1, h2, h3 { font-weight: 900; letter-spacing: -0.02em; }
+.text-gradient { background: linear-gradient(to right, #fde68a, #f59e0b, #fb7185); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.font-mono { font-family: 'Space Mono', monospace; }
+
+.btn-primary { 
+    background: linear-gradient(135deg, #f59e0b, #e11d48); 
+    color: white; font-weight: bold; padding: 14px 28px; 
+    border-radius: 99px; transition: transform 0.2s, box-shadow 0.2s; 
+    box-shadow: 0 10px 25px rgba(225, 29, 72, 0.4); 
+    border: 1px solid rgba(255,255,255,0.2); cursor: pointer; 
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary:active { transform: scale(0.95); }
+.btn-primary:disabled { filter: grayscale(100%); opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.view-section { display: none; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.view-section.active { display: block; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+@keyframes pulseGlow { 0% { box-shadow: 0 0 10px rgba(251,191,36,0.2); } 50% { box-shadow: 0 0 30px rgba(251,191,36,0.6); } 100% { box-shadow: 0 0 10px rgba(251,191,36,0.2); } }
+
+.flower-unit { cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.flower-unit:hover { transform: scale(1.05) translateY(-5px); }
+.flower-unit.selected { transform: scale(1.1) translateY(-10px); filter: drop-shadow(0 15px 20px rgba(251,191,36,0.3)); }
+.flower-unit.selected .f-label { background: var(--gold); color: black; font-weight: bold; border-color: transparent; }
+
+/* SVG Girasol Animado */
+.stem { transition: all 1s ease-in-out; }
+.petal { transition: all 1s ease-in-out; transform-origin: center; }
+.wilted .stem { stroke: #475569; d: path('M50,200 Q70,120 80,60'); } /* Tallo doblado */
+.wilted .head-group { transform: translate(80px, 60px) rotate(45deg); }
+.wilted .petal { fill: #94a3b8; stroke: #64748b; }
+.wilted .center { fill: #334155; }
+
+.healed .stem { stroke: #22c55e; d: path('M50,200 Q50,120 50,40'); } /* Tallo recto */
+.healed .head-group { transform: translate(50px, 40px) rotate(0deg); animation: float 4s ease-in-out infinite; }
+.healed .petal { fill: #fde68a; stroke: #f59e0b; }
+.healed .center { fill: #78350f; }
+
+.nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 500px; z-index: 100; display: flex; justify-content: space-between; padding: 10px; border-radius: 99px; background: rgba(5,10,20,0.85); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 4px; font-size: 0.65rem; font-weight: 800; color: #64748b; transition: all 0.3s; border-radius: 99px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+.nav-item.active { background: rgba(251,191,36,0.15); color: var(--gold); }
+.nav-item span { font-size: 1.6rem; margin-bottom: 4px; filter: grayscale(100%) opacity(0.5); transition: all 0.3s; }
+.nav-item.active span { filter: grayscale(0%) opacity(1); transform: scale(1.2); }
+
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(251,191,36,0.3); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(251,191,36,0.6); }
+
+.game-canvas-container { position: relative; width: 100%; max-width: 400px; margin: 0 auto; aspect-ratio: 1/1; }
+.game-canvas { background: #000; border: 2px solid var(--gold); border-radius: 16px; width: 100%; height: 100%; box-shadow: 0 0 30px rgba(251,191,36,0.15); display: block; }
+.dpad-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 200px; margin: 20px auto 0; }
+.dpad-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; aspect-ratio: 1/1; transition: all 0.1s; user-select: none; }
+.dpad-btn:active { background: var(--gold); color: black; transform: scale(0.9); }
+
+.terminal-container { background: #0a0a0a; border-radius: 16px; overflow: hidden; border: 1px solid #333; }
+.terminal-header { background: #1a1a1a; padding: 10px 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #333; }
+.terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
 </style>
 </head>
-<body>
+<body class="antialiased selection:bg-rose-500 selection:text-white">
 
-<!-- Audio Player Oculto (Música de fondo) -->
-<audio id="bg-music" loop>
-    <!-- Usa tu propia pista o dejé un placeholder que es suave y relajante -->
-    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
-</audio>
+<div id="canvas-container"></div>
+<canvas id="weather-canvas"></canvas>
 
-<div class="particles" id="particles"></div>
-<div class="app-container">
-<header>
-    <button id="music-toggle" onclick="toggleMusic()">
-        <span id="music-icon">🎵</span> <span id="music-text">Play Música</span>
+<div id="login-screen" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-6 transition-opacity duration-1000">
+    <div class="glass-panel p-8 md:p-12 text-center max-w-md w-full relative z-10 border-gold/40 animate-[slideUp_1s_ease-out]">
+        <div class="text-7xl mb-6 animate-pulse">🔒</div>
+        <h1 class="text-3xl font-bold text-white mb-2 font-mono">Stark-OS v3.0</h1>
+        <p class="text-xs text-gray-400 mb-8 font-mono uppercase tracking-widest border-b border-gray-700 pb-4">Protocolo de Acceso Restringido</p>
+        
+        <p class="text-sm text-gray-300 mb-6">Este entorno cuántico está encriptado. Solo una persona en todo el multiverso tiene autorización para acceder a los registros emocionales.</p>
+        
+        <button onclick="authenticateUser()" class="btn-primary w-full text-lg shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] group">
+            <span class="group-hover:animate-bounce">👩🏻‍🍳</span> Identificar: La Chef
+        </button>
+        <p class="text-[0.65rem] text-gray-500 mt-6">*Al ingresar, el sistema calibrará sensores giroscópicos y habilitará el motor de resonancia acústica (Audio).</p>
+    </div>
+</div>
+
+<div class="app-container" id="app-main">
+
+    <header class="text-center mb-10 relative">
+        <div class="inline-flex items-center gap-2 bg-rose-500/20 border border-rose-500/50 text-rose-200 text-xs font-bold px-4 py-1.5 rounded-full mb-4 shadow-[0_0_15px_rgba(244,63,94,0.3)]">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+            </span>
+            Entrelazamiento Activo y Estable
+        </div>
+        <h1 class="text-4xl md:text-6xl text-gradient mb-3 drop-shadow-lg">Nuestro Espacio</h1>
+        
+        <div class="glass-panel p-5 mt-4 inline-block font-mono border-t-2 border-t-gold relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div class="text-[0.7rem] text-gold mb-1 uppercase tracking-widest font-bold">Tiempo desde el Reinicio (22 Jul)</div>
+            <div class="text-3xl md:text-4xl text-white font-black drop-shadow-md" id="uptime-counter">Calculando...</div>
+        </div>
+    </header>
+
+    <div class="glass-panel p-6 mb-10 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-transparent to-purple-900/10 pointer-events-none"></div>
+        
+        <div class="relative z-10 flex flex-col lg:flex-row justify-between items-stretch gap-6">
+            <!-- Clima Real -->
+            <div class="flex-1 w-full flex flex-col">
+                <h3 class="text-xs font-bold text-blue-300 mb-4 uppercase tracking-widest flex justify-between items-center border-b border-blue-900/30 pb-2">
+                    <span>🛰️ Red Atmosférica Abierta</span>
+                    <span id="weather-sync-status" class="text-[0.65rem] bg-blue-900/40 px-2 py-1 rounded text-blue-200">Conectando...</span>
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-4 flex-1">
+                    <!-- Orizaba -->
+                    <div class="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col justify-center transition-all hover:bg-black/60">
+                        <div class="text-[0.65rem] text-gray-400 mb-2 uppercase tracking-wider font-bold">📍 Orizaba (Santana)</div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-4xl drop-shadow-lg" id="w-icon-ori">⌛</span>
+                            <div>
+                                <div class="text-2xl font-black text-white leading-none" id="w-temp-ori">--°</div>
+                                <div class="text-xs text-blue-200 mt-1 capitalize font-medium" id="w-desc-ori">Leyendo...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Atlixco -->
+                    <div class="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col justify-center transition-all hover:bg-black/60">
+                        <div class="text-[0.65rem] text-gray-400 mb-2 uppercase tracking-wider font-bold">📍 Atlixco (Analy)</div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-4xl drop-shadow-lg" id="w-icon-atl">⌛</span>
+                            <div>
+                                <div class="text-2xl font-black text-white leading-none" id="w-temp-atl">--°</div>
+                                <div class="text-xs text-rose-200 mt-1 capitalize font-medium" id="w-desc-atl">Leyendo...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Análisis del Sistema -->
+            <div class="w-full lg:w-1/3 bg-rose-950/20 border border-rose-500/20 rounded-2xl p-5 flex flex-col justify-center">
+                <h3 class="text-xs font-bold text-rose-400 mb-3 uppercase tracking-widest">🧠 Estado Psicológico</h3>
+                <div class="flex items-start gap-4">
+                    <div class="text-4xl mt-1">🩺</div>
+                    <div>
+                        <div class="text-sm font-bold text-white mb-1">Análisis Predictivo Activo</div>
+                        <p class="text-[0.7rem] text-gray-400 leading-relaxed">El algoritmo indica que la comunicación honesta previene el sobrepensamiento. Advertencia al programador: Reducir excusas lógicas, aumentar presencia emocional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="view-garden" class="view-section active">
+        <div class="grid lg:grid-cols-2 gap-8 items-start">
+            
+            <!-- Invernadero Interactivo -->
+            <div class="glass-panel p-8 flex flex-col">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-black text-gold mb-3">Jardín de Resolución</h2>
+                    <p class="text-sm text-gray-300 leading-relaxed">Cada girasol representa un ciclo de nuestra historia. Si detectas fallas o errores, el girasol se marchitará. Toca una flor para leer el reporte, entender el error, y si sientes que estoy mejorando, <strong>riégala para sanarla</strong>.</p>
+                </div>
+                
+                <!-- Contenedor donde se inyectan los SVGs -->
+                <div class="flex justify-around items-end h-72 border-b-4 border-amber-900/60 pb-2 relative" id="garden-container">
+                    <!-- JS Injects flowers here -->
+                </div>
+                
+                <div class="mt-8 bg-black/30 p-4 rounded-xl border border-gold/20 flex justify-between items-center">
+                    <div>
+                        <div class="text-xs text-gray-400 uppercase tracking-wider font-bold mb-1">Herramienta de Sanación</div>
+                        <div class="text-sm text-white">Regadera de Empatía Cuántica</div>
+                    </div>
+                    <button id="btn-water-all" class="btn-primary !px-4 !py-2 text-sm" onclick="healSelectedLeaf()" disabled>
+                        💦 Regar Falla Seleccionada
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel Inspector de Hojas -->
+            <div class="glass-panel p-8 border-t-4 border-t-gold/50 flex flex-col h-full">
+                <div class="flex justify-between items-start mb-6 border-b border-white/10 pb-4">
+                    <div>
+                        <div class="text-[0.7rem] text-gold uppercase tracking-widest font-bold mb-1" id="panel-month">Selecciona un Girasol</div>
+                        <h2 class="text-2xl font-bold text-white" id="panel-title">Esperando input...</h2>
+                    </div>
+                    <div id="panel-badge" class="px-3 py-1 rounded-full text-xs font-black bg-white/10 text-gray-500">--</div>
+                </div>
+
+                <div id="leaves-container" class="flex flex-wrap gap-3 mb-6">
+                    <div class="text-sm text-gray-500 italic">Selecciona un mes en el jardín izquierdo para ver el desglose de fallas.</div>
+                </div>
+
+                <!-- Detalles Clínicos -->
+                <div id="clinical-details" class="hidden flex-col gap-4 flex-1">
+                    <div class="bg-purple-950/30 border-l-4 border-purple-500 p-4 rounded-r-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 text-6xl opacity-10">👨🏻‍💻</div>
+                        <h4 class="text-[0.7rem] font-bold text-purple-300 uppercase tracking-wider mb-2 flex items-center gap-2"><span class="text-lg">⚙️</span> Error del Sistema (Mi Falla):</h4>
+                        <p class="text-sm text-gray-200 leading-relaxed font-mono" id="detail-my-error"></p>
+                    </div>
+                    
+                    <div class="bg-blue-950/30 border-l-4 border-blue-500 p-4 rounded-r-xl relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 text-6xl opacity-10">👩🏻‍🍳</div>
+                        <h4 class="text-[0.7rem] font-bold text-blue-300 uppercase tracking-wider mb-2 flex items-center gap-2"><span class="text-lg">💔</span> Impacto Crítico (Tu Sentir):</h4>
+                        <p class="text-sm text-gray-200 leading-relaxed font-mono" id="detail-her-pain"></p>
+                    </div>
+                    
+                    <div class="bg-green-950/30 border-l-4 border-green-500 p-4 rounded-r-xl mt-auto relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 text-6xl opacity-10">🚀</div>
+                        <h4 class="text-[0.7rem] font-bold text-green-400 uppercase tracking-wider mb-2 flex items-center gap-2"><span class="text-lg">🛠️</span> Parche Propuesto (Solución Ideal):</h4>
+                        <p class="text-sm text-green-100 leading-relaxed font-mono" id="detail-solution"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-analysis" class="view-section">
+        <div class="mb-6 text-center">
+            <h2 class="text-3xl font-black text-white">Registros del Servidor Emocional</h2>
+            <p class="text-sm text-gray-400 mt-2 max-w-2xl mx-auto">Análisis exhaustivo de nuestra comunicación, estructurado por un perfilador psicológico avanzado para entender los detonantes de cada entidad.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Perfil del Programador -->
+            <div class="glass-panel p-8 border-t-4 border-t-purple-500">
+                <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-700/50">
+                    <div class="w-16 h-16 rounded-full bg-purple-900/50 flex items-center justify-center text-3xl border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.4)]">👨🏻‍💻</div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-purple-300">Entidad: Santana</h2>
+                        <p class="text-xs text-gray-400 font-mono uppercase">Perfil: Racionalización Defensiva / Evasión</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-5 text-sm text-gray-300 leading-relaxed pr-2 custom-scrollbar max-h-[50vh] overflow-y-auto">
+                    <div>
+                        <h4 class="text-white font-bold mb-1 border-b border-purple-900 pb-1">El Mecanismo de Defensa</h4>
+                        <p>Frente a la presión, mi CPU prioriza la "resolución de problemas lógicos" sobre la conexión emocional. Cuando tú me expresas una necesidad (ej. el internet falló), no leo tu necesidad de consuelo o compañía; leo un bug técnico que debo reparar. Esto me vuelve frío y distante en momentos donde necesitas calidez.</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-white font-bold mb-1 border-b border-purple-900 pb-1">El Error de la Madrugada (COD)</h4>
+                        <p>El 28 de Julio, prioricé jugar COD a las 4 AM, modificando armas y HUDs, en lugar de conectar contigo o descansar para estar presente al día siguiente. Minimizas tu sentir justificando que "me espantó el sueño" o que "todo mi entorno es digital". Esto genera un mensaje subliminal: mis hobbies virtuales tienen precedencia sobre nuestro vínculo real.</p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-bold mb-1 border-b border-purple-900 pb-1">Desconexiones y Muros</h4>
+                        <p>Tomar decisiones unilaterales impulsadas por mis inseguridades (borrar canales de Discord, perfiles en apps dudosas sin limpiar, no explicar claramente por qué me ausento). En lugar de comunicar "me siento agobiado", actúo cerrando canales de comunicación, dejándote a ciegas en la oscuridad.</p>
+                    </div>
+
+                    <div class="bg-purple-900/20 p-4 rounded-xl border border-purple-500/30 mt-4">
+                        <strong class="text-purple-400 block mb-2 font-mono text-xs uppercase">Dictamen Psicológico para Santana:</strong>
+                        Debes desinstalar el ego de "ingeniero solitario". Aprende que validar las emociones de Analy ("tienes razón mi amor, qué pesado está esto, hablemos") es mil veces más efectivo que intentar darle una cátedra lógica de por qué las cosas son como son.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Perfil de la Chef -->
+            <div class="glass-panel p-8 border-t-4 border-t-blue-500">
+                <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-700/50">
+                    <div class="w-16 h-16 rounded-full bg-blue-900/50 flex items-center justify-center text-3xl border border-blue-500/30 shadow-[0_0_15px_rgba(56,189,248,0.4)]">👩🏻‍🍳</div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-blue-300">Entidad: Analy</h2>
+                        <p class="text-xs text-gray-400 font-mono uppercase">Perfil: Apego Ansioso / Sobrepensamiento</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-5 text-sm text-gray-300 leading-relaxed pr-2 custom-scrollbar max-h-[50vh] overflow-y-auto">
+                    <div>
+                        <h4 class="text-white font-bold mb-1 border-b border-blue-900 pb-1">El Ciclo de Sobreestimulación</h4>
+                        <p>Tu mente analítica necesita certezas. Cuando él desaparece o envía señales mixtas (está en línea pero no responde, borra cosas de Discord, notificaciones fantasma), tu cerebro comienza a calcular escenarios catastróficos. Como dijiste (7 Jun): "Los sobrepensamientos me queman... no es algo que apenas esté pasando, llevo años así". Tu mecanismo es válido; es tu mente intentando protegerte de ser lastimada de nuevo.</p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-bold mb-1 border-b border-blue-900 pb-1">El Sentimiento de Segunda Opción</h4>
+                        <p>Tu reclamo (21 Jun): "Siento que no significó nada para ti... que te quedaste conmigo por la insistencia". Tu lenguaje del amor es el tiempo de calidad. Si inviertes tiempo esperándolo, y él te atiende con respuestas cortas o prioriza un rango en un juego, te sientes invalidada y relegada a un plan B.</p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-bold mb-1 border-b border-blue-900 pb-1">El Refugio en el Sarcasmo y Retirada</h4>
+                        <p>Cuando llegas a tu límite, tu defensa es replegarte ("ya no quiero nada", "raro de raro"). Es una forma pasiva de protestar por la falta de atención, esperando que él note tu ausencia y luche por acercarse. Si él responde de forma lógica ("es que estaba haciendo X cosa"), te lastima más, porque ignora el subtexto emocional.</p>
+                    </div>
+
+                    <div class="bg-blue-900/20 p-4 rounded-xl border border-blue-500/30 mt-4">
+                        <strong class="text-blue-400 block mb-2 font-mono text-xs uppercase">Resolución del Sistema para Analy:</strong>
+                        Tu ansiedad es completamente válida. El sistema (Santana) debe comprometerse a darte paz mental, no motivos para dudar. Tienes derecho a exigir prioridad, transparencia y apapachos virtuales sin excusas técnicas.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-express" class="view-section">
+        <div class="max-w-3xl mx-auto">
+            <div class="glass-panel p-8 border-t-4 border-t-pink-500">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-black text-pink-400 mb-2">Bitácora Cuántica de Analy</h2>
+                    <p class="text-sm text-gray-300">Si algo te incomoda, te hace sentir mal, o simplemente quieres desahogarte porque fui un pendejo, escríbelo aquí. Este canal encriptado guarda tus pensamientos localmente para que no se pierdan en el vacío.</p>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-xs text-pink-300 uppercase font-bold tracking-widest mb-2">Nuevo Registro Emocional</label>
+                    <textarea id="feedback-input" class="w-full bg-black/50 border border-pink-500/30 rounded-xl p-4 text-white text-sm font-mono focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none resize-none transition-all" rows="4" placeholder="Ej: Hoy sentí que me ignoraste de nuevo por jugar..."></textarea>
+                    
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-[0.65rem] text-gray-500 font-mono">*Los datos se almacenan en el caché de este dispositivo de forma segura.</span>
+                        <button class="btn-primary !py-2 !px-6" onclick="saveFeedback()">📡 Transmitir al Servidor</button>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-700/50 pt-6">
+                    <h3 class="text-xs text-gray-400 uppercase font-bold tracking-widest mb-4">Registros Anteriores</h3>
+                    <div id="feedback-list" class="space-y-3 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- JS Injects feedback here -->
+                        <div class="text-center text-sm text-gray-600 italic py-4">No hay registros guardados aún.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-system" class="view-section">
+        <div class="grid lg:grid-cols-2 gap-8 items-start">
+            
+            <!-- Pac-Man Game -->
+            <div class="glass-panel p-6 md:p-8 flex flex-col items-center">
+                <div class="w-full flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gold">Atrapando el Presente</h2>
+                    <div class="text-xs bg-black/50 px-3 py-1 rounded-full border border-gold/30 text-gold font-mono">
+                        Vidas: <span id="p-lives">❤️❤️❤️</span>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-gray-300 mb-6 text-center">Tú (👩🏻‍🍳) cómete mis excusas y recolecta amor (🍓🍰🌻). Esquiva mis defectos (👻). Demuestra que me ganas hasta en mis propios juegos.</p>
+                
+                <div class="game-canvas-container">
+                    <canvas id="pacman-canvas" class="game-canvas"></canvas>
+                    
+                    <!-- Overlays de Mensajes -->
+                    <div id="pacman-overlay" class="absolute inset-0 bg-black/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center transition-opacity duration-300 z-10">
+                        <h3 id="pm-title" class="text-3xl font-black text-white mb-2 shadow-black drop-shadow-lg"></h3>
+                        <p id="pm-desc" class="text-sm text-gray-300 mb-6"></p>
+                        <button onclick="initPacmanMap()" class="btn-primary !py-3">🎮 <span id="pm-btn-txt">Iniciar</span></button>
+                    </div>
+                </div>
+
+                <div class="w-full flex justify-between items-center mt-4 px-2 font-mono text-sm font-bold text-gray-400">
+                    <div>Nivel Cuántico: <span id="p-level" class="text-white">1</span></div>
+                    <div>Puntos: <span id="p-score" class="text-white">0</span></div>
+                </div>
+
+                <div class="dpad-container w-full lg:hidden">
+                    <div></div>
+                    <button class="dpad-btn" onmousedown="setPacmanDir(0, -1)" ontouchstart="setPacmanDir(0, -1); event.preventDefault();">⬆️</button>
+                    <div></div>
+                    <button class="dpad-btn" onmousedown="setPacmanDir(-1, 0)" ontouchstart="setPacmanDir(-1, 0); event.preventDefault();">⬅️</button>
+                    <button class="dpad-btn" onmousedown="setPacmanDir(0, 1)" ontouchstart="setPacmanDir(0, 1); event.preventDefault();">⬇️</button>
+                    <button class="dpad-btn" onmousedown="setPacmanDir(1, 0)" ontouchstart="setPacmanDir(1, 0); event.preventDefault();">➡️</button>
+                </div>
+                <p class="text-[0.65rem] text-gray-500 mt-4 text-center w-full">Usa deslizar en pantalla o flechas en teclado.</p>
+            </div>
+
+            <!-- Terminal OS & Pong -->
+            <div class="glass-panel p-0 overflow-hidden flex flex-col h-[600px] border-gray-700 shadow-2xl">
+                <div class="terminal-header">
+                    <div class="flex gap-2">
+                        <div class="terminal-dot bg-red-500"></div>
+                        <div class="terminal-dot bg-yellow-500"></div>
+                        <div class="terminal-dot bg-green-500"></div>
+                    </div>
+                    <span class="text-xs text-gray-400 font-mono ml-4 flex-1 text-center">root@stark-os:~/console</span>
+                </div>
+                
+                <!-- Terminal Text Area -->
+                <div class="flex-1 p-5 font-mono text-sm bg-[#0a0a0a] text-green-400 overflow-y-auto custom-scrollbar relative" id="terminal-screen">
+                    <div id="term-output">
+                        Bienvenida al root del sistema, mi amor.<br>
+                        Typeando <span class="text-blue-300">help</span> para comandos.<br>
+                        Ejecuta <span class="text-rose-400 font-bold bg-rose-900/30 px-1">play_pong</span> para reto retro.<br>
+                    </div>
+                    <div class="flex mt-2">
+                        <span class="mr-2 text-gray-500">$</span>
+                        <input type="text" id="term-input" class="flex-1 bg-transparent border-none outline-none text-green-300" autocomplete="off" onkeydown="handleTermEnter(event)">
+                    </div>
+
+                    <!-- Pong Game Overlay inside Terminal -->
+                    <div id="pong-container" class="absolute inset-0 bg-black z-20 hidden flex-col">
+                        <div class="bg-gray-900 text-xs text-gray-400 font-mono p-1 text-center border-b border-gray-700 flex justify-between px-4">
+                            <span>Comando: play_pong</span>
+                            <button onclick="exitPong()" class="text-rose-500 hover:text-rose-400">[Cerrar (Ctrl+C)]</button>
+                        </div>
+                        <canvas id="pong-canvas" class="flex-1 w-full" onmousemove="movePongPaddleMouse(event)" ontouchmove="movePongPaddleTouch(event)"></canvas>
+                        <div class="bg-gray-900 text-center text-xs p-2 text-gray-500 font-mono">Toca y arrastra para mover tu paleta (Izquierda)</div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-gray-900 border-t border-gray-800 grid grid-cols-2 gap-2 text-xs font-mono">
+                    <button onclick="injectCmd('ping_heart')" class="bg-black/50 border border-gray-700 p-2 rounded text-left hover:bg-gray-800 transition text-gray-300">> ping_heart</button>
+                    <button onclick="injectCmd('deploy_hug')" class="bg-black/50 border border-gray-700 p-2 rounded text-left hover:bg-gray-800 transition text-rose-300">> deploy_hug</button>
+                    <button onclick="injectCmd('analyze_love')" class="bg-black/50 border border-gray-700 p-2 rounded text-left hover:bg-gray-800 transition text-blue-300">> analyze_love</button>
+                    <button onclick="injectCmd('play_pong')" class="bg-rose-900/30 border border-rose-500/50 p-2 rounded text-left hover:bg-rose-900/50 transition text-rose-200 font-bold">> play_pong</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+
+<nav class="nav-bar shadow-[0_20px_50px_rgba(0,0,0,0.9)] hidden" id="main-nav">
+    <button class="nav-item active" onclick="switchTab('view-garden', this)">
+        <span>🌻</span> Jardín
     </button>
-    <br><br>
-    <span class="badge-date">🌻 Nuestro Jardín Vivo • Día 22 de cada mes 🌻</span>
-    <h1>Nuestro Ecosistema</h1>
-    <p class="subtitle">Un jardín no se cuida solo deseando que crezca en el futuro; se riega hoy, en el presente. Aquí están mis flores marchitas para asumir dónde te he fallado, mi análisis para sanarlo, lo que siento en silencio, tus ciclos, tus gustos y nuestro método de comprobación.</p>
-    <div class="health-bar-wrapper">
-        <div class="health-header"><span>🌱 Vitalidad y Sanación del Ecosistema</span><span id="health-percent">Calculando...</span></div>
-        <div class="progress-track"><div class="progress-fill" id="health-fill"></div></div>
-    </div>
-</header>
-
-<section class="elements-bar">
-    <div class="element-card" onclick="openElementModal('sun')">
-        <div class="element-top"><div class="element-icon">☀️</div><div><div class="element-role">Lo que significas para mí</div><div class="element-title">El Sol: Tu Luz y Presencia</div></div></div>
-        <p class="element-desc">Incluso a kilómetros de distancia, eres el calor que me saca de mi aislamiento y le da sentido a mis desvelos. (Toca para abrir)</p>
-    </div>
-    <div class="element-card" onclick="openElementModal('water')">
-        <div class="element-top"><div class="element-icon">💧</div><div><div class="element-role">Lo que me entregas</div><div class="element-title">El Agua: Tu Amor y Cuidado 24/7</div></div></div>
-        <p class="element-desc">Tus canciones, tus masajitos, recordarme mis pastillas y gotitas, esperarme en Discord y darme cariño sin pedirlo. (Toca para abrir)</p>
-    </div>
-    <div class="element-card" onclick="openElementModal('earth')">
-        <div class="element-top"><div class="element-icon">🌱</div><div><div class="element-role">Nuestra raíz y destino</div><div class="element-title">La Tierra: Lealtad y Hogar</div></div></div>
-        <p class="element-desc">Saber que solo eres tú, honrar nuestro presente cada fin de semana y construir nuestra casita y tu cocina soñada. (Toca para abrir)</p>
-    </div>
-</section>
-
-<nav class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('view-garden',this)">🥀 1. Mis Errores (5 Flores)</button>
-    <button class="tab-btn" onclick="switchTab('view-mirror',this)">🍃 2. Puntos que Noto y Siento</button>
-    <button class="tab-btn" onclick="switchTab('view-care',this)">🌙 3. Tus Días y Tu Esencia</button>
-    <button class="tab-btn" onclick="switchTab('view-sos',this)">🛠️ 4. Método de Comprobación</button>
-    <button class="tab-btn" onclick="switchTab('view-greenhouse',this)">🏡 5. Invernadero de Acuerdos</button>
+    <button class="nav-item" onclick="switchTab('view-analysis', this)">
+        <span>🧠</span> Clínica
+    </button>
+    <button class="nav-item" onclick="switchTab('view-express', this)">
+        <span>📝</span> Expresión
+    </button>
+    <button class="nav-item" onclick="switchTab('view-system', this)">
+        <span>🕹️</span> Sistema
+    </button>
 </nav>
 
-<section id="view-garden" class="view-section active">
-    <div class="garden-layout">
-        <div class="garden-stage">
-            <div class="stage-instruction">👆 Toca cada <strong>Girasol (Etapa)</strong> y luego cada <strong>Hoja</strong> para ver el diagnóstico profundo y regarla.</div>
-            <div class="flowers-row" id="flowers-container"></div>
-            <div class="soil-bed">🌍 Raíz Firme: Ni 100% fría lógica, ni 100% silencio • Presente y Futuro Juntos</div>
-        </div>
-        <div class="inspector-panel">
-            <div class="inspector-header">
-                <div><span class="box-label" style="color:var(--gold)" id="flower-month-tag">ETAPA</span><h2 class="inspector-title" id="flower-title">Selecciona una flor</h2></div>
-                <span class="inspector-status status-wilted" id="flower-status-badge">Marchita</span>
-            </div>
-            <div><span class="box-label" style="color:var(--muted)">🍃 Hojas de este Girasol (Problemas específicos):</span><div class="leaves-selector" id="leaves-buttons"></div></div>
-            <div class="info-box"><span class="box-label" style="color:#fb7185">🥀 1. El Hecho Concreto / Mi Error:</span><p class="box-text" id="leaf-error-text"></p></div>
-            <div class="info-box psych"><span class="box-label" style="color:var(--purple)">🧠 2. Raíz Psicológica (Mecanismo de Defensa):</span><p class="box-text" id="leaf-psych-text"></p></div>
-            <div class="info-box empathy"><span class="box-label" style="color:var(--blue)">💭 3. Cómo te hice sentir (Empatía Afectiva):</span><p class="box-text" id="leaf-empathy-text"></p></div>
-            <div class="proposals-grid">
-                <div class="proposal-card broken"><span class="box-label" style="color:#94a3b8">💔 4. Propuesta Rota / Intento Fallido:</span><p class="box-text" id="leaf-broken-text"></p></div>
-                <div class="proposal-card new-prop"><span class="box-label" style="color:#4ade80">✨ 5. Nueva Propuesta Real y Medible:</span><p class="box-text" id="leaf-new-text"></p></div>
-            </div>
-            <div class="action-row">
-                <button class="water-btn secondary" id="heal-leaf-btn" onclick="toggleHealLeaf()">🌿 Sanar y Asumir esta Hoja</button>
-                <button class="water-btn" id="water-flower-btn" onclick="toggleWaterFlower()">💧 Regar Girasol Completo</button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="view-mirror" class="view-section">
-    <div class="mirror-intro"><strong>❤️‍🩹 Comunicación Asertiva y Desde el Amor:</strong> Mi amor, como te dije una vez, tú no eres un proyecto de universidad; eres el proyecto de mi vida. Este apartado aplica psicología afectiva sin culpas: son las cosas que <strong>noto y siento en mi corazón</strong> cuando interactuamos, expresadas con ternura para que jamás nos gane la resignación ni el silencio.</div>
-    <div class="mirror-grid" id="mirror-container"></div>
-</section>
-
-<section id="view-care" class="view-section">
-    <div class="care-layout">
-        <div class="lunar-card">
-            <div class="inspector-header"><div><span class="box-label" style="color:var(--pink)">🌙 Biología y Empatía Afectiva</span><h2 class="inspector-title" style="color:#ffe4e6">Tu Calendario Lunar & Monitor de Fases</h2></div></div>
-            <p class="box-text">Tengo grabado que el <strong>11 de septiembre a las 9:00 AM</strong> me contaste que viste la primera gotita y me pediste: <em>"Dame bechitos y apapáchame... ¿Me amas mucho?"</em>. Quiero anticiparme siempre para cuidarte como mereces.</p>
-            <div class="cycle-controls"><span>⚙️ Duración de tu ciclo:</span><select id="cycle-length-select" class="cycle-select" onchange="calculateCycleDates()"><option value="28" selected>28 días (Estándar)</option><option value="29">29 días</option><option value="30">30 días</option></select></div>
-            <div class="phase-banner">
-                <span class="box-label" style="color:#fde68a" id="current-phase-title">🔍 Estado actual de tu ciclo hoy:</span>
-                <p class="box-text" id="current-phase-desc" style="font-weight:600;margin-bottom:6px"></p>
-                <p class="box-text" id="current-phase-care" style="font-size:.8rem;color:#ffe4e6"></p>
-            </div>
-            <div class="info-box" style="text-align:center;border-left-color:var(--pink)">
-                <span class="box-label" style="color:var(--pink)">🌷 Próxima llegada estimada de tus días:</span>
-                <div style="font-size:1.35rem;font-weight:900;color:#fda4af;margin:4px 0" id="next-period-date"></div>
-                <p class="box-text" style="font-size:.8rem" id="next-period-countdown"></p>
-            </div>
-            <div><span class="box-label" style="color:var(--gold)">📅 Próximos 4 Ciclos (Fechas para cuidarte al máximo):</span><div id="upcoming-cycles-list" style="display:flex;flex-direction:column;gap:6px"></div></div>
-        </div>
-
-        <div class="likes-panel">
-            <div><span class="box-label" style="color:var(--gold)">🍓 Mi Libreta Digital de Ti</span><h2 class="inspector-title">El Mapa Completo de Tus Gustos y Esencia</h2><p class="box-text" style="font-size:.82rem;color:var(--muted)">Tú me enseñaste que amar es anotar los detalles de la otra persona en una libreta. Aquí está todo lo que observo, admiro y amo de ti:</p></div>
-            <div class="likes-categories">
-                <div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🍰 Postres, Dulces y Café</h4><div class="tag-cloud"><span class="taste-tag pink">Pastel de Chocolate y Mil Hojas 😋</span><span class="taste-tag pink">Arroz con leche</span><span class="taste-tag pink">Chocolatito caliente con pan</span><span class="taste-tag pink">Cafecito para quitar el sueño</span><span class="taste-tag pink">Palomitas o postre viendo pelis</span><span class="taste-tag pink">Agua bien fría (aunque yo tiemble jsjs)</span></div></div>
-                <div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🌮 Comida Salada y Bebidas</h4><div class="tag-cloud"><span class="taste-tag">Mole y Tamales de mole</span><span class="taste-tag">Chilaquiles verdes</span><span class="taste-tag">Enmoladas, Sopecitos y Taquitos</span><span class="taste-tag">Pizza con orilla de queso</span><span class="taste-tag">Lasaña y Comida China (Pollo agridulce)</span><span class="taste-tag">Huevitos rancheritos (¡nunca revueltos!)</span><span class="taste-tag">Picante solo por antojo</span><span class="taste-tag">Miches, cantaritos, tepache y tequila 😌</span></div></div>
-                <div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🥰 Tus Lenguajes del Amor</h4><div class="tag-cloud"><span class="taste-tag blue">Contacto físico: abrazos, besos y darme masajitos</span><span class="taste-tag blue">Cocinarme y hacerme de desayunar</span><span class="taste-tag blue">Escuchar que te diga "Te adoro" :3</span><span class="taste-tag blue">Mis textos largos de buenos días</span><span class="taste-tag blue">Audios dándote besos</span><span class="taste-tag blue">Que te mande fotos mías y videos directo a ti</span><span class="taste-tag blue">Una flor hecha con lata de Monster y fotos de nuestros meñiques</span></div></div>
-                <div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🏋🏻‍♀️ Tu Mundo, Rutinas y Nosotros</h4><div class="tag-cloud"><span class="taste-tag green">Tu Recetario y amor por Gastronomía</span><span class="taste-tag green">Gym: Espalda/hombro y piernita de pollo al fallo</span><span class="taste-tag green">Cuidar a Rogelio (tu gallo)</span><span class="taste-tag green">Cuidar a "Nuestros niños" :3</span><span class="taste-tag green">Ver SAO, Jujutsu Kaisen y The Boys juntos</span><span class="taste-tag green">Casita en el Realm y jugar COD</span><span class="taste-tag green">Tu cobijita cuando llueve</span><span class="taste-tag green">Recordarme mi Omeprazol y mis gotitas para los ojos</span></div></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="view-sos" class="view-section">
-    <div class="mirror-intro" style="border-color:var(--gold);background:rgba(251,191,36,0.08)"><strong>🛠️ Nuestro «Método de Comprobación» Emocional:</strong> En mayo platicábamos de que en matemáticas y programación todo problema tiene un <em>método de comprobación</em> para saber a tiempo dónde algo falló y corregirlo en orden. Toca cualquiera de estas situaciones cuando la estemos viviendo para activar nuestro protocolo de rescate:</div>
-    <div class="sos-grid" id="sos-container"></div>
-</section>
-
-<section id="view-greenhouse" class="view-section">
-    <div class="greenhouse-box">
-        <span class="badge-date">🏡 Invernadero de Acuerdos Permanentes</span>
-        <h2 class="inspector-title">Compromisos Activos para Nuestro Presente y Futuro</h2>
-        <p class="box-text" style="color:var(--muted)">Cada casilla marcada se guarda automáticamente en la memoria de este jardín y eleva la vitalidad de nuestro ecosistema. Solo palomea si lo estamos cumpliendo:</p>
-        <div id="pacts-container" style="display:flex;flex-direction:column;gap:10px;margin-top:8px"></div>
-    </div>
-</section>
-</div>
-
-<div class="modal-overlay" id="element-modal" onclick="if(event.target === this) closeElementModal()">
-    <div class="modal-card">
-        <button class="close-modal" onclick="closeElementModal()">✕</button>
-        <div id="modal-icon" style="font-size:2.4rem; margin-bottom: 10px;"></div>
-        <h3 id="modal-title" style="color:#fde68a;margin:8px 0; font-size: 1.4rem;"></h3>
-        <p id="modal-body" class="box-text" style="font-size: 0.95rem; line-height: 1.6;"></p>
-    </div>
-</div>
-
 <script>
-const elementsData = {
-    sun: { icon: "☀️", title: "El Sol: Lo que tu luz despierta en mí", body: "Durante años me acostumbré a vivir aislado 'haciendo lo mío', apagando mi empatía emocional como coraza. Cuando llegaste tú, despertaste en mí una ternura y una curiosidad emocional que no conocía. Eres quien me dice 'Ánimo mi inge' o 'Tienes mis respetos Stark' cuando me arden los ojos de programar en la madrugada; eres el calor al que siempre quiero regresar." },
-    water: { icon: "💧", title: "El Agua: Tu cuidado y entrega 24/7", body: "El agua de este jardín es cada vez que me ofreces un masajito cuando salgo cansado de hornear (o programar), cada vez que me recuerdas cargar mi Omeprazol para la gastritis o ponerme gotitas en los ojos porque no parpadeo al codear. Es tu paciencia esperándome en Discord, tus canciones dedicadas y ese amor 24/7 que me entregas sin que yo tenga que pedirlo." },
-    earth: { icon: "🌱", title: "La Tierra: Nuestro Presente y Nuestro Hogar", body: "La tierra firme es mi lealtad absoluta de que en mi vida solo existes tú. Pero hoy comprendo que la tierra no solo sirve para soñar con la casita y tus utensilios de gastronomía del futuro; sirve para pisar firme en el PRESENTE, recibirte con los brazos abiertos cuando vienes a verme y disfrutar cada domingo y cada noche juntos." }
-};
-
-const flowersData = [
+// Base de datos de conflictos extraída de los chats proporcionados
+const clinicalData = [
     {
-        id: 0, month: "Mayo - Junio", title: "1. Girasol del Alba: Desvelo y Confianza", bloomed: false,
+        month: "Mayo - Junio",
+        title: "La Desconexión Digital",
         leaves: [
-            { name: "🍃 Hoja 1: Madrugada en Discord", healed: false, error: "Cuando cambiaron tus planes al llegar tu hermano y me muteaste en Discord para no despertarme, en lugar de preguntarte con calma me emperré de madrugada, me armé una película negativa y me muteé como castigo.", psych: "Hipervigilancia afectiva y Proyección: Ante un cambio imprevisto sin aviso previo, mi sistema nervioso activó heridas del pasado, interpretando tu cuidado (no despertarme) como ocultamiento.", empathy: "Te hice sentir vigilada, juzgada injustamente y con la impotencia de que hasta un gesto para cuidar mi sueño terminara en enojo.", broken: "Prometí que entendería cuando los planes familiares cambian sin asumir lo peor.", newProp: "Pausar antes de reaccionar de noche. Preguntar siempre desde la confianza ('¿Todo bien, mi amor?') y jamás usar el muteo o el silencio como castigo." },
-            { name: "🍃 Hoja 2: Miedo a no ser prioridad", healed: false, error: "Sobreanalizar descripciones en perfiles o detalles en redes sociales, proyectando la duda de si yo realmente tenía mi lugar exclusivo contigo.", psych: "Apego ansioso latente: El temor interno a abrir mi corazón al 100% y salir lastimado me llevó a buscar 'pruebas' donde ya había amor y lealtad total de tu parte.", empathy: "Sentiste que todo el amor, las llamadas y el lugar público que me das no eran suficientes para que yo confiara en ti.", broken: "Decir que ya estaba todo asimilado cuando por dentro seguía rumiando inseguridades.", newProp: "Practicar vulnerabilidad limpia: si un día me siento inseguro, pedirte un abrazo o reafirmación con ternura sin disfrazarlo de reclamo." },
-            { name: "🍃 Hoja 3: Fallas técnicas y el Router", healed: false, error: "Cuando falló tu internet en Junio, mi mente técnica (Santana Ingeniero) tomó el control. Quise configurarte el router y pedirte contraseñas en lugar de simplemente decirte 'No importa mi amor, hablemos por WhatsApp'.", psych: "Solucionismo defensivo: Ante la frustración, mi cerebro busca arreglar máquinas en vez de validar corazones. Prioricé la conexión técnica sobre la conexión humana.", empathy: "Te sentiste rechazada. Sentiste que si la conexión no era perfecta para jugar COD, yo perdía el interés. Respondiste con un resignado 'no ocupo internet ahorita'.", broken: "Decir 'acabo esto y te llamo' pero dejar que el estrés arruine el momento.", newProp: "Apagar el 'modo técnico'. Si falla el WiFi, la solución es apapacharnos en llamada normal o mensajear bonito hasta dormir. El afecto vence al código." }
+            {
+                name: "El Router vs La Empatía",
+                myError: "Cuando tu internet falló, mi cerebro de ingeniero vio un problema a resolver. Quise arreglar tu router y medir tus megas en lugar de entender que querías compañía y me enfríe técnicamente.",
+                herPain: "Te sentiste rechazada e invalidada. Sentiste que si la conexión no era perfecta para jugar juntos, yo perdía el interés. Terminaste cerrándote con un 'no ocupo internet ahorita'.",
+                solution: "Apagar el modo resolutivo. Si falla la red, la solución es la presencia: 'No importa mi amor, hablemos normal por llamada o durmamos juntitos'.",
+                healed: false
+            },
+            {
+                name: "Atención Condicionada",
+                myError: "Responder rápido solo cuando 'no tenía nada en mente' (20 Jun). O borrar canales de voz de Discord impulsivamente sin comunicarlo por mis propias frustraciones.",
+                herPain: "El 21 de Jun me dijiste: 'me tomas a largo... pareciera que no significo nada para ti'. Te dolió sentir que eras una opción secundaria mientras yo tenía 'más opciones'.",
+                solution: "Demostrar con acciones que eres mi prioridad innegociable. No dejar que mis enojos técnicos afecten la comunicación directa contigo.",
+                healed: false
+            }
         ]
     },
     {
-        id: 1, month: "Julio - Agosto", title: "2. Girasol de Agosto: Iniciativa y Detalles", bloomed: false,
+        month: "Julio",
+        title: "Madrugadas y Suposiciones",
         leaves: [
-            { name: "🍃 Hoja 1: Fotos a cuenta gotas", healed: false, error: "Darte vueltas cuando me pedías una foto mía ('Yo quería una foto tuya, no de ellos') o dejar que sintieras que solo te doy atención cuando yo quiero.", psych: "Coraza evitativa de autosuficiencia: Por costumbre de vivir encerrado en mi mundo, subestimé que a distancia una foto espontánea o un video mío es oxígeno afectivo para ti.", empathy: "Te hice sentir que tenías que 'mendigar' mi imagen y mi cariño, llevándote al límite de querer renunciar a pedírmelo.", broken: "Decir que me iría soltando poco a poco pero retroceder cada vez que había tensión.", newProp: "Enviarte fotos mías en el trabajo o en casa y videos solo para ti de forma espontánea varias veces por semana, antes de que me los pidas." },
-            { name: "🍃 Hoja 2: El 1 de Agosto y Fechas", healed: false, error: "Pasar por alto el Día de la Novia (1 de agosto) escudándome en que yo no conocía esas fechas, dejando pasar el día sin un detalle oportuno.", psych: "Racionalización práctica: Creer que el afecto no necesita fechas simbólicas, ignorando que para tu lenguaje del amor ser recordada y presumida en días clave valida tu importancia.", empathy: "Te sentiste pasada por alto e con la ilusión rota al ver que un día especial para las parejas pasaba en blanco.", broken: "Pedirte la lista de fechas pero dejar que el cansancio diario apagara la sorpresa.", newProp: "Honrar cada día 22, tu cumpleaños y cada fecha simbólica con anticipación, creatividad y detalles que nazcan de mí." },
-            { name: "🍃 Hoja 3: Memes y Likes de despedida", healed: false, error: "Mandar videos al grupo en vez de a tu chat privado ('Este me lo tuve que robar porque no me lo enviaste') y dar like a posts sobre 'alejarse para dar paz'.", psych: "Autosabotaje por insuficiencia: Cuando siento que te fallo, activo la fantasía defensiva de 'mejor me quito de su camino', mientras descuido los pequeños gestos exclusivos contigo.", empathy: "Sentiste que perdías tu trato especial y que en cualquier momento yo podía tirar la toalla y abandonarte.", broken: "Jurarte firmeza absoluta mientras mis interacciones en redes sembraban incertidumbre.", newProp: "Cuidar la exclusividad de nuestro chat privado mandándote primero a ti lo que me da risa, y erradicar para siempre cualquier indirecta de alejarme." }
-        ]
-    },
-    {
-        id: 2, month: "Agosto - Sept", title: "3. Girasol de Fuego: Juegos, Palabra y Salud", bloomed: false,
-        leaves: [
-            { name: "🍃 Hoja 1: Tono 'mamón' en COD", healed: false, error: "Ponerme cortante por puntos o avisos en el juego, hacer comparaciones injustas o sonar más preocupado por ganar rango en Free Fire / COD que por pasarla bien contigo.", psych: "Desplazamiento de frustración: Llevar el estrés del día al juego y no validar de inmediato tu sensibilidad. Sentir que ganar partidas compensa mi falta de control externo.", empathy: "Transformé nuestro lugar seguro de diversión en tensión. Te hice sentir que rankear valía más que tu tranquilidad o tu compañía.", broken: "Decir que jugaríamos solo para desestresarnos y terminar discutiendo por tablas.", newProp: "En el juego tú y yo somos equipo: cero reclamos por puntos o rangos. El tiempo contigo es sagrado e innegociable; si el juego estresa, lo apagamos y nos mimamos." },
-            { name: "🍃 Hoja 2: Romper palabra (Clanes viejos)", healed: false, error: "Haberte asegurado que el ciclo con mi antiguo clan estaba totalmente cerrado, y usar accesos para volver a meterme a resolver problemas de esa tribu.", psych: "Apego al rol de salvador del pasado: Dificultad para soltar la identidad de lo que construí antes, sin medir el costo de contradecir mi palabra frente a ti.", empathy: "Te hice sentir que mis promesas tienen letra chiquita y que cuando digo 'ya cerré eso', puedo romperlo por impulso dejándote en segundo plano.", broken: "Promesa rota directa: 'Dijiste que ya había terminado eso para ti y lo volviste a hacer'.", newProp: "Congruencia total entre lo que digo y lo que hago. Lo que queda en el pasado, se queda en el pasado; mi presente y mi única tribu eres tú y nuestra familia." },
-            { name: "🍃 Hoja 3: Viejos excesos (La loquera)", healed: false, error: "Hablar con ligereza de volver a 'la loquera' o negociar pases a fin de año, sabiendo cuánto te angustia mi bienestar y mi falta de límites en el pasado.", psych: "Minimización del riesgo: Disfrazar viejos hábitos como 'convivencia o negocios', pasando por alto el dolor que le causa a quien de verdad ama mi vida.", empathy: "Desperté tu miedo más profundo de verme recaer o hacerme daño cuando tú rezas por mí y sueñas una familia sana conmigo.", broken: "Admitir que no tengo límites con el vicio pero seguir dejando la puerta entreabierta.", newProp: "Elegir la vida sana que estamos construyendo. Ver tus límites no como prohibición, sino como el abrazo de la mujer que cuida mi vida y mi futuro." }
-        ]
-    },
-    {
-        id: 3, month: "Septiembre I", title: "4. Girasol de Escucha: Empatía vs Terminal", bloomed: false,
-        leaves: [
-            { name: "🍃 Hoja 1: Invalidar tu Servicio Social", healed: false, error: "El 10 de sept, por no traer audífonos leí solo transcripciones, te insistí con irte a Puebla y llamé 'cagadas' a las escuelas públicas. Me respondiste: 'Es pa lo que me alcanzó, perdón'.", psych: "Solucionismo impulsivo sin escucha activa: Querer 'resolverte' la vida desde mi perspectiva privilegiada sin detenerme primero a escuchar tu voz y tu realidad.", empathy: "Te hice sentir no escuchada, juzgada en tus posibilidades económicas y obligada a pedir perdón por el lugar donde estudias y sirves con tanto esfuerzo.", broken: "Prometer ser tu apoyo incondicional en tu carrera de Gastronomía.", newProp: "Nunca opinar ni dar soluciones sin antes haber escuchado tus audios completos con atención. Honrar y admirar tu escuela, tu sazón y cada logro tuyo." },
-            { name: "🍃 Hoja 2: Ironía pasivo-agresiva", healed: false, error: "El 26 de sept, cuando regresaste de convivir con tu familia, te escribí con sarcasmo: 'Me fue bien... no preguntaste pero no cené y ya me bañé'.", psych: "Comunicación pasivo-agresiva por necesidad de atención: En vez de decirte con amor que extrañaba tu atención, cobré tu distracción familiar con culpa.", empathy: "Después de un día en que me dijiste cuánto me necesitabas, mi mensaje te cayó como un balde de agua fría y reproche.", broken: "Acordar que hablaríamos directo sin indirectas ni sarcasmos.", newProp: "Pedir atención de forma limpia y cariñosa: 'Amor, ¿tienes un ratito para que te platique de mi día?' sin cobrar facturas emocionales." },
-            { name: "🍃 Hoja 3: Flores en Terminal iOS", healed: false, error: "El 21 de sept, al mandarte las flores amarillas por código en iSH Shell, hacerte pasar más de dos horas peleando con el teclado de tu iPhone y errores de consola.", psych: "Proyección técnica y ceguera de usuario: Quise expresarte mi amor en mi propio idioma (código Linux) sin adaptar la experiencia para que fuera sencilla y placentera para ti.", empathy: "Agradeciste el detalle con todo el amor, pero terminaste frustrada y estresada porque el regalo se volvió una tarea técnica exhaustiva.", broken: "Hacer detalles digitales sin verificar antes su compatibilidad total.", newProp: "Adaptar mi conocimiento a tu comodidad: entregarte mis detalles listos en un entorno visual y fácil (como esta página web adaptada a tu iPhone) para que tú solo tengas que disfrutarlos y sonreír." }
-        ]
-    },
-    {
-        id: 4, month: "Septiembre II", title: "5. Girasol del Presente: Orgullo y Madrugadas", bloomed: false,
-        leaves: [
-            { name: "🍃 Hoja 1: Barreras para venir a verme", healed: false, error: "Cuando tú con toda la ilusión buscaste venir a Orizaba a verme, anteponer que no tenía dinero, que mis horarios eran malos, haciéndote preguntar herida: '¿Te molesta que esté contigo?'.", psych: "Orgullo masculino defensivo e Hiper-futurismo: Por vergüenza a mi falta de liquidez actual (renta, gastos) saboteé el encuentro físico que sostiene nuestro vínculo HOY.", empathy: "Te sentiste rechazada como mujer y como pareja; sentiste que tu esfuerzo y tu dinero por viajar estorbaban y que yo enfriaba tu ilusión.", broken: "Hablar todos los días de vivir juntos en el futuro mientras ponía barreras para vernos un fin de semana hoy.", newProp: "Derribar el orgullo de 'proveedor único'. Tu presencia jamás estorba. Recibirte con ilusión absoluta, aceptar si quieres aportar algo al fin de semana y disfrutar estar juntos en casa sin que el dinero sea barrera." },
-            { name: "🍃 Hoja 2: Interrogatorios a las 3:00 AM", healed: false, error: "Forzar debates interminables de madrugada pidiendo crear 'una base de datos o registro lógico de problemas' cuando tú estabas emocionalmente agotada.", psych: "Intelectualización extrema: Cuando siento miedo de perderte en una discusión, mi cerebro de ingeniero intenta controlar la angustia convirtiendo los sentimientos en tablas algorítmicas a deshoras.", empathy: "Sentiste que te trataba como a una máquina, drenando tu energía, invalidando tu llanto y llevándote a la sobreestimulación.", broken: "Prometer no alargar dramas de madrugada y respetar tus límites de energía.", newProp: "Regla sagrada de medianoche: después de las 12:00 AM queda prohibido analizar conflictos. Primero nos damos paz, dormimos descansados y construimos soluciones de día con la mente fresca." }
+            {
+                name: "Sobrepensamientos Ignorados",
+                myError: "Minimizar tu dolor llamando 'pendejadas' a tus sobrepensamientos sobre mi perfil en redes o mis actitudes. Decir 'haz lo que quieras' en lugar de dar seguridad.",
+                herPain: "Te hizo dudar de mi interés. Me dijiste: 'Me hiciste creer que no te importaba'. Tus miedos crecieron al no recibir validación inmediata.",
+                solution: "Escuchar sin juzgar. Entender que tu ansiedad es real y mi deber es darte certezas claras, constantes y amorosas, no dejarte adivinar.",
+                healed: false
+            },
+            {
+                name: "El Incidente de COD (4 AM)",
+                myError: "El 28 de Julio, prioricé jugar COD a las 4 AM, modificando mi HUD y armas, sabiendo que tú estabas cansada y querías pasar tiempo. Mi justificación fue 'se me espantó el sueño'.",
+                herPain: "Notaste que estuve conectado hace horas mientras tú priorizabas tu sueño para estar bien. Lo definiste como 'raro de raro'. Fue una muestra clara de egoísmo de mi parte.",
+                solution: "Sacrificar el egoísmo digital. Si hay insomnio, te escribo cosas lindas, leo un libro, o edito algo productivo, pero no reemplazo nuestro tiempo con un juego.",
+                healed: false
+            }
         ]
     }
 ];
 
-const mirrorData = [
-    { title: "1. Callarte pequeñas cosas hasta sobrepensar", feel: "Noto que cuando ando lleno de trabajo o escuela, por ser comprensiva y no querer 'distraerme', te guardas cosas que te incomodan. Pero ese silencio hace que tu mente les dé vueltas hasta que el dolor se vuelve enorme.", broken: "Acuerdo previo: Habíamos quedado en que, como no soy adivino, me dirías cualquier incomodidad en el momento en que nace.", solution: "Propuesta de Co-regulación: Usar nuestra señal secreta (mandarme un 🌻 o decir 'Amor, código abrazo'). En cuanto la vea, dejo el código para escucharte." },
-    { title: "2. El escudo de 'Ya cedí, ya no pediré nada'", feel: "Siento un vacío muy fuerte cuando, tras una decepción por las fotos, el juego o nuestra visita, levantas una muralla y dices: 'Ya no voy a insistir, ya no pediré nada, ahí muere'. Siento que te resignas y apagas tu brillo conmigo.", broken: "Hábito que lastima: Creer que anular tus deseos o 'ceder para evitar peleas' trae paz, cuando en realidad crea distancia emocional.", solution: "Propuesta de Co-regulación: Nunca renunciar a pedirnos amor. Vale decir 'Hoy estoy sentida y necesito que te acerques primero', pero jamás cerrar la puerta con un 'nunca más'." },
-    { title: "3. La sed de contacto físico frente a la distancia", feel: "Comprendo y siento cuánto te pesa estar lejos en Atlixco. Tu forma de amar es tocar, abrazar, darme masajitos, cocinarme y compartir un domingo familiar, y la pantalla a veces te desespera hasta hacerte dudar.", broken: "Hábito que lastima: Dejar que pasen semanas pesadas sin una fecha clara en el calendario para tocarnos y vernos.", solution: "Propuesta de Co-regulación: Tener siempre activa nuestra próxima fecha real de encuentro físico en Orizaba o donde sea, y hacer videollamadas cenando juntos." },
-    { title: "4. El temor a que la emoción te desborde", feel: "Escucho tu corazón cuando me dices: 'Yo no soy lógica como tú, si ampliamos el tema mis emociones me van a controlar'. Noto que prefieres cortar el tema para protegerte de la frustración.", broken: "Hábito que lastima: Yo empujarte con mil preguntas lógicas y biblias de texto, y tú cerrarte por miedo a explotar.", solution: "Propuesta de Co-regulación: Hablar en dosis pequeñas (máximo 10 minutos, de día y un punto a la vez), priorizando apapacharnos." },
-    { title: "5. Sentir que tus esfuerzos son menos", feel: "Me dolió en el alma cuando me dijiste 'Es pa lo que me alcanzó, perdón' hablando de tu escuela. Noto que a veces mis comentarios impulsivos te han hecho sentir que minimizo tu entorno.", broken: "Hábito que lastima: Hablar desde mi burbuja (como la vez de la terminal) sin medir el peso de mis palabras sobre tu esfuerzo diario.", solution: "Propuesta de Co-regulación: Recordarte todos los días cuánto admiro a la mujer y futura chef que eres, tu disciplina y todo lo que logras en tu día a día." }
-];
+let selectedMonthIdx = null;
+let selectedLeafIdx = null;
 
-const sosData = [
-    { btn: "🥺 «Hoy te extraño demasiado y ya te necesito»", title: "Protocolo de Presencia Inmediata", steps: "1. Pausa inmediata a cualquier código (Termux/PC) o tarea por 10 minutos.<br>2. Llamada o nota de voz mirándonos/escuchándonos sin distracciones.<br>3. Reafirmar nuestro plan del fin de semana para vernos: tu lugar es en mis brazos, nunca eres una molestia." },
-    { btn: "💔 «Siento que ya no pediré nada / Ahí muere»", title: "Protocolo Contra la Resignación", steps: "1. Alto total a la discusión: ninguno se rinde ni renuncia a sus necesidades.<br>2. Reconozco mi falta de iniciativa sin excusas ni explicaciones técnicas.<br>3. En lugar de que tú dejes de pedir, hoy yo tomo el volante y te demuestro con hechos que me nace darte el 100%." },
-    { btn: "🌙 «Estoy en mis días / Me siento bajoneada»", title: "Protocolo Lunar de Apapacho al 1000%", steps: "1. Cero debates, cero ironías y cero exigencias hoy.<br>2. Lluvia de bechitos, audios tiernos y recordarte cada hora cuánto te amo.<br>3. Consentirte con tu cobijita, ver un capítulo de nuestra serie favorita juntos a distancia y no despegarme de ti." },
-    { btn: "🕒 «Son más de las 12:00 AM y estamos tensos»", title: "Regla de Oro de Medianoche", steps: "1. Prohibido intentar resolver o enlistar problemas con sueño.<br>2. Nos decimos: 'Te amo incluso cuando no nos entendemos al 100%, mañana con luz lo cuidamos'.<br>3. Nos quedamos acompañados en llamada, en silencio y paz, hasta dormir." }
-];
-
-const pactsData = [
-    "1. Usar nuestra señal secreta (🌻) en WhatsApp antes de guardarnos las cosas o aplicar la ley del hielo.",
-    "2. Recibir tus visitas en Orizaba en el PRESENTE con ilusión total, tirando a la basura mi orgullo por cuestiones de dinero o gastos.",
-    "3. Iniciativa constante de mi parte: mandarte fotos mías, audios tiernos y buenos días largos sin que tengas que pedírmelos.",
-    "4. Escuchar siempre tus audios completos antes de opinar y jamás menospreciar tu escuela, tu sazón o tu esfuerzo.",
-    "5. Mantener el juego (COD/Free Fire) como refugio de diversión, jamás para rankear estresados o hacerte sentir de segunda categoría.",
-    "6. Aplicar la Regla de Medianoche: después de las 12:00 AM apagamos mi 'cerebro de ingeniero', dejamos de debatir y nos apapachamos."
-];
-
-let currentFlowerIndex = 0, currentLeafIndex = 0;
-let savedState = JSON.parse(localStorage.getItem('ecosistema_v3') || '{}');
-let isMusicPlaying = false;
-
-function toggleMusic() {
-    const audio = document.getElementById('bg-music');
-    const btn = document.getElementById('music-toggle');
-    const icon = document.getElementById('music-icon');
-    const text = document.getElementById('music-text');
+async function authenticateUser() {
+    // UI Transition
+    const screen = document.getElementById('login-screen');
+    const btn = screen.querySelector('button');
+    btn.innerHTML = '<span class="animate-spin text-xl">⏳</span> Desencriptando Protocolos...';
+    btn.classList.add('pointer-events-none');
     
-    if (isMusicPlaying) {
-        audio.pause();
-        isMusicPlaying = false;
-        btn.classList.remove('playing');
-        icon.innerText = "🎵";
-        text.innerText = "Play Música";
-    } else {
-        // Intentar reproducir (requiere que el usuario haya tocado la pantalla)
-        audio.play().then(() => {
-            isMusicPlaying = true;
-            btn.classList.add('playing');
-            icon.innerText = "⏸️";
-            text.innerText = "Pausar";
-        }).catch(e => {
-            console.log("No se pudo reproducir el audio por políticas del navegador.", e);
-            alert("Tu iPhone bloquea la música automática. Vuelve a tocar el botón para iniciarla.");
-        });
+    // Iniciar Audio (Requiere interaccion del usuario)
+    await initAudioContext();
+    
+    setTimeout(() => {
+        screen.classList.add('opacity-0');
+        setTimeout(() => {
+            screen.style.display = 'none';
+            document.getElementById('app-main').classList.add('active');
+            document.getElementById('main-nav').classList.remove('hidden');
+            document.getElementById('main-nav').classList.add('flex');
+            
+            // Inicializar Sistemas
+            initThreeJSGalaxy();
+            initWeather();
+            initGarden();
+            loadFeedback();
+            startUptimeCounter();
+            
+            // Welcome message in terminal
+            printTerm("Autenticación exitosa. Perfil: Analy (La Reina).", "text-rose-400 font-bold");
+            printTerm("Iniciando módulos compensatorios de amor...", "text-green-400");
+        }, 1000);
+    }, 1500);
+}
+
+let synth, sequence;
+async function initAudioContext() {
+    try {
+        await Tone.start();
+        console.log("Audio ready");
+        
+        // Crear un sinte espacial y relajante
+        const reverb = new Tone.Reverb({ decay: 8, preDelay: 0.2 }).toDestination();
+        const delay = new Tone.FeedbackDelay("8n", 0.4).connect(reverb);
+        const autoFilter = new Tone.AutoFilter("4n").connect(delay).start();
+        
+        synth = new Tone.PolySynth(Tone.Oscillator, {
+            oscillator: { type: "sine" },
+            envelope: { attack: 2, decay: 1, sustain: 0.5, release: 4 }
+        }).connect(autoFilter);
+        
+        synth.volume.value = -15; // Suave
+
+        // Progresión de acordes relajantes (Do Maj9, Lam9, Fa Maj7, Sol6)
+        const chords = [
+            ["C4", "E4", "G4", "B4", "D5"],
+            ["A3", "C4", "E4", "G4", "B4"],
+            ["F3", "A3", "C4", "E4", "G4"],
+            ["G3", "B3", "D4", "E4", "A4"]
+        ];
+        
+        let step = 0;
+        Tone.Transport.scheduleRepeat(time => {
+            synth.triggerAttackRelease(chords[step % chords.length], "2m", time);
+            step++;
+        }, "2m"); // Toca cada 2 compases
+
+        Tone.Transport.bpm.value = 60; // Lento y relajante
+        Tone.Transport.start();
+
+    } catch(e) {
+        console.error("Audio block", e);
     }
 }
 
-function saveProgress() {
-    const state = {
-        flowers: flowersData.map(f => ({ bloomed: f.bloomed, leaves: f.leaves.map(l => l.healed) })),
-        pacts: Array.from(document.querySelectorAll('.pact-check')).map(c => c.checked)
-    };
-    localStorage.setItem('ecosistema_v3', JSON.stringify(state));
-    updateHealthBar();
+function startUptimeCounter() {
+    const startD = new Date('2026-07-22T00:00:00'); // Fecha de reinicio del prompt
+    setInterval(() => {
+        let diff = new Date() - startD;
+        if(diff < 0) { document.getElementById('uptime-counter').innerText = "Viajando al futuro..."; return; }
+        
+        let d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        let h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+        let m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
+        let s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+        document.getElementById('uptime-counter').innerText = `${d} Días, ${h}:${m}:${s}`;
+    }, 1000);
 }
 
-function loadProgress() {
-    if (savedState.flowers) {
-        savedState.flowers.forEach((sf, fIdx) => {
-            if (flowersData[fIdx]) {
-                flowersData[fIdx].bloomed = sf.bloomed;
-                sf.leaves.forEach((lh, lIdx) => { 
-                    if (flowersData[fIdx].leaves[lIdx]) flowersData[fIdx].leaves[lIdx].healed = lh; 
-                });
+function switchTab(tabId, btnEl) {
+    document.querySelectorAll('.view-section').forEach(el => {
+        el.classList.remove('active');
+        el.style.animation = 'none';
+        el.offsetHeight; /* trigger reflow */
+        el.style.animation = null; 
+    });
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    if(btnEl) btnEl.classList.add('active');
+    
+    // Pause games if switching away
+    if(tabId !== 'view-system') {
+        pActive = false; // Pacman
+        pongActive = false; // Pong
+    }
+}
+
+async function initWeather() {
+    const status = document.getElementById('weather-sync-status');
+    try {
+        // Coordenadas: Orizaba (18.85, -97.10), Atlixco (18.90, -98.43)
+        const urls = [
+            'https://api.open-meteo.com/v1/forecast?latitude=18.85&longitude=-97.10&current_weather=true',
+            'https://api.open-meteo.com/v1/forecast?latitude=18.90&longitude=-98.43&current_weather=true'
+        ];
+        
+        const [resOri, resAtl] = await Promise.all(urls.map(u => fetch(u)));
+        const [dataOri, dataAtl] = await Promise.all([resOri.json(), resAtl.json()]);
+
+        const mapW = (code, isDay) => {
+            if (code <= 1) return { icon: isDay ? '☀️' : '🌕', text: 'Despejado', type: isDay ? 'sun' : 'moon' };
+            if (code <= 3) return { icon: isDay ? '⛅' : '☁️', text: 'Nublado', type: 'cloud' };
+            if (code <= 48) return { icon: '🌫️', text: 'Neblina', type: 'cloud' };
+            if (code <= 67) return { icon: '🌧️', text: 'Lluvia', type: 'rain' };
+            if (code <= 77) return { icon: '❄️', text: 'Frío/Nieve', type: 'rain' };
+            return { icon: '⛈️', text: 'Tormenta', type: 'rain' };
+        };
+
+        const wO = mapW(dataOri.current_weather.weathercode, dataOri.current_weather.is_day);
+        const wA = mapW(dataAtl.current_weather.weathercode, dataAtl.current_weather.is_day);
+
+        document.getElementById('w-icon-ori').innerText = wO.icon;
+        document.getElementById('w-temp-ori').innerText = `${Math.round(dataOri.current_weather.temperature)}°`;
+        document.getElementById('w-desc-ori').innerText = wO.text;
+
+        document.getElementById('w-icon-atl').innerText = wA.icon;
+        document.getElementById('w-temp-atl').innerText = `${Math.round(dataAtl.current_weather.temperature)}°`;
+        document.getElementById('w-desc-atl').innerText = wA.text;
+
+        status.innerText = "Conexión Estable";
+        status.className = "text-[0.65rem] bg-green-900/50 px-2 py-1 rounded text-green-300 font-bold border border-green-500/30";
+        
+        // Renderizar canvas meteorológico basado en Orizaba o Atlixco (mezcla)
+        startWeatherCanvas(wO.type === 'rain' || wA.type === 'rain', dataOri.current_weather.is_day);
+
+    } catch (e) {
+        console.error("Weather API failed", e);
+        status.innerText = "Error API";
+        status.className = "text-[0.65rem] bg-red-900/50 px-2 py-1 rounded text-red-300 font-bold";
+        startWeatherCanvas(false, 0); // Default night
+    }
+}
+
+function startWeatherCanvas(isRaining, isDay) {
+    const cvs = document.getElementById('weather-canvas');
+    const ctx = cvs.getContext('2d');
+    
+    function resize() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let raindrops = [];
+    if(isRaining) {
+        for(let i=0; i<100; i++) raindrops.push({x: Math.random()*cvs.width, y: Math.random()*cvs.height, l: Math.random()*20+10, v: Math.random()*10+5});
+    }
+
+    function animate() {
+        ctx.clearRect(0,0,cvs.width,cvs.height);
+        
+        // Sol o Luna suave en la esquina superior derecha
+        const time = Date.now() * 0.0005;
+        const oX = cvs.width * 0.8 + Math.sin(time)*30;
+        const oY = cvs.height * 0.2 + Math.cos(time)*15;
+        
+        let grad = ctx.createRadialGradient(oX, oY, 20, oX, oY, 200);
+        if(isDay) {
+            grad.addColorStop(0, 'rgba(251,191,36,0.3)');
+            grad.addColorStop(1, 'rgba(251,191,36,0)');
+        } else {
+            grad.addColorStop(0, 'rgba(148,163,184,0.15)');
+            grad.addColorStop(1, 'rgba(148,163,184,0)');
+        }
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(oX, oY, 200, 0, Math.PI*2); ctx.fill();
+
+        // Lluvia
+        if(isRaining) {
+            ctx.strokeStyle = 'rgba(186, 230, 253, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            raindrops.forEach(r => {
+                ctx.moveTo(r.x, r.y);
+                ctx.lineTo(r.x - r.l*0.1, r.y + r.l);
+                r.y += r.v;
+                r.x -= r.v*0.1;
+                if(r.y > cvs.height) { r.y = -20; r.x = Math.random()*cvs.width + 50; }
+            });
+            ctx.stroke();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function initThreeJSGalaxy() {
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    
+    // Niebla para profundidad
+    scene.fog = new THREE.FogExp2(0x020308, 0.001);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
+    camera.position.z = 1000;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    // Crear partículas de estrellas
+    const starGeo = new THREE.BufferGeometry();
+    const starCount = 2000;
+    const starPos = new Float32Array(starCount * 3);
+    const starColors = new Float32Array(starCount * 3);
+
+    const colorBlue = new THREE.Color('#38bdf8');
+    const colorPink = new THREE.Color('#f43f5e');
+    const colorGold = new THREE.Color('#fbbf24');
+
+    for(let i=0; i<starCount*3; i+=3) {
+        starPos[i] = (Math.random() - 0.5) * 3000;
+        starPos[i+1] = (Math.random() - 0.5) * 3000;
+        starPos[i+2] = (Math.random() - 0.5) * 3000;
+
+        let mixedColor = colorBlue.clone();
+        const rnd = Math.random();
+        if(rnd > 0.8) mixedColor = colorGold;
+        else if(rnd > 0.5) mixedColor = colorPink;
+
+        starColors[i] = mixedColor.r;
+        starColors[i+1] = mixedColor.g;
+        starColors[i+2] = mixedColor.b;
+    }
+
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+
+    // Textura redonda procedural para las estrellas
+    const createCircleTexture = () => {
+        const matCvs = document.createElement('canvas'); matCvs.width = 64; matCvs.height = 64;
+        const matCtx = matCvs.getContext('2d');
+        matCtx.beginPath(); matCtx.arc(32, 32, 30, 0, Math.PI*2);
+        matCtx.fillStyle = 'white'; matCtx.fill();
+        return new THREE.CanvasTexture(matCvs);
+    }
+
+    const starMat = new THREE.PointsMaterial({
+        size: 8, map: createCircleTexture(), transparent: true, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false
+    });
+
+    const starMesh = new THREE.Points(starGeo, starMat);
+    scene.add(starMesh);
+
+    // Núcleo brillante / Agujero Negro en el centro
+    const coreGeo = new THREE.SphereGeometry(150, 32, 32);
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const core = new THREE.Mesh(coreGeo, coreMat);
+    scene.add(core);
+
+    // Halo del núcleo
+    const haloGeo = new THREE.PlaneGeometry(1000, 1000);
+    const haloCvs = document.createElement('canvas'); haloCvs.width=256; haloCvs.height=256;
+    const haloCtx = haloCvs.getContext('2d');
+    const grad = haloCtx.createRadialGradient(128,128, 20, 128,128, 128);
+    grad.addColorStop(0, 'rgba(251,191,36,1)');
+    grad.addColorStop(0.3, 'rgba(244,63,94,0.4)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    haloCtx.fillStyle = grad; haloCtx.fillRect(0,0,256,256);
+    
+    const haloMat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(haloCvs), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+    const halo = new THREE.Mesh(haloGeo, haloMat);
+    scene.add(halo);
+
+    // Variables de Movimiento
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
+
+    // Giroscopio
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', (e) => {
+            if(e.gamma !== null && e.beta !== null) {
+                // gamma: izq a der (-90 a 90) -> mapear a rotacion
+                targetX = e.gamma * (Math.PI / 180) * 1.5; 
+                // beta: adelante a atras (-180 a 180) -> normalizar
+                targetY = (e.beta - 45) * (Math.PI / 180) * 1.5;
             }
         });
     }
-}
 
-function triggerRain() {
-    for (let i = 0; i < 30; i++) {
-        const drop = document.createElement('div'); 
-        drop.className = 'rain-drop';
-        drop.style.left = (Math.random() * 100) + 'vw';
-        drop.style.animationDelay = (Math.random() * 0.5) + 's';
-        document.body.appendChild(drop);
-        setTimeout(() => drop.remove(), 1100);
+    // Fallback Mouse
+    window.addEventListener('mousemove', (e) => {
+        targetX = (e.clientX - window.innerWidth/2) * 0.001;
+        targetY = (e.clientY - window.innerHeight/2) * 0.001;
+    });
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Loop de animación
+    const clock = new THREE.Clock();
+    function animate() {
+        requestAnimationFrame(animate);
+        const delta = clock.getDelta();
+
+        // Rotación general de la galaxia
+        starMesh.rotation.y += 0.05 * delta;
+        halo.rotation.z -= 0.1 * delta;
+
+        // Interpolación suave de cámara basada en input
+        mouseX += (targetX - mouseX) * 0.05;
+        mouseY += (targetY - mouseY) * 0.05;
+
+        camera.position.x = mouseX * 800;
+        camera.position.y = -mouseY * 800;
+        camera.lookAt(scene.position);
+
+        // Que el halo mire a la camara
+        halo.lookAt(camera.position);
+
+        renderer.render(scene, camera);
     }
+    animate();
 }
 
 function initGarden() {
-    loadProgress();
-    const pCont = document.getElementById('particles');
-    for (let i = 0; i < 15; i++) {
-        const p = document.createElement('div'); p.className = 'particle';
-        const s = Math.random() * 4 + 3; p.style.width = s+'px'; p.style.height = s+'px';
-        p.style.left = (Math.random()*100)+'%'; p.style.animationDuration = (Math.random()*8+7)+'s';
-        pCont.appendChild(p);
-    }
-    renderFlowersStage(); 
-    selectFlower(0); 
-    renderMirrorSection(); 
-    renderSosSection(); 
-    renderPacts();
-    calculateCycleDates(); 
-    updateHealthBar();
-}
-
-function switchTab(tabId, btn) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    btn.classList.add('active');
-}
-
-function openElementModal(type) {
-    const data = elementsData[type];
-    document.getElementById('modal-icon').innerText = data.icon;
-    document.getElementById('modal-title').innerText = data.title;
-    document.getElementById('modal-body').innerText = data.body;
-    document.getElementById('element-modal').classList.add('open');
-}
-
-function closeElementModal() {
-    document.getElementById('element-modal').classList.remove('open');
-}
-
-/* --- LÓGICA DE JARDÍN --- */
-function renderFlowersStage() {
-    const container = document.getElementById('flowers-container');
+    const container = document.getElementById('garden-container');
     container.innerHTML = '';
     
-    flowersData.forEach((f, idx) => {
-        let isSelected = currentFlowerIndex === idx ? 'selected' : '';
-        let isBloomed = f.bloomed ? 'bloomed' : 'wilted';
+    clinicalData.forEach((data, mIdx) => {
+        let unhealed = data.leaves.filter(l => !l.healed).length;
+        let isWilted = unhealed > 0;
         
-        // Determinar color de las hojas según estado
-        let leafFill = f.bloomed ? '#22c55e' : '#475569';
+        let unit = document.createElement('div');
+        unit.className = `flower-unit flex flex-col items-center w-1/3 group`;
+        unit.onclick = () => selectFlower(mIdx, unit);
         
-        container.innerHTML += `
-        <div class="flower-unit ${isSelected} ${isBloomed}" onclick="selectFlower(${idx})">
-            <svg class="flower-svg" viewBox="0 0 100 200">
-                <path class="stem-path" d="M50,200 Q40,110 50,40" fill="none" />
-                <path class="leaf-svg-item" d="M50,150 Q20,130 30,100 Q45,120 50,150" fill="${leafFill}"/>
-                <path class="leaf-svg-item" d="M50,120 Q80,100 70,70 Q55,90 50,120" fill="${leafFill}"/>
+        // Creación del SVG dinámico
+        let svgClass = isWilted ? 'wilted' : 'healed';
+        let svg = `
+        <svg viewBox="0 0 100 200" class="w-16 h-32 md:w-24 md:h-48 drop-shadow-xl ${svgClass}">
+            <!-- Hoja triste si esta marchito -->
+            ${isWilted ? '<path d="M50,150 Q20,130 10,160 Q40,180 50,150" fill="#475569" class="transition-all duration-1000" />' 
+                       : '<path d="M50,130 Q10,100 20,70 Q60,90 50,130" fill="#22c55e" class="transition-all duration-1000" />'}
+            
+            <path class="stem" fill="none" stroke-width="5" stroke-linecap="round" />
+            
+            <g class="head-group">
+                <!-- Pétalos -->
+                <circle cx="0" cy="-25" r="8" class="petal"/> <circle cx="20" cy="-15" r="8" class="petal"/>
+                <circle cx="25" cy="5" r="8" class="petal"/>  <circle cx="15" cy="20" r="8" class="petal"/>
+                <circle cx="-15" cy="20" r="8" class="petal"/> <circle cx="-25" cy="5" r="8" class="petal"/>
+                <circle cx="-20" cy="-15" r="8" class="petal"/>
                 
-                <g class="flower-head">
-                    <circle cx="50" cy="40" r="28" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
-                    <circle cx="50" cy="40" r="16" fill="#78350f"/>
-                    <!-- Detalles del centro del girasol -->
-                    <circle cx="45" cy="35" r="2" fill="#92400e"/>
-                    <circle cx="55" cy="45" r="2" fill="#92400e"/>
-                    <circle cx="55" cy="35" r="2" fill="#92400e"/>
-                    <circle cx="45" cy="45" r="2" fill="#92400e"/>
-                </g>
-            </svg>
-            <div class="flower-label"><span class="status-dot"></span>${f.month}</div>
+                <!-- Centro -->
+                <circle cx="0" cy="0" r="16" class="center stroke-black stroke-2"/>
+            </g>
+        </svg>
+        <div class="f-label mt-3 px-3 py-1 rounded-lg bg-black/80 border border-white/10 text-[0.65rem] whitespace-nowrap text-gray-300 transition-colors shadow-lg">
+            ${isWilted ? '🥀' : '🌻'} ${data.month}
         </div>`;
+        
+        unit.innerHTML = svg;
+        container.appendChild(unit);
     });
 }
 
-function selectFlower(idx) {
-    currentFlowerIndex = idx;
-    const f = flowersData[idx];
+function selectFlower(mIdx, unitEl) {
+    document.querySelectorAll('.flower-unit').forEach(el => el.classList.remove('selected'));
+    unitEl.classList.add('selected');
     
-    // UI Panel Inspector
-    document.getElementById('flower-month-tag').innerText = f.month.toUpperCase();
-    document.getElementById('flower-title').innerText = f.title;
+    selectedMonthIdx = mIdx;
+    let data = clinicalData[mIdx];
+    let unhealedCount = data.leaves.filter(l=>!l.healed).length;
     
-    const badge = document.getElementById('flower-status-badge');
-    badge.innerText = f.bloomed ? "Flor Sanada ✨" : "Flor Marchita 🥀";
-    badge.className = `inspector-status ${f.bloomed ? 'status-bloomed' : 'status-wilted'}`;
+    document.getElementById('panel-month').innerText = `Ciclo: ${data.month}`;
+    document.getElementById('panel-title').innerText = data.title;
+    document.getElementById('panel-badge').innerText = unhealedCount === 0 ? 'Sanado ✨' : `${unhealedCount} Fallas`;
+    document.getElementById('panel-badge').className = `px-3 py-1 rounded-full text-xs font-black ${unhealedCount === 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`;
     
-    // Botones de Hojas
-    const leavesCont = document.getElementById('leaves-buttons');
+    let leavesCont = document.getElementById('leaves-container');
     leavesCont.innerHTML = '';
-    f.leaves.forEach((l, lIdx) => {
+    
+    data.leaves.forEach((leaf, lIdx) => {
         let btn = document.createElement('button');
-        btn.className = `leaf-btn ${l.healed ? 'healed-leaf' : ''}`;
-        btn.innerText = l.name;
-        btn.onclick = () => selectLeaf(lIdx);
+        let cl = leaf.healed ? 'bg-green-900/40 border-green-500 text-green-300' : 'bg-rose-900/40 border-rose-500 text-rose-200 hover:bg-rose-800/60';
+        btn.className = `px-4 py-2 rounded-xl text-xs font-bold border transition-all ${cl}`;
+        btn.innerText = `${leaf.healed ? '🌿' : '🥀'} ${leaf.name}`;
+        btn.onclick = () => selectErrorLeaf(mIdx, lIdx, btn);
         leavesCont.appendChild(btn);
     });
     
-    renderFlowersStage();
-    selectLeaf(0); // Seleccionar la primera hoja por defecto
+    document.getElementById('clinical-details').classList.add('hidden');
+    document.getElementById('btn-water-all').disabled = true;
 }
 
-function selectLeaf(idx) {
-    currentLeafIndex = idx;
-    const l = flowersData[currentFlowerIndex].leaves[idx];
+function selectErrorLeaf(mIdx, lIdx, btnEl) {
+    // Styling buttons
+    const btns = document.getElementById('leaves-container').children;
+    for(let i=0; i<btns.length; i++) btns[i].classList.remove('ring-2', 'ring-white');
+    btnEl.classList.add('ring-2', 'ring-white');
+
+    selectedLeafIdx = lIdx;
+    let leaf = clinicalData[mIdx].leaves[lIdx];
     
-    // Marcar botón activo
-    const btns = document.getElementById('leaves-buttons').children;
-    for(let i=0; i<btns.length; i++){
-        btns[i].classList.remove('active');
-        if(i === idx) btns[i].classList.add('active');
-    }
+    document.getElementById('clinical-details').classList.remove('hidden');
+    document.getElementById('clinical-details').classList.add('flex');
     
-    // Llenar textos
-    document.getElementById('leaf-error-text').innerHTML = l.error;
-    document.getElementById('leaf-psych-text').innerHTML = l.psych;
-    document.getElementById('leaf-empathy-text').innerHTML = l.empathy;
-    document.getElementById('leaf-broken-text').innerHTML = l.broken;
-    document.getElementById('leaf-new-text').innerHTML = l.newProp;
+    document.getElementById('detail-my-error').innerText = leaf.myError;
+    document.getElementById('detail-her-pain').innerText = leaf.herPain;
+    document.getElementById('detail-solution').innerText = leaf.solution;
     
-    // Botón de sanar hoja
-    const healBtn = document.getElementById('heal-leaf-btn');
-    if(l.healed) {
-        healBtn.className = "water-btn healed";
-        healBtn.innerText = "✓ Hoja Sanada y Asumida";
+    let btnWater = document.getElementById('btn-water-all');
+    if(leaf.healed) {
+        btnWater.innerText = "✨ Parche ya asimilado";
+        btnWater.disabled = true;
     } else {
-        healBtn.className = "water-btn secondary";
-        healBtn.innerText = "🌿 Sanar y Asumir esta Hoja";
-    }
-    
-    // Check si todas las hojas están sanas para activar regar flor
-    checkFlowerHealable();
-}
-
-function toggleHealLeaf() {
-    const l = flowersData[currentFlowerIndex].leaves[currentLeafIndex];
-    if(!l.healed) {
-        l.healed = true;
-        selectLeaf(currentLeafIndex);
-        saveProgress();
-        triggerRain(); // Efecto visual pequeño
-        selectFlower(currentFlowerIndex); // Refresca botones
+        btnWater.innerText = "💦 Regar para perdonar";
+        btnWater.disabled = false;
     }
 }
 
-function checkFlowerHealable() {
-    const f = flowersData[currentFlowerIndex];
-    const allHealed = f.leaves.every(l => l.healed);
-    const waterBtn = document.getElementById('water-flower-btn');
+function healSelectedLeaf() {
+    if(selectedMonthIdx !== null && selectedLeafIdx !== null) {
+        clinicalData[selectedMonthIdx].leaves[selectedLeafIdx].healed = true;
+        
+        // Regenerar UI
+        initGarden();
+        const units = document.querySelectorAll('.flower-unit');
+        if(units[selectedMonthIdx]) selectFlower(selectedMonthIdx, units[selectedMonthIdx]);
+        
+        // Log to terminal
+        printTerm(`> Feedback Asimilado. Algoritmo de amor parcheado exitosamente.`, 'text-green-400 font-bold');
+    }
+}
+
+function saveFeedback() {
+    const input = document.getElementById('feedback-input');
+    const text = input.value.trim();
+    if(!text) return;
+
+    let history = JSON.parse(localStorage.getItem('stark_os_feedback') || '[]');
+    let entry = { date: new Date().toLocaleString(), text: text };
+    history.unshift(entry);
+    localStorage.setItem('stark_os_feedback', JSON.stringify(history));
     
-    if(f.bloomed) {
-        waterBtn.className = "water-btn healed";
-        waterBtn.innerText = "✨ Girasol Resplandeciente";
-        waterBtn.disabled = true;
-    } else if(allHealed) {
-        waterBtn.className = "water-btn";
-        waterBtn.innerText = "💧 Regar Girasol Completo";
-        waterBtn.disabled = false;
+    input.value = '';
+    loadFeedback();
+    
+    // Animation
+    const btn = event.target;
+    btn.innerText = "✅ Guardado";
+    setTimeout(() => btn.innerText = "📡 Transmitir al Servidor", 2000);
+}
+
+function loadFeedback() {
+    const list = document.getElementById('feedback-list');
+    let history = JSON.parse(localStorage.getItem('stark_os_feedback') || '[]');
+    
+    if(history.length === 0) {
+        list.innerHTML = '<div class="text-center text-sm text-gray-600 italic py-4">No hay registros guardados aún. Empieza a escribir.</div>';
+        return;
+    }
+    
+    list.innerHTML = '';
+    history.forEach(item => {
+        let div = document.createElement('div');
+        div.className = "bg-white/5 border border-white/10 rounded-xl p-3 mb-2";
+        div.innerHTML = `
+            <div class="text-[0.6rem] text-pink-500 font-mono mb-1">${item.date}</div>
+            <p class="text-sm text-gray-200 break-words">${item.text}</p>
+        `;
+        list.appendChild(div);
+    });
+}
+
+let pmCvs, pmCtx, pmSize;
+const pCols = 15, pRows = 15;
+let pGrid = [];
+let chef = {c:1, r:1, dc:0, dr:0, nDc:0, nDr:0, rFloat:1, cFloat:1};
+let ghosts = [];
+let pScore = 0, pLives = 3, pLevel = 1, pActive = false;
+let pmLoop;
+
+// 0: Wall, 1: Dot, 2: Empty
+const mapLayout = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+    [0,1,0,0,1,0,1,0,1,0,1,0,0,1,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,0,0,1,0,0,0,0,0,1,0,0,1,0],
+    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+    [0,0,0,0,1,0,2,2,2,0,1,0,0,0,0],
+    [2,2,2,2,1,0,2,0,2,0,1,2,2,2,2], // Tunnel
+    [0,0,0,0,1,0,2,2,2,0,1,0,0,0,0],
+    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+    [0,1,0,0,1,0,0,0,0,0,1,0,0,1,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,0,0,1,0,1,0,1,0,1,0,0,1,0],
+    [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+];
+
+function initPacmanMap() {
+    document.getElementById('pacman-overlay').classList.add('hidden');
+    pmCvs = document.getElementById('pacman-canvas');
+    pmCtx = pmCvs.getContext('2d');
+    
+    // Set responsive resolution
+    pmCvs.width = 300; pmCvs.height = 300; 
+    pmSize = pmCvs.width / pCols;
+    
+    // Reset or increase difficulty
+    if(pLives <= 0) { pLives = 3; pScore = 0; pLevel = 1; }
+    document.getElementById('p-lives').innerText = '❤️'.repeat(pLives);
+    document.getElementById('p-score').innerText = pScore;
+    document.getElementById('p-level').innerText = pLevel;
+    
+    // Clone map
+    pGrid = [];
+    for(let r=0; r<pRows; r++) pGrid.push([...mapLayout[r]]);
+    
+    chef = {c:1, r:1, dc:0, dr:0, nDc:0, nDr:0, cFloat:1, rFloat:1};
+    
+    ghosts = [
+        {c:7, r:7, dc:0, dr:-1, color: '#f43f5e', name: 'Ego'},
+        {c:6, r:7, dc:1, dr:0, color: '#c084fc', name: 'Silencio'},
+        {c:8, r:7, dc:-1, dr:0, color: '#38bdf8', name: 'Distracción'}
+    ];
+    
+    pActive = true;
+    if(pmLoop) cancelAnimationFrame(pmLoop);
+    lastTime = performance.now();
+    pmLoop = requestAnimationFrame(pacmanTick);
+}
+
+function setPacmanDir(dc, dr) {
+    if(!pActive) return;
+    chef.nDc = dc; chef.nDr = dr;
+}
+
+let lastTime = 0;
+const speed = 4; // squares per second
+
+function pacmanTick(now) {
+    if(!pActive) return;
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+    
+    // Attempt turn if aligned with grid
+    const margin = 0.1;
+    if(Math.abs(chef.cFloat - chef.c) < margin && Math.abs(chef.rFloat - chef.r) < margin) {
+        // Snap to grid
+        chef.cFloat = chef.c; chef.rFloat = chef.r;
+        
+        // Can we turn?
+        let nc = chef.c + chef.nDc, nr = chef.r + chef.nDr;
+        if(nc<0) nc = pCols-1; if(nc>=pCols) nc=0; // Tunnel wrapping
+        if(pGrid[nr] && pGrid[nr][nc] !== 0) {
+            chef.dc = chef.nDc; chef.dr = chef.nDr;
+        }
+        
+        // Move current direction
+        nc = chef.c + chef.dc; nr = chef.r + chef.dr;
+        if(nc<0) { chef.c = pCols-1; chef.cFloat = chef.c; } // Tunnel left
+        else if(nc>=pCols) { chef.c = 0; chef.cFloat = 0; } // Tunnel right
+        else if(pGrid[nr] && pGrid[nr][nc] !== 0) {
+            chef.c = nc; chef.r = nr;
+        } else {
+            // Hit wall, stop
+            chef.dc = 0; chef.dr = 0;
+        }
+    }
+    
+    // Interpolate visual position
+    chef.cFloat += chef.dc * speed * dt;
+    chef.rFloat += chef.dr * speed * dt;
+
+    // Eat dots
+    if(pGrid[chef.r][chef.c] === 1) {
+        pGrid[chef.r][chef.c] = 2;
+        pScore += 10;
+        document.getElementById('p-score').innerText = pScore;
+        
+        // Check win
+        let dotsLeft = 0;
+        for(let r=0; r<pRows; r++) for(let c=0; c<pCols; c++) if(pGrid[r][c]===1) dotsLeft++;
+        if(dotsLeft === 0) {
+            pActive = false; pLevel++;
+            showPMOverlay("¡Nivel Superado!", "Ganaste esta discusión con amor.", "Siguiente Nivel");
+            return;
+        }
+    }
+    
+    // Ghosts AI (Simple)
+    ghosts.forEach(g => {
+        if(!g.cFloat) g.cFloat = g.c; if(!g.rFloat) g.rFloat = g.r;
+        
+        if(Math.abs(g.cFloat - g.c) < margin && Math.abs(g.rFloat - g.r) < margin) {
+            g.cFloat = g.c; g.rFloat = g.r;
+            
+            let opts = [];
+            [[-1,0],[1,0],[0,-1],[0,1]].forEach(d => {
+                if(d[0]===-g.dc && d[1]===-g.dr) return; // no uturn
+                let nr = g.r+d[1], nc = g.c+d[0];
+                if(nc>=0 && nc<pCols && pGrid[nr] && pGrid[nr][nc] !== 0) opts.push(d);
+            });
+            
+            if(opts.length > 0) {
+                // Random choice for now, speed depends on level
+                let ch = opts[Math.floor(Math.random()*opts.length)];
+                g.dc = ch[0]; g.dr = ch[1];
+            } else { g.dc *= -1; g.dr *= -1; }
+            
+            g.c += g.dc; g.r += g.dr;
+        }
+        
+        let gSpeed = speed * (0.6 + (pLevel * 0.1));
+        g.cFloat += g.dc * gSpeed * dt;
+        g.rFloat += g.dr * gSpeed * dt;
+        
+        // Collision
+        if(Math.abs(g.cFloat - chef.cFloat) < 0.8 && Math.abs(g.rFloat - chef.rFloat) < 0.8) {
+            pActive = false;
+            pLives--;
+            if(pLives <= 0) showPMOverlay("Me ganó el EGO", "No importa, empezamos de nuevo amor.", "Reintentar");
+            else showPMOverlay("¡Ouch!", `Un fantasma te tocó. Vidas: ${pLives}`, "Continuar");
+        }
+    });
+
+    drawPacman();
+    if(pActive) requestAnimationFrame(pacmanTick);
+}
+
+function drawPacman() {
+    pmCtx.fillStyle = '#0a0a0a';
+    pmCtx.fillRect(0,0,pmCvs.width,pmCvs.height);
+    
+    // Draw map
+    for(let r=0; r<pRows; r++){
+        for(let c=0; c<pCols; c++){
+            if(pGrid[r][c] === 0) {
+                pmCtx.fillStyle = 'rgba(56, 189, 248, 0.1)';
+                pmCtx.fillRect(c*pmSize, r*pmSize, pmSize, pmSize);
+                pmCtx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+                pmCtx.strokeRect(c*pmSize+2, r*pmSize+2, pmSize-4, pmSize-4);
+            } else if(pGrid[r][c] === 1) {
+                let tastes = ['🍓','🍰','🌻'];
+                let t = tastes[(r+c)%3];
+                pmCtx.font = `${pmSize*0.6}px Arial`; pmCtx.textAlign="center"; pmCtx.textBaseline="middle";
+                pmCtx.fillText(t, c*pmSize+pmSize/2, r*pmSize+pmSize/2);
+            }
+        }
+    }
+    
+    // Draw Chef
+    pmCtx.font = `${pmSize*0.9}px Arial`;
+    pmCtx.fillText("👩🏻‍🍳", chef.cFloat*pmSize+pmSize/2, chef.rFloat*pmSize+pmSize/2);
+    
+    // Draw Ghosts
+    ghosts.forEach(g => {
+        pmCtx.font = `${pmSize*0.8}px Arial`;
+        pmCtx.fillText("👻", g.cFloat*pmSize+pmSize/2, g.rFloat*pmSize+pmSize/2);
+        
+        // Ghost name tag
+        pmCtx.font = "8px 'Space Mono'"; pmCtx.fillStyle = g.color;
+        pmCtx.fillText(g.name, g.cFloat*pmSize+pmSize/2, g.rFloat*pmSize-5);
+    });
+}
+
+function showPMOverlay(title, desc, btn) {
+    document.getElementById('pacman-overlay').classList.remove('hidden');
+    document.getElementById('pm-title').innerText = title;
+    document.getElementById('pm-desc').innerText = desc;
+    document.getElementById('pm-btn-txt').innerText = btn;
+}
+
+// Keyboard Listeners
+window.addEventListener('keydown', (e) => {
+    if(document.getElementById('view-system').classList.contains('active')) {
+        if(pActive) {
+            if(e.key==='ArrowUp') { setPacmanDir(0,-1); e.preventDefault(); }
+            if(e.key==='ArrowDown') { setPacmanDir(0,1); e.preventDefault(); }
+            if(e.key==='ArrowLeft') { setPacmanDir(-1,0); e.preventDefault(); }
+            if(e.key==='ArrowRight') { setPacmanDir(1,0); e.preventDefault(); }
+        }
+    }
+});
+// Touch Swipes
+let touchStartX = 0, touchStartY = 0;
+document.getElementById('pacman-canvas').addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY;
+}, {passive:true});
+document.getElementById('pacman-canvas').addEventListener('touchend', e => {
+    let dx = e.changedTouches[0].screenX - touchStartX;
+    let dy = e.changedTouches[0].screenY - touchStartY;
+    if(Math.abs(dx) > Math.abs(dy)) {
+        if(dx > 30) setPacmanDir(1,0); else if(dx < -30) setPacmanDir(-1,0);
     } else {
-        waterBtn.className = "water-btn";
-        waterBtn.innerText = "⚠️ Sana todas las hojas primero";
-        waterBtn.style.opacity = "0.5";
-        waterBtn.disabled = true;
+        if(dy > 30) setPacmanDir(0,1); else if(dy < -30) setPacmanDir(0,-1);
+    }
+}, {passive:true});
+
+
+function printTerm(text, cls='text-gray-300') {
+    const out = document.getElementById('term-output');
+    out.innerHTML += `<div class="${cls}">${text}</div>`;
+    const sc = document.getElementById('terminal-screen');
+    sc.scrollTop = sc.scrollHeight;
+}
+
+function handleTermEnter(e) {
+    if(e.key === 'Enter') {
+        const val = e.target.value.trim();
+        e.target.value = '';
+        if(val) injectCmd(val);
     }
 }
 
-function toggleWaterFlower() {
-    const f = flowersData[currentFlowerIndex];
-    if(!f.bloomed && f.leaves.every(l => l.healed)) {
-        f.bloomed = true;
-        triggerRain();
-        setTimeout(() => triggerRain(), 500); // Lluvia doble
-        saveProgress();
-        selectFlower(currentFlowerIndex);
+function injectCmd(cmd) {
+    printTerm(`$ ${cmd}`, 'text-gray-500');
+    
+    if(cmd === 'help') {
+        printTerm("Comandos: ping_heart, deploy_hug, analyze_love, play_pong, clear");
+    } 
+    else if(cmd === 'clear') { document.getElementById('term-output').innerHTML = ''; }
+    else if(cmd === 'ping_heart') {
+        printTerm("Enviando paquetes TCP al servidor Atlixco (Analys_Heart)...", 'text-blue-300');
+        setTimeout(() => printTerm("Respuesta 1: 0ms - Conexión fuerte.", 'text-green-400'), 400);
+        setTimeout(() => printTerm("Respuesta 2: 0ms - Cero packet loss. Te sigo amando igual.", 'text-green-400'), 800);
+    }
+    else if(cmd === 'deploy_hug') {
+        printTerm("Desplegando apapacho remoto...", 'text-pink-300');
+        setTimeout(() => printTerm("(づ￣ ³￣)づ  👩🏻‍🍳", 'text-2xl text-gold font-bold'), 500);
+    }
+    else if(cmd === 'analyze_love') {
+        printTerm("Analizando logs de Junio a Septiembre...");
+        setTimeout(() => {
+            printTerm("Diagnóstico: El programador cometió fallos lógicos graves.", 'text-red-400');
+            printTerm("Resolución: La entidad 'Analy' siempre tuvo la razón. Proceder a darle besos.", 'text-green-400 font-bold');
+        }, 1000);
+    }
+    else if(cmd === 'play_pong') {
+        startPong();
+    }
+    else {
+        printTerm(`Comando no encontrado: ${cmd}. Escribe 'help'.`, 'text-red-500');
     }
 }
 
-/* --- RENDERIZADO DE SECCIONES SECUNDARIAS --- */
-function renderMirrorSection() {
-    const container = document.getElementById('mirror-container');
-    container.innerHTML = '';
-    mirrorData.forEach(item => {
-        container.innerHTML += `
-        <div class="proposal-card">
-            <h4 style="color:#fde68a; margin-bottom:8px;">${item.title}</h4>
-            <div style="font-size:0.82rem; color:var(--muted); margin-bottom:8px;"><strong>Lo que siento:</strong> ${item.feel}</div>
-            <div style="font-size:0.82rem; color:#fca5a5; margin-bottom:8px; border-left:2px solid #ef4444; padding-left:6px;"><strong>El Hábito roto:</strong> ${item.broken}</div>
-            <div style="font-size:0.82rem; color:#86efac; border-left:2px solid #22c55e; padding-left:6px;"><strong>Promesa de amor:</strong> ${item.solution}</div>
-        </div>`;
-    });
+let pongCvs, pongCtx;
+let pongActive = false;
+let pongLoop;
+let paddleMe = {x: 20, y: 50, w: 10, h: 40}, paddleAI = {x: 270, y: 50, w: 10, h: 40};
+let ball = {x: 150, y: 75, r: 4, dx: 3, dy: 3};
+
+function startPong() {
+    const pCont = document.getElementById('pong-container');
+    pCont.classList.remove('hidden');
+    pCont.classList.add('flex');
+    
+    pongCvs = document.getElementById('pong-canvas');
+    pongCtx = pongCvs.getContext('2d');
+    
+    // Fit to container width (roughly)
+    pongCvs.width = 300; pongCvs.height = 150;
+    
+    paddleMe = {x: 10, y: 55, w: 5, h: 40};
+    paddleAI = {x: 285, y: 55, w: 5, h: 40};
+    ball = {x: 150, y: 75, r: 4, dx: 3, dy: 3};
+    
+    pongActive = true;
+    if(pongLoop) cancelAnimationFrame(pongLoop);
+    pongTick();
 }
 
-function renderSosSection() {
-    const container = document.getElementById('sos-container');
-    container.innerHTML = '';
-    sosData.forEach(item => {
-        container.innerHTML += `
-        <div class="proposal-card" style="border-top: 3px solid var(--gold);">
-            <div style="font-weight:900; color:var(--rose); margin-bottom:4px;">${item.btn}</div>
-            <h4 style="color:#fde68a; margin-bottom:8px; font-size:0.9rem;">${item.title}</h4>
-            <div style="font-size:0.82rem; color:var(--muted); line-height: 1.6;">${item.steps}</div>
-        </div>`;
-    });
+function exitPong() {
+    pongActive = false;
+    document.getElementById('pong-container').classList.add('hidden');
+    document.getElementById('pong-container').classList.remove('flex');
+    printTerm("Proceso 'pong' terminado.", "text-gray-500");
 }
 
-function renderPacts() {
-    const container = document.getElementById('pacts-container');
-    container.innerHTML = '';
+function pongTick() {
+    if(!pongActive) return;
     
-    // Cargar checks si existen, si no, crear array false
-    let pactsState = savedState.pacts || new Array(pactsData.length).fill(false);
+    // Move AI (Follows ball clumsily)
+    if(paddleAI.y + paddleAI.h/2 < ball.y) paddleAI.y += 2;
+    else paddleAI.y -= 2;
     
-    pactsData.forEach((pact, i) => {
-        let isChecked = pactsState[i] ? 'checked' : '';
-        container.innerHTML += `
-        <label class="pact-item">
-            <div style="flex:1;">${pact}</div>
-            <input type="checkbox" class="pact-check" onchange="saveProgress()" ${isChecked} style="width:20px; height:20px; accent-color: var(--green);">
-        </label>`;
-    });
-}
-
-/* --- LÓGICA DEL CICLO LUNAR COMPLETADA --- */
-function calculateCycleDates() {
-    const cycleDays = parseInt(document.getElementById('cycle-length-select').value, 10);
-    // Fecha base: 11 de septiembre 2026 (Según tus datos)
-    const baseDate = new Date(2026, 8, 11); 
-    const today = new Date();
+    // Move ball
+    ball.x += ball.dx; ball.y += ball.dy;
     
-    // Diferencia en días
-    const diffTime = today.getTime() - baseDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    // Bounce top/bottom
+    if(ball.y - ball.r <= 0 || ball.y + ball.r >= pongCvs.height) ball.dy *= -1;
     
-    // Calcular día actual dentro del ciclo (1 al cycleDays)
-    let currentDayInCycle = ((diffDays % cycleDays) + cycleDays) % cycleDays + 1;
-
-    let phaseTitle = "", phaseDesc = "", phaseCare = "";
-    
-    // Fases Biológicas y Psicológicas
-    if (currentDayInCycle <= 5) {
-        phaseTitle = `🩸 Día ${currentDayInCycle} del Ciclo • Fase Menstrual (Tus Días)`;
-        phaseDesc = "Niveles de energía bajitos, dolor físico y mayor necesidad de contención emocional.";
-        phaseCare = "💛 Acción para mí: Cero debates, muchos bechitos virtuales, preguntarte si ya tomaste agüita, ver pelis y darte todo el apapacho sin pedir nada a cambio.";
-    } else if (currentDayInCycle <= 13) {
-        phaseTitle = `🌱 Día ${currentDayInCycle} del Ciclo • Fase Folicular`;
-        phaseDesc = "Tu energía comienza a subir. Te sientes más activa para el gym, tu escuela y tus proyectos gastronómicos.";
-        phaseCare = "💛 Acción para mí: Motivarte con tus recetas, admirar tus avances en el gym, mandarte memes que te den risa y planear nuestra próxima cita física.";
-    } else if (currentDayInCycle <= 17) {
-        phaseTitle = `✨ Día ${currentDayInCycle} del Ciclo • Fase Ovulatoria`;
-        phaseDesc = "Energía a tope, te sientes más conectada, sociable y afectiva.";
-        phaseCare = "💛 Acción para mí: Demostrarte cuánto me atraes, coquetearte mucho, llenarte de cumplidos por lo hermosa que te ves y disfrutar nuestro tiempo jugando juntos.";
-    } else {
-        phaseTitle = `🌙 Día ${currentDayInCycle} del Ciclo • Fase Lútea (Premenstrual)`;
-        phaseDesc = "La energía empieza a bajar. Puede haber sensibilidad emocional, cansancio o antojos de dulce (tu pan de muerto o chocolatito).";
-        phaseCare = "💛 Acción para mí: Extrema paciencia. Si estás callada o cortante, no tomármelo personal (no activar mi apego). Mandarte algo dulce o dedicarte tiempo de calidad extra.";
+    // Bounce paddles
+    // Left (Me)
+    if(ball.x - ball.r <= paddleMe.x + paddleMe.w && ball.y >= paddleMe.y && ball.y <= paddleMe.y + paddleMe.h) {
+        ball.dx = Math.abs(ball.dx); // force right
+        ball.dx *= 1.1; // speed up
     }
-
-    document.getElementById('current-phase-title').innerText = phaseTitle;
-    document.getElementById('current-phase-desc').innerText = phaseDesc;
-    document.getElementById('current-phase-care').innerText = phaseCare;
-
-    // Calcular próxima fecha de inicio
-    let daysUntilNext = cycleDays - currentDayInCycle + 1;
-    let nextDate = new Date(today.getTime() + (daysUntilNext * 86400000));
-    
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('next-period-date').innerText = nextDate.toLocaleDateString('es-ES', options);
-    document.getElementById('next-period-countdown').innerText = `Faltan aproximadamente ${daysUntilNext} días para cuidarte al doble.`;
-
-    // Calcular próximos 4 ciclos
-    const listCont = document.getElementById('upcoming-cycles-list');
-    listCont.innerHTML = '';
-    for(let i=1; i<=4; i++) {
-        let cycleD = new Date(nextDate.getTime() + (i * cycleDays * 86400000));
-        let fmt = cycleD.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
-        listCont.innerHTML += `<div class="date-pill"><span>Periodo ${i}</span> <strong>Aprox. ${fmt}</strong></div>`;
+    // Right (AI)
+    if(ball.x + ball.r >= paddleAI.x && ball.y >= paddleAI.y && ball.y <= paddleAI.y + paddleAI.h) {
+        ball.dx = -Math.abs(ball.dx); // force left
     }
+    
+    // Score / Reset
+    if(ball.x < 0 || ball.x > pongCvs.width) {
+        ball.x = 150; ball.y = 75; ball.dx = (Math.random()>0.5?3:-3); ball.dy = 3;
+    }
+    
+    // Draw
+    pongCtx.fillStyle = '#0a0a0a'; pongCtx.fillRect(0,0,pongCvs.width,pongCvs.height);
+    pongCtx.fillStyle = '#22c55e';
+    pongCtx.fillRect(paddleMe.x, paddleMe.y, paddleMe.w, paddleMe.h);
+    pongCtx.fillRect(paddleAI.x, paddleAI.y, paddleAI.w, paddleAI.h);
+    
+    pongCtx.beginPath(); pongCtx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); pongCtx.fill();
+    
+    // Net
+    pongCtx.setLineDash([5, 5]); pongCtx.beginPath(); pongCtx.moveTo(150,0); pongCtx.lineTo(150,150);
+    pongCtx.strokeStyle = 'rgba(34,197,94,0.3)'; pongCtx.stroke();
+    pongCtx.setLineDash([]);
+    
+    pongLoop = requestAnimationFrame(pongTick);
 }
 
-function updateHealthBar() {
-    let totalItems = 0;
-    let completedItems = 0;
-    
-    // Contar hojas sanadas
-    flowersData.forEach(f => {
-        f.leaves.forEach(l => {
-            totalItems++;
-            if(l.healed) completedItems++;
-        });
-        totalItems++; // Puntos por flor regada
-        if(f.bloomed) completedItems++;
-    });
-    
-    // Contar acuerdos activos
-    const pacts = Array.from(document.querySelectorAll('.pact-check'));
-    pacts.forEach(p => {
-        totalItems++;
-        if(p.checked) completedItems++;
-    });
-    
-    let percent = totalItems === 0 ? 0 : Math.round((completedItems / totalItems) * 100);
-    
-    document.getElementById('health-percent').innerText = `${percent}% Completado`;
-    document.getElementById('health-fill').style.width = `${percent}%`;
-    
-    // Cambiar color de la barra según progreso
-    const fill = document.getElementById('health-fill');
-    if(percent < 40) fill.style.background = "linear-gradient(90deg, #f43f5e, #e11d48)";
-    else if(percent < 80) fill.style.background = "linear-gradient(90deg, #f59e0b, #d97706)";
-    else fill.style.background = "linear-gradient(90deg, #22c55e, #16a34a)";
+function movePongPaddleMouse(e) {
+    if(!pongActive) return;
+    const rect = pongCvs.getBoundingClientRect();
+    const scaleY = pongCvs.height / rect.height;
+    paddleMe.y = (e.clientY - rect.top) * scaleY - paddleMe.h/2;
 }
-
-// Inicializar al cargar
-window.onload = initGarden;
+function movePongPaddleTouch(e) {
+    if(!pongActive) return;
+    e.preventDefault(); // stop scroll
+    const rect = pongCvs.getBoundingClientRect();
+    const scaleY = pongCvs.height / rect.height;
+    paddleMe.y = (e.touches[0].clientY - rect.top) * scaleY - paddleMe.h/2;
+}
 </script>
 </body>
 </html>
-```eof
-
-He adaptado todo para que cuando abras el link desde tu iPhone la experiencia sea fluida y no sufras intentando leer o dar clic en áreas pequeñas. He integrado el reproductor de música en la parte superior (está desactivado por defecto por reglas del navegador, pero con un toque en el botón inicia la melodía de fondo). También agregué la funcionalidad faltante del ciclo lunar para que se calculen los días de tu fase actual y me diga exactamente qué hacer para cuidarte en cada etapa.
-
-¿Te gustaría que ajustáramos algún punto del Invernadero de Acuerdos (los compromisos) o revisamos los pasos en los Protocolos SOS para asegurarnos de que así te sientes cómoda?
+```
