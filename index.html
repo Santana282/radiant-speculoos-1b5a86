@@ -69,6 +69,13 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.02em; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 @keyframes pulseGlow { 0% { box-shadow: 0 0 10px rgba(251,191,36,0.2); } 50% { box-shadow: 0 0 25px rgba(251,191,36,0.5); } 100% { box-shadow: 0 0 10px rgba(251,191,36,0.2); } }
+@keyframes eqBar { 0%, 100% { height: 4px; } 50% { height: 16px; } }
+
+.eq-bar { width: 3px; background: var(--gold); border-radius: 2px; display: inline-block; animation: eqBar 0.8s ease-in-out infinite; }
+.eq-bar:nth-child(1) { animation-delay: 0.1s; }
+.eq-bar:nth-child(2) { animation-delay: 0.3s; }
+.eq-bar:nth-child(3) { animation-delay: 0.2s; }
+.eq-bar:nth-child(4) { animation-delay: 0.4s; }
 
 .flower-unit { cursor: pointer; transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .flower-unit:hover { transform: scale(1.08) translateY(-6px); }
@@ -140,6 +147,7 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.02em; }
             <p><span class="text-purple-400 font-bold">👨🏻‍💻 Programador:</span> Kevin Santana Ramírez (24 de Marzo, 2003 - 23 años)</p>
             <p><span class="text-rose-400 font-bold">👩🏻‍🍳 La Chef / Mi Reina:</span> Analy Monserrat Vázquez Gómez (22 de Septiembre, 1998 - 28 años)</p>
             <p><span class="text-blue-400 font-bold">📍 Coordenadas:</span> Orizaba, Ver. ⇄ Atlixco, Pue. (~150 km)</p>
+            <p><span class="text-amber-400 font-bold">🎵 Música de Fondo:</span> Sintetizador Ambiental Cuántico & Spotify</p>
         </div>
 
         <p class="text-xs text-gray-400 mb-6 leading-relaxed">
@@ -147,7 +155,7 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.02em; }
         </p>
         
         <button onclick="authenticateUser()" class="btn-primary w-full text-base shadow-[0_0_20px_rgba(251,191,36,0.3)] group">
-            <span class="group-hover:rotate-12 transition-transform">🔑</span> Iniciar Sesión: Analy & Kevin
+            <span class="group-hover:rotate-12 transition-transform">🔑</span> Iniciar Sesión & Activar Música
         </button>
     </div>
 </div>
@@ -155,14 +163,31 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.02em; }
 <!-- Contenedor Principal de la Aplicación -->
 <div class="app-container" id="app-main">
 
-    <!-- Header Principal con Contadores en Tiempo Real -->
+    <!-- Header Principal con Contadores en Tiempo Real y Widget de Audio -->
     <header class="text-center mb-8 relative">
-        <div class="inline-flex items-center gap-2 bg-rose-500/10 border border-rose-500/40 text-rose-300 text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
-            <span class="relative flex h-2.5 w-2.5">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
-            </span>
-            Entrelazamiento Cuántico Activo: Orizaba ⇄ Atlixco
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-4 max-w-4xl mx-auto px-2">
+            <div class="inline-flex items-center gap-2 bg-rose-500/10 border border-rose-500/40 text-rose-300 text-xs font-bold px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.2)]">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+                </span>
+                Entrelazamiento Cuántico Activo: Orizaba ⇄ Atlixco
+            </div>
+
+            <!-- Floating Audio Control Badge -->
+            <div class="inline-flex items-center gap-3 bg-black/60 border border-gold/40 px-3 py-1.5 rounded-full backdrop-blur-md">
+                <div class="flex items-center gap-1 h-4 px-1" id="audio-eq-bars">
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                </div>
+                <span class="text-[0.65rem] font-mono text-gold font-bold uppercase tracking-wider" id="audio-status-text">Música: On</span>
+                <button onclick="toggleAudio()" id="btn-toggle-audio" class="text-xs bg-gold/20 hover:bg-gold/40 text-gold px-2.5 py-0.5 rounded-full border border-gold/40 transition-all font-bold">
+                    🔊 Pausar
+                </button>
+                <input type="range" id="volume-slider" min="-35" max="-5" value="-18" class="w-16 h-1 accent-amber-400 bg-gray-700 rounded-lg cursor-pointer hidden md:inline-block" oninput="adjustVolume(this.value)">
+            </div>
         </div>
         
         <h1 class="text-4xl md:text-6xl text-gradient mb-2 drop-shadow-md">Nuestra Historia</h1>
@@ -494,11 +519,46 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.02em; }
         </div>
     </section>
 
-    <!-- SECCIÓN 5: PERFIL COMPLETO DE GUSTOS DE ANALY -->
+    <!-- SECCIÓN 5: PERFIL COMPLETO DE GUSTOS & PLAYLIST DEDICADA -->
     <section id="view-analy-profile" class="view-section">
         <div class="mb-6 text-center">
-            <h2 class="text-3xl font-black text-gold">Inventario Obsesivo de Gustos de Analy</h2>
-            <p class="text-xs text-gray-400 mt-1">Todo lo que he aprendido y registrado minuciosamente sobre la mujer que amo.</p>
+            <h2 class="text-3xl font-black text-gold">Inventario Obsesivo & Reproductor de Canciones</h2>
+            <p class="text-xs text-gray-400 mt-1">Todo lo que he registrado sobre la mujer que amo y las canciones especiales dedicadas en nuestro chat.</p>
+        </div>
+
+        <!-- Reproductor de Canciones Dedicadas de la Pareja -->
+        <div class="glass-panel p-6 mb-8 border-t-4 border-t-rose-500">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 pb-3 border-b border-gray-800">
+                <div>
+                    <h3 class="text-xl font-bold text-rose-300 flex items-center gap-2"><span>🎵</span> Canciones Especiales & Dedicatorias</h3>
+                    <p class="text-xs text-gray-400">Las canciones que Kevin le ha dedicado a Analy en WhatsApp/Spotify.</p>
+                </div>
+                <div class="text-xs font-mono bg-rose-950/60 text-rose-300 px-3 py-1 rounded-full border border-rose-500/30">
+                    ❤️ "Un romántico para su Reina"
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <!-- Track 1: Spotify Embed 1 -->
+                <div class="bg-black/50 p-3 rounded-2xl border border-white/10 flex flex-col justify-between">
+                    <div class="mb-2">
+                        <span class="text-[0.6rem] font-mono text-gold uppercase block">Dedicatoria #1 (Spotify)</span>
+                        <h4 class="text-sm font-bold text-white">Canción Especial Dedicada</h4>
+                        <p class="text-xs text-gray-400">"Me gustan todos los temas que toca para describir sin duda necesito dedicártela..."</p>
+                    </div>
+                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3mK8uv2ajpUQkVD9iY2YfF?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+
+                <!-- Track 2: Spotify Embed 2 -->
+                <div class="bg-black/50 p-3 rounded-2xl border border-white/10 flex flex-col justify-between">
+                    <div class="mb-2">
+                        <span class="text-[0.6rem] font-mono text-rose-400 uppercase block">Dedicatoria #2 (Spotify)</span>
+                        <h4 class="text-sm font-bold text-white">Para Mi Reina</h4>
+                        <p class="text-xs text-gray-400">Compartida en nuestras conversaciones nocturnas.</p>
+                    </div>
+                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3679nxLpRn426cH9iYiL3Q?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+            </div>
         </div>
 
         <div class="grid md:grid-cols-3 gap-6">
@@ -730,7 +790,7 @@ let selectedLeafIdx = null;
 async function authenticateUser() {
     const screen = document.getElementById('login-screen');
     const btn = screen.querySelector('button');
-    btn.innerHTML = '<span class="animate-spin text-xl">⏳</span> Inicializando Motor Cuántico...';
+    btn.innerHTML = '<span class="animate-spin text-xl">⏳</span> Inicializando Motor Cuántico & Audio...';
     btn.classList.add('pointer-events-none');
     
     await initAudioContext();
@@ -755,7 +815,9 @@ async function authenticateUser() {
     }, 1200);
 }
 
-let synth;
+// MOTOR DE MÚSICA DE FONDO AMBIENTAL (SINTETIZADOR SINE EN TONE.JS)
+let synth, isAudioPlaying = false;
+
 async function initAudioContext() {
     try {
         await Tone.start();
@@ -764,7 +826,7 @@ async function initAudioContext() {
         
         synth = new Tone.PolySynth(Tone.Oscillator, {
             oscillator: { type: "sine" },
-            envelope: { attack: 2, decay: 1, sustain: 0.6, release: 3 }
+            envelope: { attack: 2.5, decay: 1.5, sustain: 0.7, release: 3.5 }
         }).connect(delay);
         
         synth.volume.value = -18;
@@ -778,13 +840,55 @@ async function initAudioContext() {
         
         let step = 0;
         Tone.Transport.scheduleRepeat(time => {
-            synth.triggerAttackRelease(chords[step % chords.length], "2m", time);
+            if(synth) {
+                synth.triggerAttackRelease(chords[step % chords.length], "2m", time);
+            }
             step++;
         }, "2m");
 
-        Tone.Transport.bpm.value = 55;
+        Tone.Transport.bpm.value = 52;
         Tone.Transport.start();
-    } catch(e) { console.error("Audio init", e); }
+        isAudioPlaying = true;
+        updateAudioUIState();
+    } catch(e) { 
+        console.error("Audio init error:", e); 
+    }
+}
+
+function toggleAudio() {
+    if(!synth) return;
+    if(isAudioPlaying) {
+        Tone.Transport.pause();
+        isAudioPlaying = false;
+    } else {
+        Tone.Transport.start();
+        isAudioPlaying = true;
+    }
+    updateAudioUIState();
+}
+
+function adjustVolume(val) {
+    if(synth) {
+        synth.volume.value = parseFloat(val);
+    }
+}
+
+function updateAudioUIState() {
+    const btn = document.getElementById('btn-toggle-audio');
+    const txt = document.getElementById('audio-status-text');
+    const bars = document.getElementById('audio-eq-bars');
+
+    if(isAudioPlaying) {
+        btn.innerText = "🔊 Pausar";
+        btn.className = "text-xs bg-gold/20 hover:bg-gold/40 text-gold px-2.5 py-0.5 rounded-full border border-gold/40 transition-all font-bold";
+        txt.innerText = "Música: On";
+        bars.style.opacity = "1";
+    } else {
+        btn.innerText = "🔇 Reproducir";
+        btn.className = "text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2.5 py-0.5 rounded-full border border-gray-600 transition-all font-bold";
+        txt.innerText = "Música: Off";
+        bars.style.opacity = "0.2";
+    }
 }
 
 function startUptimeCounter() {
