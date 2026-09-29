@@ -3,165 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANALYS SERVER - Nuestro Ecosistema Vivo</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Nuestro Ecosistema Cuántico</title>
+    <!-- Vinculación de la PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Nuestro Jardín">
+    
+    <style>
+        /* Estilos base para eliminar márgenes y preparar el entorno 3D */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b0c10;
+            overflow: hidden; /* Evita que Analy mueva la pantalla por accidente */
+            font-family: 'Georgia', serif;
+        }
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            color: rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+        }
+    </style>
+
+    <!-- Mapa de importación para evitar usar terminales o dependencias locales -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
 </head>
 <body>
+    <div id="ui-layer">
+        <h2 style="margin: 0; font-size: 1.2rem; color: #ff3366;">Conexión Cuántica Estable</h2>
+        <p style="margin: 5px 0; font-size: 0.9rem;">Sincronización Orizaba - Atlixco</p>
+    </div>
+    
+    <!-- Aquí se renderizará todo el universo -->
+    <div id="canvas-container"></div>
 
-    <!-- CANVAS 3D ESPACIAL -->
-    <canvas id="space-canvas"></canvas>
-
-    <!-- HEADER ATMOSFÉRICO EN TIEMPO REAL -->
-    <header class="header-bar">
-        <div>
-            <span class="weather-pill" id="weather-text">☀️ Orizaba / Atlixco • Sincronizado</span>
-            <div class="clock-display" id="live-clock">00:00:00</div>
-            <div class="sub-status" id="sky-subtext">🌙 Descansa mi amor, nos vemos en sueños</div>
-        </div>
-        <button class="btn-audio" id="music-btn" onclick="toggleAudioEngine()">🎵 Música: OFF</button>
-    </header>
-
-    <!-- CONTENEDOR PRINCIPAL -->
-    <main class="main-container">
-        
-        <section class="hero-title">
-            <h1>Nuestro Ecosistema</h1>
-            <p>Un jardín vivo sincronizado con nuestro cielo, tu ciclo, tus gustos y nuestras soluciones en el presente.</p>
-        </section>
-
-        <!-- GRID DE MÉTRICAS -->
-        <section class="grid-3">
-            <div class="m-card">
-                <label>⏱️ TIEMPO JUNTOS</label>
-                <val id="timer-together">Cargando...</val>
-            </div>
-            <div class="m-card">
-                <label>🌱 VITALIDAD</label>
-                <val style="color:var(--accent-green);" id="vitality-val">10% (0/14)</val>
-            </div>
-            <div class="m-card">
-                <label>🎃 PRÓXIMO ENCUENTRO</label>
-                <val style="color:var(--accent-pink);">Presente Activo 🎃</val>
-            </div>
-        </section>
-
-        <section class="grid-3">
-            <div class="m-card" style="border-color: var(--accent-yellow);">
-                <label>☀️ EL SOL</label>
-                <val style="font-size:0.62rem;">Tu Luz y Calor</val>
-            </div>
-            <div class="m-card" style="border-color: var(--accent-blue);">
-                <label>💧 EL AGUA</label>
-                <val style="font-size:0.62rem;">Tu Amor 24/7</val>
-            </div>
-            <div class="m-card" style="border-color: var(--accent-green);">
-                <label>🌱 LA TIERRA</label>
-                <val style="font-size:0.62rem;">Raíz y Hogar</val>
-            </div>
-        </section>
-
-        <!-- SECCIÓN: JARDÍN Y SANACIÓN -->
-        <article id="tab-jardin" class="tab-panel active">
-            <div class="card-box">
-                <div class="card-title">🌻 Etapa 1 de 5: Girasol del Alba - Confianza Nocturna</div>
-                
-                <div class="leaf-box">1. Mayo-Junio: Desvelos escolares y retiros en silencio.</div>
-                <div class="leaf-box">2. Agosto: Pestañas reducidas en COD y mutes de madrugada.</div>
-                <div class="leaf-box">3. 27/09: "No eres proyecto de mi uni" vs. "No hay tiempo en el presente".</div>
-
-                <div class="tag-diag">1. ANÁLISIS HISTÓRICO DE ERRORES</div>
-                <div class="text-diag">Anteponer barreras lógicas o explicaciones de tiempo antes de dar la calidez afectiva que Analy necesita en el presente.</div>
-
-                <div class="tag-diag">2. DIAGNÓSTICO PSICOLÓGICO CLÍNICO</div>
-                <div class="text-diag"><strong>Autosuficiencia Defensiva (Santana) vs. Hipervigilancia Afectiva (Analy):</strong> Ocultar el cansancio detrás de una máscara de "todo bajo control" genera distancia, provocando que Analy interprete los reparos logísticos como rechazo.</div>
-
-                <div class="tag-diag">3. NUEVO COMPROMISO INQUEBRANTABLE</div>
-                <div class="text-diag">Regla de *Afecto Primero*: Decir siempre "Deseo estar contigo" antes de coordinar horarios. Nunca usar el silencio como refugio.</div>
-
-                <button class="btn-action" onclick="healLeafAction()" style="background: linear-gradient(45deg, var(--accent-yellow), #ff9f1c); color:#000;">💧 Regar Girasol / Sanar Hoja</button>
-            </div>
-        </article>
-
-        <!-- SECCIÓN: TUS DÍAS & CICLO -->
-        <article id="tab-dias" class="tab-panel">
-            <div class="card-box">
-                <div class="card-title" style="color:var(--accent-pink);">🌸 Monitor Hormonal & Curva Lunar</div>
-                <div style="font-size:0.82rem; font-weight:bold; color:var(--accent-yellow);" id="cycle-title">FASE FOLICULAR / ALTA ENERGÍA</div>
-                <div class="text-diag" id="cycle-desc" style="margin-top:4px;">Cargando estado biológico...</div>
-            </div>
-        </article>
-
-        <!-- SECCIÓN: TU VIDA (GUSTOS DE ANALY) -->
-        <article id="tab-tuvida" class="tab-panel">
-            <div class="card-box">
-                <div class="card-title">🦋 El Mapa Exacto de Tus Gustos</div>
-                <div class="tag-diag">POSTRES FAVORITOS</div>
-                <div class="text-diag">Pastel de Chocolate y 3 Leches, Arroz con leche, Chocolatito caliente con pan.</div>
-                <div class="tag-diag">PLATILLOS FAVORITOS</div>
-                <div class="text-diag">Lasaña, Comida China (Pollo agridulce), Mole con Pollo, Enmoladas, Chilaquiles.</div>
-            </div>
-        </article>
-
-        <!-- SECCIÓN: MI VIDA (REALIDAD DE SANTANA) -->
-        <article id="tab-mivida" class="tab-panel">
-            <div class="card-box">
-                <div class="card-title" style="color:var(--accent-blue);">📖 Mi Realidad y Bloqueos (Santana)</div>
-                <div class="text-diag">
-                    Mi silencio durante las entregas escolares o el trabajo en la panadería no es desinterés. Es una parálisis por sobrecarga. Mi compromiso es abrir mi vulnerabilidad contigo en lugar de fingir que "tengo todo bajo control".
-                </div>
-            </div>
-        </article>
-
-        <!-- SECCIÓN: DIARIOS BILATERALES Y BUZÓN -->
-        <article id="tab-diarios" class="tab-panel">
-            <div class="card-box">
-                <div class="card-title" style="color:var(--accent-pink);">📕 Buzón Directo de Analy</div>
-                <div class="text-diag">Un espacio privado para escribir lo que sientes o piensas cuando sea difícil expresarlo verbalmente:</div>
-                <textarea id="analy-journal-input" placeholder="Escribe aquí lo que sientes hoy..."></textarea>
-                <button class="btn-action" onclick="saveJournalLocal()">💾 Guardar Nota Local</button>
-                <button class="btn-action" style="background:#25D366; color:#fff;" onclick="sendJournalWhatsApp()">💬 Sincronizar por WhatsApp</button>
-            </div>
-        </article>
-
-        <!-- SECCIÓN: ARCADE (PAC-MAN Y TERMINAL) -->
-        <article id="tab-arcade" class="tab-panel">
-            <div class="card-box" style="text-align:center;">
-                <div class="card-title">👾 Pac-Man Retro Arcade</div>
-                <canvas id="pacmanCanvas" class="game-canvas" width="220" height="220"></canvas>
-                <div style="margin-top:6px;">
-                    <button class="btn-audio" onclick="movePacman('UP')">⬆️</button><br>
-                    <button class="btn-audio" onclick="movePacman('LEFT')">⬅️</button>
-                    <button class="btn-audio" onclick="movePacman('RIGHT')">➡</button><br>
-                    <button class="btn-audio" onclick="movePacman('DOWN')">⬇️</button>
-                </div>
-            </div>
-
-            <div class="card-box">
-                <div class="card-title">💻 Terminal Interactive (Stark-OS)</div>
-                <div class="terminal-box" id="term-out">
-                    root@stark-os:~# python3 campo_flores.py<br>
-                    > Servidor sincronizado. 0 errores detectados.
-                </div>
-                <button class="btn-action" onclick="runScriptTerminal()">▶ Ejecutar Script</button>
-            </div>
-        </article>
-
-    </main>
-
-    <!-- DOCK DE NAVEGACIÓN INFERIOR EXPANDIDO -->
-    <nav class="bottom-dock">
-        <button class="dock-btn active" onclick="switchTab('tab-jardin', this)"><span class="dock-icon">🌻</span>Jardín</button>
-        <button class="dock-btn" onclick="switchTab('tab-dias', this)"><span class="dock-icon">🌙</span>Tus Días</button>
-        <button class="dock-btn" onclick="switchTab('tab-tuvida', this)"><span class="dock-icon">🦋</span>Tu Vida</button>
-        <button class="dock-btn" onclick="switchTab('tab-mivida', this)"><span class="dock-icon">📖</span>Mi Vida</button>
-        <button class="dock-btn" onclick="switchTab('tab-diarios', this)"><span class="dock-icon">📕</span>Buzón</button>
-        <button class="dock-btn" onclick="switchTab('tab-arcade', this)"><span class="dock-icon">👾</span>Arcade</button>
-    </nav>
-
-    <!-- LIBRERÍAS Y MODULOS JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="js/space.js"></script>
-    <script src="js/engine.js"></script>
-    <script src="js/arcade.js"></script>
+    <!-- Llamada al archivo lógico principal -->
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
