@@ -4,106 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ANALYS SERVER - Nuestro Ecosistema Vivo</title>
-    <style>
-        :root {
-            --bg-main: #060911;
-            --panel-bg: rgba(13, 19, 33, 0.88);
-            --border-card: rgba(255, 255, 255, 0.08);
-            --accent-yellow: #ffd166;
-            --accent-pink: #ff75a0;
-            --accent-blue: #4cc9f0;
-            --accent-green: #06d6a0;
-            --text-main: #f8f9fa;
-            --text-muted: #94a3b8;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-main); color: var(--text-main); overflow-x: hidden; padding-bottom: 95px; }
-
-        /* CANVAS UNIVERSE 3D */
-        #space-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
-
-        /* HEADER & CLIMA DINÁMICO */
-        .header-bar {
-            background: rgba(8, 12, 22, 0.95); border-bottom: 1px solid var(--border-card);
-            padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px);
-        }
-        .weather-pill { font-size: 0.72rem; color: var(--accent-yellow); background: rgba(255, 209, 102, 0.12); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(255, 209, 102, 0.2); }
-        .clock-display { font-size: 1.35rem; font-weight: 800; font-family: monospace; color: var(--accent-yellow); margin: 2px 0; }
-        .sub-status { font-size: 0.68rem; color: var(--text-muted); }
-        .btn-audio { background: rgba(76, 201, 240, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); padding: 5px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: bold; cursor: pointer; }
-
-        /* CONTAINER */
-        .main-container { max-width: 500px; margin: 0 auto; padding: 12px; }
-        .hero-title { text-align: center; margin: 10px 0 16px 0; }
-        .hero-title h1 { font-size: 1.55rem; font-weight: 800; background: linear-gradient(45deg, var(--accent-yellow), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-title p { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; }
-
-        /* GRID CARDS METRICS */
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-        .m-card { background: var(--panel-bg); border: 1px solid var(--border-card); border-radius: 10px; padding: 8px 4px; text-align: center; }
-        .m-card label { font-size: 0.6rem; color: var(--text-muted); display: block; margin-bottom: 3px; font-weight: bold; }
-        .m-card val { font-size: 0.76rem; font-weight: 800; color: var(--text-main); }
-
-        /* PANELS DE PESTAÑAS */
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-
-        .card-box { background: var(--panel-bg); border: 1px solid var(--border-card); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
-        .card-title { font-size: 0.88rem; font-weight: bold; color: var(--accent-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-
-        /* GIRASOLES & DIAGNÓSTICO */
-        .leaf-box { background: rgba(0,0,0,0.35); border-left: 3px solid var(--accent-pink); padding: 8px; border-radius: 4px; font-size: 0.74rem; margin-bottom: 6px; }
-        .tag-diag { font-size: 0.65rem; font-weight: bold; color: var(--accent-blue); margin-top: 8px; text-transform: uppercase; }
-        .text-diag { font-size: 0.75rem; color: #cbd5e1; line-height: 1.35; margin-top: 2px; }
-
-        /* INPUTS & BUZÓN */
-        textarea { width: 100%; height: 85px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-card); border-radius: 6px; color: #fff; padding: 8px; font-size: 0.78rem; resize: none; margin-top: 6px; }
-        .btn-action { width: 100%; padding: 10px; background: linear-gradient(45deg, var(--accent-blue), #3a86ff); border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 0.78rem; cursor: pointer; margin-top: 6px; }
-
-        /* ARCADE CANVASES */
-        canvas.game-canvas { background: #000; border: 1px solid var(--accent-yellow); border-radius: 6px; display: block; margin: 8px auto; }
-
-        /* DOCK DE NAVEGACIÓN INFERIOR COMPLETO */
-        .bottom-dock {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(8, 12, 22, 0.96); border-top: 1px solid var(--border-card);
-            display: flex; justify-content: flex-start; padding: 8px 4px;
-            z-index: 100; overflow-x: auto; scrollbar-width: none;
-        }
-        .bottom-dock::-webkit-scrollbar { display: none; }
-        .dock-btn { display: flex; flex-direction: column; align-items: center; background: none; border: none; color: var(--text-muted); font-size: 0.6rem; cursor: pointer; min-width: 58px; flex-shrink: 0; }
-        .dock-btn.active { color: var(--accent-yellow); }
-        .dock-icon { font-size: 1.1rem; margin-bottom: 2px; }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <!-- CANVAS TRES.JS ESPACIAL -->
+    <!-- CANVAS 3D ESPACIAL -->
     <canvas id="space-canvas"></canvas>
 
-    <!-- HEADER ATMOSFÉRICO -->
-    <div class="header-bar">
+    <!-- HEADER ATMOSFÉRICO EN TIEMPO REAL -->
+    <header class="header-bar">
         <div>
-            <span class="weather-pill" id="weather-text">☀️ Orizaba / Atlixco • Despejado</span>
-            <div class="clock-display" id="live-clock">10:01:08 p.m.</div>
-            <div class="sub-status">🌙 Noche • Descansa mi amor, nos vemos en sueños</div>
+            <span class="weather-pill" id="weather-text">☀️ Orizaba / Atlixco • Sincronizado</span>
+            <div class="clock-display" id="live-clock">00:00:00</div>
+            <div class="sub-status" id="sky-subtext">🌙 Descansa mi amor, nos vemos en sueños</div>
         </div>
-        <button class="btn-audio" id="music-btn" onclick="toggleAudio()">🎵 Música: OFF</button>
-    </div>
+        <button class="btn-audio" id="music-btn" onclick="toggleAudioEngine()">🎵 Música: OFF</button>
+    </header>
 
-    <div class="main-container">
-        <div class="hero-title">
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="main-container">
+        
+        <section class="hero-title">
             <h1>Nuestro Ecosistema</h1>
             <p>Un jardín vivo sincronizado con nuestro cielo, tu ciclo, tus gustos y nuestras soluciones en el presente.</p>
-        </div>
+        </section>
 
-        <!-- MÉTRICAS EN GRID (IGUAL A CAPTURA) -->
-        <div class="grid-3">
+        <!-- GRID DE MÉTRICAS -->
+        <section class="grid-3">
             <div class="m-card">
                 <label>⏱️ TIEMPO JUNTOS</label>
-                <val id="timer-together">68d 22h 1m</val>
+                <val id="timer-together">Cargando...</val>
             </div>
             <div class="m-card">
                 <label>🌱 VITALIDAD</label>
@@ -113,9 +43,9 @@
                 <label>🎃 PRÓXIMO ENCUENTRO</label>
                 <val style="color:var(--accent-pink);">Presente Activo 🎃</val>
             </div>
-        </div>
+        </section>
 
-        <div class="grid-3">
+        <section class="grid-3">
             <div class="m-card" style="border-color: var(--accent-yellow);">
                 <label>☀️ EL SOL</label>
                 <val style="font-size:0.62rem;">Tu Luz y Calor</val>
@@ -128,249 +58,110 @@
                 <label>🌱 LA TIERRA</label>
                 <val style="font-size:0.62rem;">Raíz y Hogar</val>
             </div>
-        </div>
+        </section>
 
-        <!-- PESTAÑA 1: JARDÍN Y GIRASOLES -->
-        <div id="tab-jardin" class="tab-panel active">
+        <!-- SECCIÓN: JARDÍN Y SANACIÓN -->
+        <article id="tab-jardin" class="tab-panel active">
             <div class="card-box">
                 <div class="card-title">🌻 Etapa 1 de 5: Girasol del Alba - Confianza Nocturna</div>
-                <div class="leaf-box">1. Discusion del 27/09: "No tienes tiempo para mí" vs "No eres proyecto de mi uni"</div>
-                <div class="leaf-box">2. Reparos logísticos interpretados como desinterés</div>
-                <div class="leaf-box">3. Miedo a insistir y cansancio afectivo acumulado</div>
+                
+                <div class="leaf-box">1. Mayo-Junio: Desvelos escolares y retiros en silencio.</div>
+                <div class="leaf-box">2. Agosto: Pestañas reducidas en COD y mutes de madrugada.</div>
+                <div class="leaf-box">3. 27/09: "No eres proyecto de mi uni" vs. "No hay tiempo en el presente".</div>
 
-                <div class="tag-diag">1. MI ERROR / LO QUE DAÑÓ LA HOJA</div>
-                <div class="text-diag">Anteponer los problemas de logística, horarios e imprevistos en lugar de validar primero el deseo de estar juntos. Decir "no eres proyecto de uni" sin dar cercanía inmediata generó distancia.</div>
+                <div class="tag-diag">1. ANÁLISIS HISTÓRICO DE ERRORES</div>
+                <div class="text-diag">Anteponer barreras lógicas o explicaciones de tiempo antes de dar la calidez afectiva que Analy necesita en el presente.</div>
 
                 <div class="tag-diag">2. DIAGNÓSTICO PSICOLÓGICO CLÍNICO</div>
-                <div class="text-diag"><strong>Conflicto Presente vs. Futuro:</strong> Santana se enfoca en resolver la estabilidad futura (escuela/trabajo), mientras Analy necesita presencia afectiva en el presente. Los reparos racionales son leídos como rechazo.</div>
+                <div class="text-diag"><strong>Autosuficiencia Defensiva (Santana) vs. Hipervigilancia Afectiva (Analy):</strong> Ocultar el cansancio detrás de una máscara de "todo bajo control" genera distancia, provocando que Analy interprete los reparos logísticos como rechazo.</div>
 
-                <div class="tag-diag">3. CÓMO TE HICE SENTIR</div>
-                <div class="text-diag">Sintiéndote cansada de insistir, no escuchada y con la idea de que tu presencia es una molestia o una interrupción.</div>
+                <div class="tag-diag">3. NUEVO COMPROMISO INQUEBRANTABLE</div>
+                <div class="text-diag">Regla de *Afecto Primero*: Decir siempre "Deseo estar contigo" antes de coordinar horarios. Nunca usar el silencio como refugio.</div>
 
-                <div class="tag-diag">4. NUEVO COMPROMISO (CORTAR LA CADENA)</div>
-                <div class="text-diag">Eliminar los "peros" defensivos. Cuando propongas un espacio o encuentro, responder desde el afecto primero ("Me encanta la idea, coordinemos cómo lograrlo") sin anteponer barreras.</div>
-
-                <button class="btn-action" onclick="healLeaf()" style="background: linear-gradient(45deg, var(--accent-yellow), #ff9f1c); color:#000;">💧 Regar Girasol / Sanar Hoja</button>
+                <button class="btn-action" onclick="healLeafAction()" style="background: linear-gradient(45deg, var(--accent-yellow), #ff9f1c); color:#000;">💧 Regar Girasol / Sanar Hoja</button>
             </div>
-        </div>
+        </article>
 
-        <!-- PESTAÑA 2: TUS DÍAS -->
-        <div id="tab-dias" class="tab-panel">
+        <!-- SECCIÓN: TUS DÍAS & CICLO -->
+        <article id="tab-dias" class="tab-panel">
             <div class="card-box">
                 <div class="card-title" style="color:var(--accent-pink);">🌸 Monitor Hormonal & Curva Lunar</div>
-                <div style="font-size:0.8rem; font-weight:bold; color:var(--accent-yellow);" id="cycle-title">FASE FOLICULAR / ALTA ENERGÍA</div>
-                <div class="text-diag" id="cycle-desc" style="margin-top:4px;">Tu energía está subiendo. Es el mejor momento para disfrutar, reír y entrenar al fallo.</div>
+                <div style="font-size:0.82rem; font-weight:bold; color:var(--accent-yellow);" id="cycle-title">FASE FOLICULAR / ALTA ENERGÍA</div>
+                <div class="text-diag" id="cycle-desc" style="margin-top:4px;">Cargando estado biológico...</div>
             </div>
-        </div>
+        </article>
 
-        <!-- PESTAÑA 3: TU VIDA -->
-        <div id="tab-tuvida" class="tab-panel">
+        <!-- SECCIÓN: TU VIDA (GUSTOS DE ANALY) -->
+        <article id="tab-tuvida" class="tab-panel">
             <div class="card-box">
-                <div class="card-title">📖 El Mapa Exacto de Tus Gustos</div>
-                <div class="tag-diag">POSTRES Y ANTOJOS</div>
+                <div class="card-title">🦋 El Mapa Exacto de Tus Gustos</div>
+                <div class="tag-diag">POSTRES FAVORITOS</div>
                 <div class="text-diag">Pastel de Chocolate y 3 Leches, Arroz con leche, Chocolatito caliente con pan.</div>
                 <div class="tag-diag">PLATILLOS FAVORITOS</div>
-                <div class="text-diag">Lasaña, Comida China, Mole con Pollo, Enmoladas, Chilaquiles verdes/rojos.</div>
+                <div class="text-diag">Lasaña, Comida China (Pollo agridulce), Mole con Pollo, Enmoladas, Chilaquiles.</div>
             </div>
-        </div>
+        </article>
 
-        <!-- PESTAÑA 4: MI VIDA -->
-        <div id="tab-mivida" class="tab-panel">
+        <!-- SECCIÓN: MI VIDA (REALIDAD DE SANTANA) -->
+        <article id="tab-mivida" class="tab-panel">
             <div class="card-box">
-                <div class="card-title" style="color:var(--accent-blue);">📘 Mi Realidad y Bloqueos (Santana)</div>
+                <div class="card-title" style="color:var(--accent-blue);">📖 Mi Realidad y Bloqueos (Santana)</div>
                 <div class="text-diag">
-                    Mi sobrecarga en la escuela, los certificados y el trabajo en la panadería activan en mí un estado de parálisis. Cuando parezco cerrado o "bajo control", es mi defensa frente al colapso. Mi compromiso contigo es no dejarte fuera de lo que siento.
+                    Mi silencio durante las entregas escolares o el trabajo en la panadería no es desinterés. Es una parálisis por sobrecarga. Mi compromiso es abrir mi vulnerabilidad contigo en lugar de fingir que "tengo todo bajo control".
                 </div>
             </div>
-        </div>
+        </article>
 
-        <!-- PESTAÑA 5: ANÁLISIS -->
-        <div id="tab-analisis" class="tab-panel">
+        <!-- SECCIÓN: DIARIOS BILATERALES Y BUZÓN -->
+        <article id="tab-diarios" class="tab-panel">
             <div class="card-box">
-                <div class="card-title">🧠 Análisis Sistémico de Interacción</div>
-                <div class="tag-diag">PATRÓN A CORTAR</div>
-                <div class="text-diag">Sustituir las discusiones de medianoche por pausas de validación mutua ("Te amo, estoy cansado hoy, pero mañana lo resolvemos juntos").</div>
+                <div class="card-title" style="color:var(--accent-pink);">📕 Buzón Directo de Analy</div>
+                <div class="text-diag">Un espacio privado para escribir lo que sientes o piensas cuando sea difícil expresarlo verbalmente:</div>
+                <textarea id="analy-journal-input" placeholder="Escribe aquí lo que sientes hoy..."></textarea>
+                <button class="btn-action" onclick="saveJournalLocal()">💾 Guardar Nota Local</button>
+                <button class="btn-action" style="background:#25D366; color:#fff;" onclick="sendJournalWhatsApp()">💬 Sincronizar por WhatsApp</button>
             </div>
-        </div>
+        </article>
 
-        <!-- PESTAÑA 6: PAC-MAN -->
-        <div id="tab-pacman" class="tab-panel">
+        <!-- SECCIÓN: ARCADE (PAC-MAN Y TERMINAL) -->
+        <article id="tab-arcade" class="tab-panel">
             <div class="card-box" style="text-align:center;">
-                <div class="card-title">🟡 Pac-Man Retro Arcade</div>
+                <div class="card-title">👾 Pac-Man Retro Arcade</div>
                 <canvas id="pacmanCanvas" class="game-canvas" width="220" height="220"></canvas>
-                <div>
-                    <button class="btn-audio" onclick="movePac('UP')">⬆️</button><br>
-                    <button class="btn-audio" onclick="movePac('LEFT')">⬅️</button>
-                    <button class="btn-audio" onclick="movePac('RIGHT')">➡</button><br>
-                    <button class="btn-audio" onclick="movePac('DOWN')">⬇️</button>
+                <div style="margin-top:6px;">
+                    <button class="btn-audio" onclick="movePacman('UP')">⬆️</button><br>
+                    <button class="btn-audio" onclick="movePacman('LEFT')">⬅️</button>
+                    <button class="btn-audio" onclick="movePacman('RIGHT')">➡</button><br>
+                    <button class="btn-audio" onclick="movePacman('DOWN')">⬇️</button>
                 </div>
             </div>
-        </div>
 
-        <!-- PESTAÑA 7: STARK-OS -->
-        <div id="tab-stark" class="tab-panel">
             <div class="card-box">
                 <div class="card-title">💻 Terminal Interactive (Stark-OS)</div>
-                <div style="font-family:monospace; font-size:0.7rem; background:#000; padding:10px; border-radius:6px; color:var(--accent-green);" id="term-out">
+                <div class="terminal-box" id="term-out">
                     root@stark-os:~# python3 campo_flores.py<br>
-                    > Ejecutando simulación... Servidor Estable.
+                    > Servidor sincronizado. 0 errores detectados.
                 </div>
-                <button class="btn-action" onclick="runTerminal()">▶ Ejecutar Script</button>
+                <button class="btn-action" onclick="runScriptTerminal()">▶ Ejecutar Script</button>
             </div>
-        </div>
+        </article>
 
-        <!-- PESTAÑA 8: BOTIQUÍN -->
-        <div id="tab-botiquin" class="tab-panel">
-            <div class="card-box">
-                <div class="card-title" style="color:var(--accent-pink);">🩹 Botiquín Emocional de Emergencia</div>
-                <div class="text-diag">Si sientes abrumación o distancia imprevista, lee esto: "Te amo, eres mi prioridad y estoy aquí contigo".</div>
-            </div>
-        </div>
+    </main>
 
-        <!-- PESTAÑA 9: ACUERDOS -->
-        <div id="tab-acuerdos" class="tab-panel">
-            <div class="card-box">
-                <div class="card-title">📕 Acuerdos Bilaterales</div>
-                <div class="tag-diag">ACUERDO #1</div>
-                <div class="text-diag">Jamás irnos a dormir en silencio o usando el desapego como represalia.</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- DOCK NAVEGADOR INFERIOR COMPLETO -->
-    <div class="bottom-dock">
+    <!-- DOCK DE NAVEGACIÓN INFERIOR EXPANDIDO -->
+    <nav class="bottom-dock">
         <button class="dock-btn active" onclick="switchTab('tab-jardin', this)"><span class="dock-icon">🌻</span>Jardín</button>
         <button class="dock-btn" onclick="switchTab('tab-dias', this)"><span class="dock-icon">🌙</span>Tus Días</button>
         <button class="dock-btn" onclick="switchTab('tab-tuvida', this)"><span class="dock-icon">🦋</span>Tu Vida</button>
         <button class="dock-btn" onclick="switchTab('tab-mivida', this)"><span class="dock-icon">📖</span>Mi Vida</button>
-        <button class="dock-btn" onclick="switchTab('tab-analisis', this)"><span class="dock-icon">🧠</span>Análisis</button>
-        <button class="dock-btn" onclick="switchTab('tab-pacman', this)"><span class="dock-icon">👾</span>Pac-Man</button>
-        <button class="dock-btn" onclick="switchTab('tab-stark', this)"><span class="dock-icon">💻</span>Stark-OS</button>
-        <button class="dock-btn" onclick="switchTab('tab-botiquin', this)"><span class="dock-icon">🩹</span>Botiquín</button>
-        <button class="dock-btn" onclick="switchTab('tab-acuerdos', this)"><span class="dock-icon">🤝</span>Acuerdos</button>
-    </div>
+        <button class="dock-btn" onclick="switchTab('tab-diarios', this)"><span class="dock-icon">📕</span>Buzón</button>
+        <button class="dock-btn" onclick="switchTab('tab-arcade', this)"><span class="dock-icon">👾</span>Arcade</button>
+    </nav>
 
-    <!-- SCRIPTS TRES.JS & LÓGICA -->
+    <!-- LIBRERÍAS Y MODULOS JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        // 1. RELOJ & MÓDULO BIOLÓGICO
-        function updateEngine() {
-            const now = new Date();
-            document.getElementById('live-clock').innerText = now.toLocaleTimeString('es-MX');
-
-            const startDate = new Date(2026, 6, 22);
-            const diff = now - startDate;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const mins = Math.floor((diff / (1000 * 60)) % 60);
-            document.getElementById('timer-together').innerText = `${days}d ${hours}h ${mins}m`;
-
-            const lastPeriod = new Date(2026, 8, 11);
-            const cycleDay = Math.floor((now - lastPeriod) / (1000 * 60 * 60 * 24)) % 28;
-            const t = document.getElementById('cycle-title');
-            const d = document.getElementById('cycle-desc');
-
-            if(cycleDay <= 5) {
-                t.innerText = "FASE MENSTRUAL / APAPACHO 🩸";
-                d.innerText = "Momento de descanso absoluto y confort. Cero presiones.";
-            } else if(cycleDay <= 12) {
-                t.innerText = "FASE FOLICULAR / ALTA ENERGÍA ✨";
-                d.innerText = "Tu energía está subiendo. Excelente para disfrutar y sonreír juntas/os.";
-            } else if(cycleDay <= 16) {
-                t.innerText = "OVULACIÓN / MÁXIMA CONEXIÓN 🥚";
-                d.innerText = "Pico de cercanía y expresión afectiva.";
-            } else {
-                t.innerText = "FASE LÚTEA / SENSIBILIDAD 🌙";
-                d.innerText = "Priorizar la escucha activa, paciencia y ternura.";
-            }
-        }
-        setInterval(updateEngine, 1000); updateEngine();
-
-        // 2. SWITCH TAB
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        // 3. AUDIO ENGINE SINTETIZADO
-        let actx, osc, audioOn = false;
-        function toggleAudio() {
-            const btn = document.getElementById('music-btn');
-            if(!audioOn) {
-                actx = new (window.AudioContext || window.webkitAudioContext)();
-                osc = actx.createOscillator();
-                const gain = actx.createGain();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(216, actx.currentTime);
-                gain.gain.setValueAtTime(0.04, actx.currentTime);
-                osc.connect(gain); gain.connect(actx.destination);
-                osc.start();
-                btn.innerText = "🎵 Música: ON"; btn.style.color = "var(--accent-green)";
-                audioOn = true;
-            } else {
-                if(actx) actx.close();
-                btn.innerText = "🎵 Música: OFF"; btn.style.color = "var(--accent-blue)";
-                audioOn = false;
-            }
-        }
-
-        // 4. SANAR HOJA
-        function healLeaf() {
-            document.getElementById('vitality-val').innerText = "25% (2/14)";
-            alert("🌻 Compromiso registrado: Priorizar afecto antes que reparos logísticos.");
-        }
-
-        // 5. PAC-MAN GAME
-        const cvs = document.getElementById('pacmanCanvas'); const ctx = cvs.getContext('2d');
-        let px = 110, py = 110, pDir = 'RIGHT';
-        function drawPac() {
-            ctx.fillStyle = '#000'; ctx.fillRect(0,0,220,220);
-            ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(40,110,4,0,Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(180,110,4,0,Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(px, py, 11, 0.2*Math.PI, 1.8*Math.PI); ctx.lineTo(px,py); ctx.fill();
-        }
-        function movePac(d) {
-            pDir = d;
-            if(d==='UP' && py > 20) py -= 12;
-            if(d==='DOWN' && py < 200) py += 12;
-            if(d==='LEFT' && px > 20) px -= 12;
-            if(d==='RIGHT' && px < 200) px += 12;
-            drawPac();
-        }
-        drawPac();
-
-        // 6. TERMINAL
-        function runTerminal() {
-            document.getElementById('term-out').innerHTML += "<br>> Script executado: 'Cortando cadenas del pasado...' OK";
-        }
-
-        // 7. THREE.JS ESPACIO 3D + GIROSCÓPIO
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-canvas'), alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        const geo = new THREE.BufferGeometry();
-        const pos = new Float32Array(1600 * 3);
-        for(let i=0; i<4800; i++) pos[i] = (Math.random() - 0.5) * 900;
-        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        const stars = new THREE.Points(geo, new THREE.PointsMaterial({color: 0x4cc9f0, size: 1.3}));
-        scene.add(stars); camera.position.z = 5;
-
-        window.addEventListener('deviceorientation', (e) => {
-            if(e.beta && e.gamma) {
-                stars.rotation.x = e.beta * 0.0015;
-                stars.rotation.y = e.gamma * 0.0015;
-            }
-        });
-
-        function animSpace() {
-            requestAnimationFrame(animSpace);
-            stars.rotation.z += 0.0002;
-            renderer.render(scene, camera);
-        }
-        animSpace();
-    </script>
+    <script src="js/space.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/arcade.js"></script>
 </body>
 </html>
