@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zona Segura - Diarios</title>
+    <style>
+        :root {
+            --bg-color: #0c141f;
+            --panel-bg: #1a2a40;
+            --text-main: #e0e0e0;
+            --accent: #55FFFF;
+            --santana: #ff4d4d;
+            --analy: #ff99cc;
+        }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main);
+            font-family: -apple-system, sans-serif;
+            display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden;
+        }
+
+        /* Navegación Superior */
+        .tabs {
+            display: flex; width: 100%; max-width: 500px; background: #000; padding: 10px 0; justify-content: space-around;
+            border-bottom: 2px solid var(--accent); z-index: 10;
+        }
+        .tab-btn {
+            background: none; border: none; color: #888; font-size: 0.9rem; font-weight: bold;
+            text-transform: uppercase; cursor: pointer; padding: 5px 10px; transition: color 0.3s;
+        }
+        .tab-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+        /* Contenedores de las Pestañas */
+        .content-panel {
+            flex: 1; width: 95%; max-width: 500px; padding: 20px 10px; overflow-y: auto; display: none;
+            animation: fadeIn 0.4s;
+        }
+        .content-panel.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Estilos Internos de los Diarios */
+        .diary-entry { background: var(--panel-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent); }
+        .diary-entry h3 { margin-top: 0; color: var(--santana); font-size: 1.1rem; }
+        .diary-entry p { font-size: 0.9rem; line-height: 1.6; color: #ccc; }
+        .analy-title { color: var(--analy) !important; border-left-color: var(--analy) !important; }
+
+        textarea {
+            width: 100%; height: 150px; background: #111; border: 1px solid var(--analy); color: #fff;
+            padding: 10px; border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: none; margin-bottom: 10px;
+        }
+        
+        .btn-save {
+            background: var(--analy); color: #000; border: none; padding: 10px 20px; font-weight: bold;
+            border-radius: 5px; width: 100%; cursor: pointer;
+        }
+
+        /* Arcade (Ping Pong Canvas) */
+        canvas { background: #000; display: block; margin: 0 auto; border: 2px solid var(--accent); border-radius: 5px; max-width: 100%; }
+        .arcade-controls { display: flex; justify-content: space-between; margin-top: 15px; }
+        .arcade-btn { background: #333; color: white; border: none; padding: 15px 30px; font-size: 1.5rem; border-radius: 8px; }
+
+        #btn-back { position: absolute; top: 12px; left: 10px; color: var(--accent); text-decoration: none; font-size: 0.8rem; font-weight: bold; z-index: 20;}
+    </style>
+</head>
+<body>
+
+    <a href="index.html" id="btn-back">⬅ Inicio</a>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('santana')">Santana</button>
+        <button class="tab-btn" onclick="switchTab('analy')">Analy</button>
+        <button class="tab-btn" onclick="switchTab('arcade')">Arcade</button>
+    </div>
+
+    <!-- PESTAÑA 1: DIARIO DE SANTANA -->
+    <div id="santana" class="content-panel active">
+        <div class="diary-entry">
+            <h3>Lo que mi silencio esconde</h3>
+            <p><strong>El problema:</strong> Cuando discutimos o me siento presionado, me aíslo, me pongo cortante y parece que te ignoro.</p>
+            <p><strong>El trasfondo:</strong> Mi reacción instintiva ante el estrés severo es desconectarme. Entre la presión de la escuela, mi trabajo horneando, los certificados pendientes y no poder pelear (lo cual me hace sentir que pierdo mi identidad), mi mente colapsa. No lo hago porque no te ame, me escondo porque me abrumo y siento que no doy el ancho. Te elijo a ti todos los días, solo necesito aprender a no tragarme esta guerra yo solo.</p>
+        </div>
+        
+        <div class="diary-entry">
+            <h3>Muro de Promesas: Las Visitas</h3>
+            <p>Sé que te frustra que planee a futuro y no tengamos una fecha física próxima. La realidad es que el tema económico me genera un miedo brutal por humillaciones que viví en el pasado. <strong>Solución:</strong> Dejemos de prometer fechas al aire. Empecemos un fondo transparente, sin presión. Acepto que nuestra primera visita puede ser sencilla, comiendo unos tacos o estando en casa. Tú eres el plan.</p>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 2: DIARIO DE ANALY -->
+    <div id="analy" class="content-panel">
+        <div class="diary-entry analy-title">
+            <h3 style="color: var(--analy);">Tu Espacio de Desahogo</h3>
+            <p>Si sientes que sobrepiensas, que mis mensajes fríos te generan inseguridad o el insomnio no te deja en paz, escríbelo aquí en lugar de guardar enojo. Este espacio es tuyo y se guarda automáticamente en tu celular.</p>
+        </div>
+        
+        <textarea id="analy-text" placeholder="Escribe aquí lo que sientes, tus dudas o lo que necesitas de mí hoy..."></textarea>
+        <button class="btn-save" onclick="saveDiary()">Guardar Pensamientos 💙</button>
+        <p id="save-msg" style="color: #4CAF50; font-size: 0.8rem; display: none; text-align: center;">Guardado en tu espacio seguro.</p>
+    </div>
+
+    <!-- PESTAÑA 3: ARCADE (JUEGOS) -->
+    <div id="arcade" class="content-panel">
+        <div class="diary-entry" style="border-color: #ffcc00; text-align: center;">
+            <h3 style="color: #ffcc00;">Ping Pong (Tú vs IA)</h3>
+            <p style="font-size: 0.75rem;">Usa los botones para mover tu barra (Izquierda).</p>
+            <canvas id="pongCanvas" width="300" height="200"></canvas>
+            
+            <div class="arcade-controls">
+                <button class="arcade-btn" id="btn-up">⬆️</button>
+                <button class="arcade-btn" id="btn-down">⬇️</button>
+            </div>
+            
+            <h3 style="color: #ffcc00; margin-top: 30px;">Pacman Web</h3>
+            <p style="font-size: 0.75rem;">(Próxima actualización del servidor: Integración de emulador local).</p>
+        </div>
+    </div>
+
+    <script>
+        // Lógica de Pestañas
+        function switchTab(tabId) {
+            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Lógica del Diario de Analy (LocalStorage)
+        const textarea = document.getElementById('analy-text');
+        textarea.value = localStorage.getItem('analy_diary') || '';
+
+        function saveDiary() {
+            localStorage.setItem('analy_diary', textarea.value);
+            const msg = document.getElementById('save-msg');
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 3000);
+        }
+
+        // Lógica del Ping Pong
+        const canvas = document.getElementById('pongCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let pong = {
+            player: { y: 80, x: 10, width: 8, height: 40, score: 0, dy: 5 },
+            cpu: { y: 80, x: 282, width: 8, height: 40, score: 0 },
+            ball: { x: 150, y: 100, radius: 5, dx: 3, dy: 3, speed: 3 }
+        };
+
+        function drawRect(x, y, w, h, color) { ctx.fillStyle = color; ctx.fillRect(x, y, w, h); }
+        function drawCircle(x, y, r, color) { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill(); }
+        function drawText(text, x, y) { ctx.fillStyle = "#fff"; ctx.font = "20px Arial"; ctx.fillText(text, x, y); }
+
+        function render() {
+            drawRect(0, 0, canvas.width, canvas.height, "#000"); // Fondo
+            drawRect(pong.player.x, pong.player.y, pong.player.width, pong.player.height, varAccent()); // Jugador
+            drawRect(pong.cpu.x, pong.cpu.y, pong.cpu.width, pong.cpu.height, "#ff4d4d"); // CPU
+            drawCircle(pong.ball.x, pong.ball.y, pong.ball.radius, "#fff"); // Pelota
+            drawText(pong.player.score, canvas.width/4, 20);
+            drawText(pong.cpu.score, 3*canvas.width/4, 20);
+        }
+
+        function varAccent() { return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(); }
+
+        function resetBall() {
+            pong.ball.x = canvas.width/2; pong.ball.y = canvas.height/2;
+            pong.ball.dx = -pong.ball.dx;
+        }
+
+        function update() {
+            pong.ball.x += pong.ball.dx;
+            pong.ball.y += pong.ball.dy;
+            pong.cpu.y += ((pong.ball.y - (pong.cpu.y + pong.cpu.height/2))) * 0.08;
+
+            if(pong.ball.y + pong.ball.radius > canvas.height || pong.ball.y - pong.ball.radius < 0) {
+                pong.ball.dy = -pong.ball.dy;
+            }
+
+            let playerCollision = (pong.ball.x < canvas.width/2) ? pong.player : pong.cpu;
+            if (pong.ball.x - pong.ball.radius < playerCollision.x + playerCollision.width &&
+                pong.ball.x + pong.ball.radius > playerCollision.x &&
+                pong.ball.y < playerCollision.y + playerCollision.height &&
+                pong.ball.y > playerCollision.y) {
+                    pong.ball.dx = -pong.ball.dx;
+            }
+
+            if(pong.ball.x - pong.ball.radius < 0) { pong.cpu.score++; resetBall(); }
+            else if(pong.ball.x + pong.ball.radius > canvas.width) { pong.player.score++; resetBall(); }
+        }
+
+        function gameLoop() { update(); render(); requestAnimationFrame(gameLoop); }
+        gameLoop();
+
+        // Controles Táctiles
+        let upPressed = false, downPressed = false;
+        document.getElementById('btn-up').addEventListener('touchstart', (e) => { e.preventDefault(); upPressed = true; });
+        document.getElementById('btn-up').addEventListener('touchend', (e) => { e.preventDefault(); upPressed = false; });
+        document.getElementById('btn-down').addEventListener('touchstart', (e) => { e.preventDefault(); downPressed = true; });
+        document.getElementById('btn-down').addEventListener('touchend', (e) => { e.preventDefault(); downPressed = false; });
+
+        setInterval(() => {
+            if(upPressed && pong.player.y > 0) pong.player.y -= pong.player.dy;
+            if(downPressed && pong.player.y < canvas.height - pong.player.height) pong.player.y += pong.player.dy;
+        }, 1000/60);
+    </script>
+</body>
+</html>
