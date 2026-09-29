@@ -1,5 +1,8 @@
 import * as THREE from 'three';
+import * as THREE from 'three';
 import { DeviceOrientationControls } from 'three/addons/controls/DeviceOrientationControls.js';
+// Importamos la lógica de nuestro ecosistema
+import { cargarEcosistema, regarJardin, sanarHoja, actualizarInterfaz } from './jardin.js';
 
 let scene, camera, renderer, controls, starMesh, phoenixA, clock;
 let isEcosystemActive = false;
