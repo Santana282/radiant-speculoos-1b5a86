@@ -2,46 +2,128 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nuestro Ecosistema</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUESTRO ECOSISTEMA | Kevin & Analy</title>
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    
-    <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #0b0c10; overflow: hidden; font-family: 'Georgia', serif; }
-        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        
-        #start-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffd1dc; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.8s ease; text-align: center; padding: 20px; box-sizing: border-box; }
-        .card-content { background: #ffffff; padding: 40px 30px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 90%; max-width: 400px; }
-        .card-content h1 { color: #d81b60; margin-bottom: 10px; font-size: 1.8em; }
-        .emojis { font-size: 3em; margin: 15px 0; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.2)); }
-        
-        #btn-enter { background-color: #d81b60; color: white; border: none; padding: 15px 30px; border-radius: 30px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 25px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4); -webkit-tap-highlight-color: transparent; }
-        #btn-enter:active { transform: scale(0.95); }
-        
-        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; width: 90%; max-width: 380px; display: none; }
-    </style>
 </head>
 <body>
-    <div id="start-screen">
-        <div class="card-content">
-            <h1>Para mi Ponanita</h1>
-            <div class="emojis">🐼💙🌻</div>
-            <p style="color: #444; font-style: italic;">Un ecosistema vivo diseñado para ti.</p>
-            <button id="btn-enter">Activar Ecosistema ✨</button>
-        </div>
-    </div>
+    <canvas id="spaceCanvas"></canvas>
 
-    <div id="ui-layer">
-        <div style="background: rgba(20, 20, 30, 0.85); border: 1px solid #ff3366; border-radius: 15px; padding: 15px; backdrop-filter: blur(10px);">
-            <h3 style="margin: 0 0 5px 0; color: #ff3366; font-size: 1rem;">🌱 Vitalidad: <span id="ui-vitalidad">10%</span></h3>
-            <p style="margin: 0; font-size: 0.8rem; color: #ddd;">Calculando conexión Orizaba - Atlixco...</p>
+    <header class="header-banner">
+        <div class="header-status">
+            <span id="climaOrizaba" class="weather-badge">🌤️ Orizaba: Cargando...</span>
+            <span id="climaAtlixco" class="weather-badge">🌋 Atlixco: Cargando...</span>
         </div>
-    </div>
-    
-    <div id="canvas-container"></div>
+        <h1 class="main-title">Nuestro Ecosistema Cósmico</h1>
+        <p class="subtitle">Un espacio vivo sincronizado con nuestro cielo, tu ciclo, tus gustos y nuestras soluciones.</p>
+    </header>
 
-    <!-- Carga segura y directa del motor gráfico -->
-    <script type="module" src="./js/app.js"></script>
+    <main class="dashboard-grid">
+        <!-- Tarjeta de Perfiles Psicológicos -->
+        <section class="card profile-card">
+            <h2>🧠 Perfiles Psicológicos & Identidad</h2>
+            <div class="profiles-container">
+                <div class="profile-box kevin">
+                    <h3>👨🏻‍💻 Kevin Santana Ramírez</h3>
+                    <p class="age-badge" id="edadKevin">23 años (24 de Marzo de 2003)</p>
+                    <p><strong>Residencia:</strong> Orizaba, Veracruz</p>
+                    <p><strong>Estilo Cognitivo:</strong> Analítico, estructurado, enfocado en resolución lógica de problemas y lenguaje de servicio mediante desarrollo técnico.</p>
+                    <p><strong>Afrontamiento:</strong> Tendencia al refugio intelectual/juegos ante fatiga intensa. Mecanismo a regular: avisar antes de desconectarse.</p>
+                </div>
+                <div class="profile-box analy">
+                    <h3>👩🏻‍🍳 Analy Monserrat Vázquez Gómez</h3>
+                    <p class="age-badge" id="edadAnaly">28 años (22 de Septiembre de 1998)</p>
+                    <p><strong>Residencia:</strong> Atlixco, Puebla (Gastronomía)</p>
+                    <p><strong>Estilo Cognitivo:</strong> Expresividad afectiva alta, sensibilidad kinestésica/estética y profunda atención al detalle emocional.</p>
+                    <p><strong>Apego:</strong> Necesidad de reafirmación constante, tiempo de calidad exclusivo y certezas explícitas para evitar sobrepensamiento.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contador de Tiempo y Aniversario -->
+        <section class="card counter-card">
+            <h2>⏳ Tiempo Juntos</h2>
+            <div class="counter-display">
+                <div id="contadorDias" class="huge-number">0d 0h 0m 0s</div>
+                <p id="infoAniversario">Oficial desde el 22 de Julio de 2026</p>
+            </div>
+        </section>
+
+        <!-- Monitor Hormonal y Curva Menstrual -->
+        <section class="card menstrual-card">
+            <h2>🌙 Monitor Hormonal & Curva Lunar</h2>
+            <div class="menstrual-body">
+                <div class="cycle-info">
+                    <p><strong>Día del Ciclo:</strong> <span id="diaCicloNum">--</span> / 28</p>
+                    <p><strong>Fase Actual:</strong> <span id="faseCicloTexto">Cargando...</span></p>
+                </div>
+                <div class="curve-container">
+                    <div class="energy-bar-label">Nivel de Energía:</div>
+                    <div class="bar-bg"><div id="barEnergia" class="bar-fill energy"></div></div>
+                    <div class="energy-bar-label">Necesidad de Apapacho & Cuidado:</div>
+                    <div class="bar-bg"><div id="barApapacho" class="bar-fill care"></div></div>
+                </div>
+                <blockquote id="recomendacionCiclo" class="care-quote">--</blockquote>
+            </div>
+        </section>
+
+        <!-- Mapa Completo de Gustos de Analy -->
+        <section class="card gustos-card">
+            <h2>📋 El Mapa Exacto de Tus Gustos (Analy)</h2>
+            <div class="gustos-grid">
+                <div class="gustos-box">
+                    <h4>🍰 Postres, Dulces y Bebidas</h4>
+                    <ul>
+                        <li>Pastel de Chocolate y Tres Leches</li>
+                        <li>Pastel de Mil Hojas</li>
+                        <li>Arroz con leche & Chocolatito caliente con pan</li>
+                        <li>Cafecito para el sueño / Tepache frío de su mamá</li>
+                        <li>Micheladas, cantaritos y tequila</li>
+                    </ul>
+                </div>
+                <div class="gustos-box">
+                    <h4>🥘 Platillos Favoritos</h4>
+                    <ul>
+                        <li>Lasaña / Comida China (Pollo Agridulce)</li>
+                        <li>Mole con pollo, enmoladas y tamal de mole</li>
+                        <li>Sopecitos con quesito y carne / Chilaquiles</li>
+                        <li>Pizza con orilla de queso</li>
+                        <li>Huevos rancheros (NUNCA revueltos)</li>
+                    </ul>
+                </div>
+                <div class="gustos-box">
+                    <h4>🌺 Flores, Colores y Amor</h4>
+                    <ul>
+                        <li>Gerberas, Rosas y Girasoles</li>
+                        <li>Flor hecha con lata de Monster</li>
+                        <li>Jardín para colibríes y abejas</li>
+                        <li>Colores: Rosa bonito y Verde</li>
+                        <li>Contacto Físico: Abrazos, besos, masajitos y "Te adoro"</li>
+                    </ul>
+                </div>
+                <div class="gustos-box">
+                    <h4>🎮 Tu Mundo y Nosotros</h4>
+                    <ul>
+                        <li>Gym: Pierna al fallo y espalda</li>
+                        <li>Cuidar a Rogelio y a "Nuestros niños" &lt;3</li>
+                        <li>Ver SAO, Jujutsu Kaisen y The Boys juntos</li>
+                        <li>Casita en el Realm y jugar COD (MW3)</li>
+                        <li>Recordarme mi Orizagol y mis gotitas</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Navegación Inferior -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active">🌌 Universo</a>
+        <a href="invernadero.html" class="nav-item">🌻 Girasoles</a>
+        <a href="diarios.html" class="nav-item">📖 Diarios</a>
+    </nav>
+
+    <script src="js/space.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
