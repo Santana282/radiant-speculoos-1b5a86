@@ -1,5 +1,12 @@
-import * as THREE from 'three';
-import { DeviceOrientationControls } from 'three/addons/controls/DeviceOrientationControls.js';
+// Importaciones directas seguras para iOS (Sin ImportMap)
+import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+import { DeviceOrientationControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/DeviceOrientationControls.js';
+
+// Importamos la lógica de nuestra base de datos
+import { cargarEcosistema, regarJardin, sanarHoja, actualizarInterfaz } from './jardin.js';
+
+// ... (Aquí continúa todo el resto de tu código de let scene, camera, etc.)
+DeviceOrientationControls.js';
 // Importamos la lógica de nuestro ecosistema
 import { cargarEcosistema, regarJardin, sanarHoja, actualizarInterfaz } from './jardin.js';
 
