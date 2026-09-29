@@ -3,47 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nuestro Ecosistema Cuántico</title>
+    <title>Nuestro Ecosistema</title>
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Nuestro Jardín">
     
     <style>
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #0b0c10; overflow: hidden; font-family: 'Georgia', serif;
-        }
-        #canvas-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
-        }
-        #ui-layer {
-            position: absolute; top: 20px; left: 20px; z-index: 10;
-            color: rgba(255, 255, 255, 0.8); pointer-events: none; display: none;
-        }
-        /* --- PANTALLA DE INICIO (ESTILO FOLLETO PONANITA) --- */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #0b0c10; overflow: hidden; font-family: 'Georgia', serif; }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        /* Pantalla de Inicio (Estilo Ponanita) */
         #start-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ffd1dc; /* Rosa pastel de tu diseño original */
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; transition: opacity 1s ease; text-align: center; padding: 20px; box-sizing: border-box;
+            background-color: #ffd1dc; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; z-index: 9999; 
+            transition: opacity 1s ease; text-align: center; padding: 20px; box-sizing: border-box;
         }
-        .card-content {
-            background: #ffffff; padding: 40px 30px; border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 90%; max-width: 400px;
-        }
+        .card-content { background: #ffffff; padding: 40px 30px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 90%; max-width: 400px; }
         .card-content h1 { color: #d81b60; margin-bottom: 10px; font-size: 1.8em; }
         .emojis { font-size: 3em; margin: 15px 0; }
-        .card-content p { color: #444; font-style: italic; font-size: 1.1em; line-height: 1.5; }
         #btn-enter {
             background-color: #d81b60; color: white; border: none; padding: 15px 30px;
-            border-radius: 30px; font-size: 1.1em; font-weight: bold; cursor: pointer;
-            margin-top: 25px; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4);
-            font-family: 'Georgia', serif; -webkit-tap-highlight-color: transparent;
+            border-radius: 30px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 25px;
         }
-        #btn-enter:active { transform: scale(0.95); }
+        #ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; color: white; display: none; }
     </style>
 
+    <!-- Importación de Three.js por CDN (Sin Terminal) -->
     <script type="importmap">
         {
             "imports": {
@@ -54,23 +40,21 @@
     </script>
 </head>
 <body>
-    <!-- Pantalla de Bienvenida y Solicitud de Permisos iOS -->
     <div id="start-screen">
         <div class="card-content">
             <h1>Para mi Ponanita</h1>
             <div class="emojis">🐼💙🌻</div>
-            <p>¿Creíste que me olvidaría de tus flores amarillas?<br>Aunque sean virtuales, mi amor.</p>
-            <button id="btn-enter">Entrar al Ecosistema ✨</button>
+            <p>Un ecosistema vivo diseñado para ti.</p>
+            <button id="btn-enter">Activar Ecosistema ✨</button>
         </div>
     </div>
 
-    <!-- Interfaz del Espacio -->
     <div id="ui-layer">
         <h2 style="margin: 0; font-size: 1.2rem; color: #ff3366;">Conexión Cuántica Estable</h2>
-        <p style="margin: 5px 0; font-size: 0.9rem;">Sincronización Orizaba - Atlixco</p>
     </div>
     
     <div id="canvas-container"></div>
-    <script type="module" src="js/app.js"></script>
+    <!-- Archivo lógico que crearemos en la carpeta js -->
+    <script type="module" src="./js/app.js"></script>
 </body>
 </html>
