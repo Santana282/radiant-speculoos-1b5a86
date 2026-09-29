@@ -29,12 +29,6 @@ function iniciarEcosistema() {
     if (isEcosystemActive) return;
     isEcosystemActive = true;
 
-    // Transición de Interfaz
-    const startScreen = document.getElementById('start-screen');
-    startScreen.style.opacity = '0';
-    setTimeout(() => { startScreen.style.display = 'none'; }, 1000);
-    document.getElementById('ui-layer').style.display = 'block';
-
     // 2. Configuración de Three.js
     const container = document.getElementById('canvas-container');
     scene = new THREE.Scene();
