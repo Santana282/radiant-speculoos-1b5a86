@@ -3,230 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Servidor de Analy & Santana</title>
+    <title>ANALYS SERVER - Nuestro Ecosistema</title>
     <style>
         :root {
-            --bg-dark: #080c14;
-            --panel-bg: rgba(18, 26, 41, 0.85);
-            --accent-blue: #55FFFF;
-            --accent-pink: #ff99cc;
-            --accent-yellow: #FFD700;
-            --text-main: #f0f0f0;
+            --bg-main: #070a12;
+            --card-bg: rgba(15, 22, 36, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-yellow: #ffd166;
+            --accent-pink: #ff75a0;
+            --accent-blue: #4cc9f0;
+            --accent-green: #06d6a0;
+            --text-primary: #f8f9fa;
+            --text-secondary: #93a1b8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: var(--bg-dark); color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow-x: hidden; min-height: 100vh;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-primary); overflow-x: hidden; padding-bottom: 80px; }
 
-        /* 1. FONDO Y CANVAS */
-        #canvas-space { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+        /* CANVAS GIROSCOPIO */
+        #space-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
 
-        /* 2. HEADER ATMOSFÉRICO Y BIOLÓGICO */
-        #header-bar {
-            position: relative; z-index: 10; background: rgba(8, 12, 20, 0.9);
-            border-bottom: 2px solid var(--accent-blue); padding: 12px; text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .time-text { font-family: monospace; font-size: 1.1rem; color: var(--accent-blue); font-weight: bold; }
-        .cycle-badge {
-            margin-top: 8px; display: inline-block; padding: 6px 12px;
-            background: rgba(255, 153, 204, 0.15); border: 1px solid var(--accent-pink);
-            border-radius: 12px; font-size: 0.8rem; color: var(--accent-pink);
-        }
+        /* HEADER */
+        .header-status { background: rgba(10, 14, 23, 0.95); padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .location-tag { font-size: 0.75rem; color: var(--accent-yellow); background: rgba(255, 209, 102, 0.1); padding: 4px 8px; border-radius: 12px; }
+        .time-display { font-size: 1.4rem; font-weight: bold; font-family: monospace; color: var(--accent-yellow); margin: 6px 0; }
 
-        /* 3. NAVEGACIÓN Y CONTENEDOR PRINCIPAL */
-        .main-container { position: relative; z-index: 10; max-width: 600px; margin: 0 auto; padding: 15px; }
+        /* CONTENEDOR */
+        .container { max-width: 480px; margin: 0 auto; padding: 12px; }
+        .title-section { text-align: center; margin: 15px 0; }
+        .title-section h1 { font-size: 1.5rem; background: linear-gradient(45deg, var(--accent-yellow), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .title-section p { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
 
-        .nav-tabs { display: flex; justify-content: space-around; margin-bottom: 15px; background: rgba(0,0,0,0.6); border-radius: 8px; padding: 5px; }
-        .tab-btn {
-            background: none; border: none; color: #aaa; padding: 10px; font-size: 0.85rem;
-            font-weight: bold; cursor: pointer; border-radius: 5px; transition: 0.3s;
-        }
-        .tab-btn.active { background: var(--panel-bg); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+        /* GRID METRICAS */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+        .metric-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center; }
+        .metric-card label { font-size: 0.65rem; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+        .metric-card val { font-size: 0.8rem; font-weight: bold; color: var(--text-primary); }
 
-        .section-panel { display: none; background: var(--panel-bg); border-radius: 10px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .section-panel.active { display: block; }
+        /* SECCIONES Y TARJETAS */
+        .view-panel { display: none; }
+        .view-panel.active { display: block; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+        .card-header { font-size: 0.85rem; font-weight: bold; color: var(--accent-yellow); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 
-        /* 4. ELEMENTOS DEL JARDÍN Y DIARIOS */
-        .card { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; margin-bottom: 12px; border-left: 3px solid var(--accent-blue); }
-        .card-pink { border-left-color: var(--accent-pink); }
-        .card-yellow { border-left-color: var(--accent-yellow); }
-        
-        h3 { font-size: 1rem; margin-bottom: 6px; }
-        p { font-size: 0.85rem; line-height: 1.4; color: #ccc; }
+        /* HOJAS Y DIAGNÓSTICO */
+        .leaf-box { background: rgba(0,0,0,0.3); border-left: 3px solid var(--accent-pink); padding: 8px; margin-bottom: 6px; border-radius: 4px; font-size: 0.75rem; }
+        .step-tag { font-size: 0.7rem; color: var(--accent-blue); font-weight: bold; margin-top: 6px; }
+        .step-desc { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.3; }
 
-        textarea {
-            width: 100%; height: 100px; background: #111; border: 1px solid var(--accent-pink);
-            color: #fff; padding: 8px; border-radius: 5px; font-size: 0.85rem; resize: none; margin-top: 8px;
-        }
+        /* BUZÓN & TERMINAL */
+        textarea { width: 100%; height: 80px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: #fff; padding: 8px; border-radius: 6px; font-size: 0.8rem; resize: none; }
+        .btn-action { width: 100%; padding: 10px; background: var(--accent-blue); border: none; border-radius: 6px; color: #000; font-weight: bold; font-size: 0.8rem; margin-top: 8px; cursor: pointer; }
 
-        /* 5. GAME ARCADE TERMINAL */
-        canvas#pongCanvas { background: #000; border: 1px solid var(--accent-blue); display: block; margin: 10px auto; border-radius: 5px; }
-        .ctrl-btn { background: #222; color: #fff; border: 1px solid #555; padding: 10px 25px; border-radius: 5px; font-size: 1.2rem; }
+        /* BOTONERA NAVEGACIÓN INFERIOR (DOCK) */
+        .bottom-dock { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(8, 11, 18, 0.95); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 8px 4px; z-index: 100; overflow-x: auto; }
+        .dock-item { display: flex; flex-direction: column; align-items: center; font-size: 0.65rem; color: var(--text-secondary); border: none; background: none; cursor: pointer; min-width: 50px; }
+        .dock-item.active { color: var(--accent-yellow); }
+        .dock-icon { font-size: 1.1rem; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <!-- FONDO ESPACIAL (Three.js) -->
-    <canvas id="canvas-space"></canvas>
+    <canvas id="space-bg"></canvas>
 
-    <!-- HEADER BIOLÓGICO Y CLIMÁTICO -->
-    <div id="header-bar">
-        <div class="time-text" id="live-clock">Cargando fecha...</div>
-        <div style="font-size: 0.75rem; color: #aaa; margin-top: 3px;">☀️ Clima en Sincronía (Atlixco / Orizaba)</div>
-        <div class="cycle-badge" id="cycle-text">🌸 Calculando fase menstrual...</div>
+    <!-- HEADER ATMOSFÉRICO -->
+    <div class="header-status">
+        <div>
+            <span class="location-tag">📍 Orizaba / Atlixco • Despejado</span>
+            <div class="time-display" id="clock">10:01:08 p.m.</div>
+            <div style="font-size: 0.7rem; color: var(--text-secondary);">🌙 Noche • Descansa mi amor, nos vemos en sueños</div>
+        </div>
+        <button onclick="toggleAudio()" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: #fff; padding: 6px 10px; border-radius: 12px; font-size: 0.7rem;">🎵 Música: ON</button>
     </div>
 
-    <div class="main-container">
-        <!-- BOTÓN GIROSCOPIO -->
-        <button id="gyro-btn" style="width:100%; padding:10px; margin-bottom:12px; background:var(--accent-blue); border:none; border-radius:5px; font-weight:bold; cursor:pointer;">
-            🌌 Activar Giroscopio Espacial
-        </button>
-
-        <!-- PESTAÑAS -->
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="showTab('jardin')">🌻 Jardín</button>
-            <button class="tab-btn" onclick="showTab('diarios')">📖 Diarios</button>
-            <button class="tab-btn" onclick="showTab('arcade')">🎮 Arcade</button>
+    <div class="container">
+        <div class="title-section">
+            <h1>Nuestro Ecosistema</h1>
+            <p>Un jardín vivo sincronizado con nuestro cielo, tu ciclo, tus gustos y nuestras soluciones en el presente.</p>
         </div>
 
-        <!-- SECCIÓN 1: JARDÍN DE RESOLUCIÓN -->
-        <div id="jardin" class="section-panel active">
-            <div class="card card-yellow">
-                <h3 style="color:var(--accent-yellow);">🪴 Elemento Tierra: La Realidad</h3>
-                <p>Representa la estructura lógica y el esfuerzo constante en la escuela, el pan y el trabajo. Sin estabilidad, el jardín se desmorona.</p>
+        <!-- GRID DE MÉTRICAS GENERALES -->
+        <div class="grid-3">
+            <div class="metric-card">
+                <label>⏱️ TIEMPO JUNTOS</label>
+                <val id="together-counter">68d 22h</val>
             </div>
+            <div class="metric-card">
+                <label>🌱 VITALIDAD</label>
+                <val style="color:var(--accent-green);">10% (0/14)</val>
+            </div>
+            <div class="metric-card">
+                <label>🎃 PRÓXIMO ENCUENTRO</label>
+                <val style="color:var(--accent-pink);">Presente Activo</val>
+            </div>
+        </div>
+
+        <!-- TRES ELEMENTOS -->
+        <div class="grid-3">
+            <div class="metric-card" style="border-color: var(--accent-yellow);">
+                <label>☀️ EL SOL</label>
+                <val style="font-size: 0.65rem;">Tu Luz y Calor</val>
+            </div>
+            <div class="metric-card" style="border-color: var(--accent-blue);">
+                <label>💧 EL AGUA</label>
+                <val style="font-size: 0.65rem;">Tu Amor 24/7</val>
+            </div>
+            <div class="metric-card" style="border-color: var(--accent-green);">
+                <label>🌱 LA TIERRA</label>
+                <val style="font-size: 0.65rem;">Raíz y Hogar</val>
+            </div>
+        </div>
+
+        <!-- VISTA 1: JARDÍN & GIRASOLES -->
+        <div id="view-jardin" class="view-panel active">
             <div class="card">
-                <h3 style="color:var(--accent-blue);">💧 Elemento Agua: Vulnerabilidad</h3>
-                <p>Representa la comunicación abierta. Expresar miedos económicos o cansancio evita la sequía emocional y los malentendidos.</p>
-            </div>
-            <div class="card card-pink">
-                <h3 style="color:var(--accent-pink);">☀️ Elemento Sol: Afecto Diario</h3>
-                <p>Las pequeñas validaciones, los mensajes de buenos días y el cariño constante mantienen la calidez en la relación.</p>
-            </div>
+                <div class="card-header">🌻 Etapa 1 de 5: Girasol del Alba - Confianza Nocturna</div>
+                <div class="leaf-box">1. Madrugada en Discord</div>
+                <div class="leaf-box">2. Miedo a no ser prioridad</div>
+                <div class="leaf-box">3. Desvelos extremos</div>
 
-            <div class="card" style="border-left-color: #ff4d4d; margin-top: 15px;">
-                <h3 style="color:#ff4d4d;">🤝 Promesa & Solución Realista</h3>
-                <p><strong>Meta: Visita Física.</strong> En lugar de fechas inciertas, mantendremos un Plan de Visita con metas claras y económicas accesibles, adaptadas a nuestra realidad actual.</p>
+                <div style="margin-top: 10px;">
+                    <div class="step-tag">1. MI ERROR / LO QUE DAÑÓ LA HOJA</div>
+                    <div class="step-desc">Cuando cambiaron tus planes y me muteaste en Discord para no despertarme, me empecé de madrugada y me muteé como castigo.</div>
+
+                    <div class="step-tag">2. DIAGNÓSTICO PSICOLÓGICO</div>
+                    <div class="step-desc">Hipervigilancia afectiva: Ante un cambio imprevisto, mi mente activó defensas interpretando tu cuidado como ocultamiento.</div>
+
+                    <div class="step-tag">3. CÓMO TE HICE SENTIR</div>
+                    <div class="step-desc">Te hice sentir juzgada injustamente.</div>
+
+                    <div class="step-tag">4. NUEVO COMPROMISO</div>
+                    <div class="step-desc">Preguntar con ternura y jamás usar el silencio como castigo.</div>
+                </div>
+
+                <button class="btn-action" style="background:var(--accent-yellow);">💧 Regar Girasol</button>
             </div>
         </div>
 
-        <!-- SECCIÓN 2: DIARIOS VINCULANTES -->
-        <div id="diarios" class="section-panel">
+        <!-- VISTA 2: MONITOR HORMONAL & DIARIOS -->
+        <div id="view-dias" class="view-panel">
             <div class="card">
-                <h3 style="color:var(--accent-blue);">📘 Diario de Santana</h3>
-                <p><strong>Mis Bloqueos:</strong> Cuando la presión escolar, los certificados y la falta de entrenamiento me abruman, tiendo a cerrarme. Mi aislamiento no es desinterés, es un mecanismo frente al estrés[cite: 1]. Mi compromiso es comunicarte cuándo necesito aire sin distanciarme de ti[cite: 1].</p>
+                <div class="card-header">🌸 Monitor Hormonal & Curva Lunar</div>
+                <div style="font-size: 0.75rem; color: var(--accent-pink); margin-bottom: 8px;">FASE FOLICULAR / ALTA ENERGÍA</div>
+                <div class="step-desc">Tu energía está subiendo. Es el mejor momento para disfrutar, reír y entrenar al fallo.</div>
             </div>
 
-            <div class="card card-pink">
-                <h3 style="color:var(--accent-pink);">📕 Diario de Analy</h3>
-                <p>Un espacio seguro para escribir tus dudas o lo que sientes sin temor a discusiones[cite: 1]:</p>
-                <textarea id="analy-note" placeholder="Escribe aquí lo que sientes hoy..."></textarea>
-                <button onclick="saveNote()" style="width:100%; margin-top:5px; padding:8px; background:var(--accent-pink); border:none; border-radius:4px; font-weight:bold;">Guardar en mi dispositivo</button>
-                <p id="save-confirm" style="color:#4CAF50; font-size:0.75rem; display:none; margin-top:4px;">Guardado con éxito.</p>
+            <div class="card">
+                <div class="card-header">📖 Diario de Santana</div>
+                <div class="step-desc">Aislamiento por estrés financiero y escolar. Mi compromiso es comunicarme sin cerrarme.</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">📕 Buzón de Analy</div>
+                <textarea id="analy-text" placeholder="Escribe aquí lo que sientes hoy..."></textarea>
+                <button class="btn-action" onclick="saveBuzon()">Guardar Nota Local</button>
             </div>
         </div>
 
-        <!-- SECCIÓN 3: TERMINAL ARCADE -->
-        <div id="arcade" class="section-panel" style="text-align:center;">
-            <h3 style="color:var(--accent-yellow);">🏓 Ping Pong Retro</h3>
-            <canvas id="pongCanvas" width="280" height="180"></canvas>
-            <div style="display:flex; justify-content:space-around; margin-top:8px;">
-                <button class="ctrl-btn" id="upBtn">⬆️</button>
-                <button class="ctrl-btn" id="downBtn">⬇️</button>
+        <!-- VISTA 3: TERMINAL ARCADE -->
+        <div id="view-arcade" class="view-panel">
+            <div class="card">
+                <div class="card-header">💻 Terminal Stark-OS</div>
+                <div style="font-family: monospace; font-size: 0.7rem; background: #000; padding: 10px; border-radius: 6px; color: var(--accent-green);">
+                    root@stark-os:~# python3 campo_flores.py<br>
+                    > Generando simulación de girasoles... OK<br>
+                    > Estado del servidor: Estable (0 errores)
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
+    <!-- NAVEGACIÓN INFERIOR (DOCK) -->
+    <div class="bottom-dock">
+        <button class="dock-item active" onclick="switchView('view-jardin', this)"><span class="dock-icon">🌻</span>Jardín</button>
+        <button class="dock-item" onclick="switchView('view-dias', this)"><span class="dock-icon">🌙</span>Tus Días</button>
+        <button class="dock-item" onclick="switchView('view-arcade', this)"><span class="dock-icon">💻</span>Stark-OS</button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // RELEOJ Y CICLO
-        function updateMetrics() {
+        // CONTADOR TIEMPO JUNTOS (Desde 22 Jul)
+        function updateCounter() {
+            const startDate = new Date(2026, 6, 22);
             const now = new Date();
-            document.getElementById('live-clock').innerText = now.toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'medium' });
-
-            const lastPeriod = new Date(2026, 8, 11); // 11 Sep 2026[cite: 1]
-            const days = Math.floor((now - lastPeriod) / (1000 * 60 * 60 * 24)) % 28;
-            let status = days <= 5 ? "Fase Menstruación 🩸" : (days <= 12 ? "Fase Folicular ✨" : (days <= 16 ? "Ovulación 🥚" : "Fase Lútea / SPM 🌙"));
-            document.getElementById('cycle-text').innerText = "🌸 Ciclo: " + status;
+            const diff = now - startDate;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            document.getElementById('together-counter').innerText = `${days}d ${hours}h`;
         }
-        setInterval(updateMetrics, 1000); updateMetrics();
+        setInterval(updateCounter, 1000); updateCounter();
 
-        // PESTAÑAS
-        function showTab(id) {
-            document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.target.classList.add('active');
+        // NAVEGACIÓN VISTAS
+        function switchView(viewId, btn) {
+            document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.dock-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            btn.classList.add('active');
         }
 
-        // DIARIO LOCALSTORAGE
-        const tx = document.getElementById('analy-note');
-        tx.value = localStorage.getItem('analy_private_note') || '';
-        function saveNote() {
-            localStorage.setItem('analy_private_note', tx.value);
-            const c = document.getElementById('save-confirm');
-            c.style.display = 'block'; setTimeout(() => c.style.display = 'none', 2000);
+        // BUZÓN
+        function saveBuzon() {
+            const val = document.getElementById('analy-text').value;
+            localStorage.setItem('analy_note', val);
+            alert('Nota guardada en este dispositivo.');
         }
 
-        // TRES.JS ESPACIO
+        // TRES.JS FONDO ESPACIAL CON GIROSCOPIO
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas-space'), alpha: true });
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-bg'), alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         const geo = new THREE.BufferGeometry();
-        const pos = new Float32Array(2000 * 3);
-        for(let i=0; i<6000; i++) pos[i] = (Math.random() - 0.5) * 1000;
+        const pos = new Float32Array(1500 * 3);
+        for(let i=0; i<4500; i++) pos[i] = (Math.random() - 0.5) * 800;
         geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        const stars = new THREE.Points(geo, new THREE.PointsMaterial({color: 0x55FFFF, size: 1.2}));
+        const stars = new THREE.Points(geo, new THREE.PointsMaterial({color: 0xffd166, size: 1.5}));
         scene.add(stars); camera.position.z = 5;
 
-        let rotX = 0, rotY = 0;
-        document.getElementById('gyro-btn').onclick = function() {
-            this.style.display = 'none';
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission().then(st => { if(st==='granted') window.addEventListener('deviceorientation', handleG); });
-            } else { window.addEventListener('deviceorientation', handleG); }
-        };
-        function handleG(e) { if(e.beta && e.gamma) { rotX = (e.beta - 90) * 0.005; rotY = e.gamma * 0.005; } }
+        window.addEventListener('deviceorientation', (e) => {
+            if(e.beta && e.gamma) {
+                stars.rotation.x = e.beta * 0.002;
+                stars.rotation.y = e.gamma * 0.002;
+            }
+        });
 
-        function anim() {
-            requestAnimationFrame(anim);
-            camera.rotation.x += (rotX - camera.rotation.x) * 0.05;
-            camera.rotation.y += (rotY - camera.rotation.y) * 0.05;
-            stars.rotation.y += 0.0003;
+        function animate() {
+            requestAnimationFrame(animate);
+            stars.rotation.z += 0.0002;
             renderer.render(scene, camera);
         }
-        anim();
-
-        // PING PONG MINI-GAME
-        const cvs = document.getElementById('pongCanvas'); const ctx = cvs.getContext('2d');
-        let py = 60, cy = 60, bx = 140, by = 90, bdx = 2, bdy = 2;
-        let uP = false, dP = false;
-        document.getElementById('upBtn').ontouchstart = () => uP = true; document.getElementById('upBtn').ontouchend = () => uP = false;
-        document.getElementById('downBtn').ontouchstart = () => dP = true; document.getElementById('downBtn').ontouchend = () => dP = false;
-
-        function loopPong() {
-            if(uP && py > 0) py -= 3; if(dP && py < 130) py += 3;
-            cy += (by - (cy + 25)) * 0.05;
-            bx += bdx; by += bdy;
-            if(by < 0 || by > 180) bdy = -bdy;
-            if(bx < 15 && by > py && by < py + 50) bdx = -bdx;
-            if(bx > 265 && by > cy && by < cy + 50) bdx = -bdx;
-            if(bx < 0 || bx > 280) { bx = 140; by = 90; }
-
-            ctx.fillStyle = "#000"; ctx.fillRect(0,0,280,180);
-            ctx.fillStyle = "#55FFFF"; ctx.fillRect(5, py, 8, 50);
-            ctx.fillStyle = "#ff99cc"; ctx.fillRect(267, cy, 8, 50);
-            ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(bx, by, 4, 0, Math.PI*2); ctx.fill();
-            requestAnimationFrame(loopPong);
-        }
-        loopPong();
+        animate();
     </script>
 </body>
 </html>
