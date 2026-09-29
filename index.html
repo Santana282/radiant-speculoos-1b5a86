@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Entrelazamiento Cuántico 🌻</title>
+<meta name="theme-color" content="#020308">
+<style>
+:root{--gold:#fbbf24;--rose:#f43f5e;--pink:#fda4af;--green:#22c55e;--purple:#c084fc;--blue:#38bdf8;--glass:rgba(15,23,42,0.65);--border:rgba(251,191,36,0.25);--txt:#f8fafc;--muted:#94a3b8;--bg-dark:#000000}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg-dark) !important;color:var(--txt);min-height:100vh;overflow-x:hidden;position:relative;line-height:1.6}
+
+/* CONTROLES TOP */
+#audio-control{position:fixed;top:15px;right:15px;z-index:10000;background:rgba(10,15,30,0.9);border:1px solid var(--gold);color:var(--gold);padding:8px 18px;border-radius:99px;font-weight:900;font-size:0.85rem;cursor:pointer;backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(251,191,36,0.3);transition:transform 0.2s}
+#audio-control:active{transform:scale(0.9)}
+
+/* MOTORES GRÁFICOS (CANVAS) */
+#cosmos-bg-canvas, #weather-canvas {position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:1}
+#cosmos-bg-canvas {opacity:0.9}
+#weather-canvas {opacity:0.8; z-index:2}
+
+/* PORTADA PHOENIX A */
+.splash-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity 1s ease, visibility 1s}
+.splash-screen.hidden{opacity:0;visibility:hidden;pointer-events:none;transform:scale(1.1)}
+#splash-galaxy-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.splash-card{position:relative;z-index:3;background:linear-gradient(145deg, rgba(10,15,30,0.85), rgba(2,3,8,0.95));backdrop-filter:blur(25px);border:1px solid rgba(251,191,36,0.5);border-radius:24px;padding:40px 25px;text-align:center;max-width:92%;box-shadow:0 0 100px rgba(0,0,0,1), inset 0 0 30px rgba(251,191,36,0.15)}
+.splash-btn{margin-top:25px;width:100%;padding:16px;border-radius:99px;border:1px solid rgba(255,255,255,0.3);background:linear-gradient(180deg, #f59e0b 0%, #e11d48 100%);color:#fff;font-weight:900;font-size:1.15rem;cursor:pointer;box-shadow:0 10px 40px rgba(225,29,72,0.6);transition:all 0.3s}
+.splash-btn:active{transform:scale(0.95)}
+
+/* MODAL INTERACTIVO */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:10000;padding:16px;backdrop-filter:blur(10px)}
+.modal-overlay.open{display:flex;animation:fadeIn 0.3s ease}
+.modal-card{background:linear-gradient(145deg,#0f172a,#050812);border:1px solid var(--gold);border-radius:24px;max-width:450px;width:100%;padding:30px;position:relative;text-align:center;box-shadow:0 20px 80px rgba(0,0,0,1)}
+.close-modal{position:absolute;top:15px;right:20px;background:none;border:none;color:var(--muted);font-size:2.2rem;cursor:pointer;transition:color 0.2s}
+.close-modal:hover{color:var(--rose)}
+
+/* CONTENEDOR APP */
+.app-container{position:relative;z-index:3;max-width:1240px;margin:0 auto;padding:70px 12px 110px;display:none}
+.app-container.active{display:block;animation:fadeIn 1.2s ease}
+
+/* WIDGET CLIMÁTICO Y HORARIO (NASA LEVEL) */
+.time-widget{background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:25px;margin-bottom:25px;backdrop-filter:blur(20px);box-shadow:0 25px 50px rgba(0,0,0,0.85);position:relative;overflow:hidden}
+.tw-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;font-size:0.9rem;font-weight:800}
+.loc-toggles{display:flex;gap:10px;margin-bottom:18px;overflow-x:auto}
+.loc-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.2);color:var(--txt);padding:8px 18px;border-radius:99px;font-size:0.85rem;white-space:nowrap;cursor:pointer;transition:all 0.3s}
+.loc-btn.active{background:var(--gold);color:#000;font-weight:900;box-shadow:0 0 20px rgba(251,191,36,0.5)}
+.clock-display{font-size:3.2rem;font-weight:900;margin-bottom:10px;color:#fde68a;display:flex;align-items:center;gap:15px;text-shadow:0 0 25px rgba(253,230,138,0.4);letter-spacing:1px}
+.clock-icon{font-size:3.5rem;filter:drop-shadow(0 0 20px rgba(251,191,36,0.8));transition:transform 0.5s}
+.phase-alert{background:rgba(251,191,36,0.15);padding:14px 18px;border-radius:14px;border-left:4px solid var(--gold);font-size:0.95rem;font-weight:800;color:#fde68a;letter-spacing:0.5px}
+
+/* TARJETAS KPI */
+header{text-align:center;margin-bottom:25px}
+.badge-date{display:inline-block;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.5);color:var(--gold);padding:6px 18px;border-radius:99px;font-size:.85rem;font-weight:800;margin-bottom:12px;letter-spacing:1px}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:900;background:linear-gradient(90deg,#fde68a,#f59e0b,#fb7185,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:5px 0;letter-spacing:1px}
+.subtitle{color:var(--muted);max-width:800px;margin:0 auto;font-size:0.95rem;line-height:1.6}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:20px 0}
+.kpi-card, .inspector-panel, .garden-stage, .lunar-card, .likes-panel, .greenhouse-box, .mirror-card, .sos-card, .pacman-container{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.8)}
+.kpi-val{font-size:1.2rem;font-weight:900;color:#fde68a;margin:4px 0}
+.kpi-lbl{font-size:.75rem;text-transform:uppercase;color:var(--muted);font-weight:800;letter-spacing:0.5px}
+
+.elements-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:20px 0}
+.element-card{background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:15px;transition:transform 0.2s, background 0.3s;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+.element-card:active{transform:scale(0.95);background:rgba(251,191,36,0.1)}
+.element-icon{font-size:2rem;min-width:55px;height:55px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2)}
+
+.view-section{display:none;animation:fadeIn .5s ease}.view-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.garden-layout, .care-layout{display:grid;grid-template-columns:1.05fr 1.15fr;gap:20px;align-items:start}
+@media(max-width:900px){.garden-layout, .care-layout{grid-template-columns:1fr}}
+
+/* FLORES SVG (3D Y MOVIMIENTO) */
+.flowers-row{display:flex;justify-content:space-around;align-items:flex-end;padding:15px 5px 0;min-height:280px;flex-wrap:wrap}
+.flower-unit{display:flex;flex-direction:column;align-items:center;cursor:pointer;width:19%;min-width:65px}
+.flower-unit.selected .flower-label{background:var(--gold);color:#000;font-weight:900;box-shadow:0 0 15px rgba(251,191,36,0.5)}
+.flower-svg{width:100%;max-width:100px;height:200px;overflow:visible;transform-origin:bottom center;animation:sway 6s ease-in-out infinite;filter:drop-shadow(0 15px 20px rgba(0,0,0,0.9))}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.flower-unit.wilted .flower-head{transform:translateY(20px) rotate(30deg);transform-origin:60px 90px;filter:grayscale(85%) brightness(.6);transition:all .8s cubic-bezier(0.4, 0, 0.2, 1)}
+.flower-unit.bloomed .flower-head{transform:translateY(0) rotate(0deg);filter:drop-shadow(0 0 20px rgba(251,191,36,0.8));transition:all .8s cubic-bezier(0.4, 0, 0.2, 1)}
+.flower-unit.wilted .stem-path{stroke:#475569}
+.flower-unit.bloomed .stem-path{stroke:#22c55e}
+.flower-label{margin:6px 0 10px;background:rgba(10,15,30,0.95);border:1px solid var(--border);padding:5px 10px;border-radius:99px;font-size:.7rem;white-space:nowrap;transition:all 0.3s}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;box-shadow:0 0 5px currentColor}
+.wilted .status-dot{background:#ef4444;color:#ef4444}
+.bloomed .status-dot{background:#22c55e;color:#22c55e}
+.soil-bed{height:40px;background:linear-gradient(180deg,#3f1604,#120600);border-radius:12px;border-top:3px solid #78350f;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#fde68a;font-weight:800;box-shadow:inset 0 5px 10px rgba(0,0,0,0.5)}
+
+/* BOTONES Y PANELES */
+.leaves-selector,.tag-cloud{display:flex;gap:8px;flex-wrap:wrap}
+.leaf-btn,.water-btn,.cmd-btn,.crud-input,.crud-select{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--txt);padding:12px 18px;border-radius:12px;cursor:pointer;font-size:.85rem;font-weight:600;transition:all 0.2s}
+.leaf-btn:active, .water-btn:active, .cmd-btn:active{transform:scale(0.95)}
+.leaf-btn.active{background:rgba(251,191,36,0.25);border-color:var(--gold);color:#fde68a;font-weight:900;box-shadow:0 0 15px rgba(251,191,36,0.3)}
+
+.info-box{background:rgba(0,0,0,0.5);border-radius:14px;padding:16px;border-left:4px solid var(--rose);margin-bottom:14px;box-shadow:inset 0 0 20px rgba(0,0,0,0.5)}
+.info-box.psych{border-left-color:var(--purple)}
+.info-box.empathy{border-left-color:var(--blue)}
+.info-box.expert{border-left-color:var(--gold)}
+.info-box.quote-box{border-left-color:#38bdf8;background:rgba(56,189,248,0.05);font-style:italic}
+.box-label{font-size:.75rem;text-transform:uppercase;font-weight:900;margin-bottom:6px;display:block;letter-spacing:0.5px}
+.box-text{font-size:.9rem;color:#e2e8f0;white-space:pre-wrap;line-height:1.7}
+
+.proposals-grid,.likes-categories,.mirror-grid,.sos-grid,.cmd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.proposal-card,.like-category-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:16px}
+.water-btn{width:100%;border:1px solid rgba(255,255,255,0.2);background:linear-gradient(135deg,#0284c7,#1e3a8a);color:#fff;font-weight:900;font-size:.9rem;box-shadow:0 5px 15px rgba(2,132,199,0.4)}
+.water-btn.secondary{background:linear-gradient(135deg,#d97706,#78350f);box-shadow:0 5px 15px rgba(217,119,6,0.4)}
+.water-btn.healed{background:linear-gradient(135deg,#16a34a,#064e3b);box-shadow:0 5px 15px rgba(22,163,74,0.4)}
+
+.taste-tag{background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fef3c7;padding:6px 12px;border-radius:99px;font-size:.8rem;font-weight:600}
+.taste-tag.pink{background:rgba(244,63,94,0.18);border-color:rgba(244,63,94,0.4);color:#ffe4e6}
+.taste-tag.blue{background:rgba(56,189,248,0.18);border-color:rgba(56,189,248,0.4);color:#e0f2fe}
+.taste-tag.green{background:rgba(34,197,94,0.18);border-color:rgba(34,197,94,0.4);color:#dcfce7}
+
+/* NAVEGACIÓN BOTTOM */
+.bottom-nav{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:96%;max-width:900px;background:rgba(5,8,18,0.95);backdrop-filter:blur(25px);border:1px solid rgba(251,191,36,0.3);border-radius:99px;display:flex;justify-content:flex-start;padding:8px 12px;z-index:90;box-shadow:0 15px 50px rgba(0,0,0,0.9), 0 0 20px rgba(251,191,36,0.1);overflow-x:auto;gap:6px}
+.bottom-nav::-webkit-scrollbar{display:none}
+.b-tab{background:none;border:none;color:var(--muted);font-size:.65rem;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:8px 14px;border-radius:99px;flex:0 0 auto;min-width:65px;transition:all 0.3s}
+.b-tab span{font-size:1.5rem; filter:grayscale(100%); transition:filter 0.3s}
+.b-tab.active{background:linear-gradient(135deg,#f59e0b,#e11d48);color:#fff;box-shadow:0 5px 15px rgba(225,29,72,0.5)}
+.b-tab.active span{filter:grayscale(0%)}
+
+/* TERMINAL STARK-OS */
+.terminal-window{background:#02040a;border:1px solid #334155;border-radius:16px;overflow:hidden;font-family:'Courier New',monospace;margin-top:15px;box-shadow:0 10px 30px rgba(0,0,0,0.8)}
+.terminal-bar{background:#0f172a;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1e293b}
+.term-body{padding:18px;color:#38bdf8;font-size:.85rem;line-height:1.6;min-height:220px;max-height:350px;overflow-y:auto;white-space:pre-wrap;text-shadow:0 0 5px rgba(56,189,248,0.4)}
+.crud-form{display:grid;gap:12px;background:rgba(0,0,0,0.6);padding:16px;border-radius:16px;border:1px solid var(--border);margin-top:12px}
+
+/* JUEGO PAC-MAN NATIVO */
+#pacman-canvas{background:#02040a;border:2px solid #fde68a;border-radius:12px;width:100%;max-width:350px;height:auto;display:block;margin:0 auto;box-shadow:0 0 30px rgba(251,191,36,0.2)}
+.pacman-controls{display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;max-width:220px;margin:20px auto}
+.dpad-btn{background:linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.5));border:1px solid var(--border);color:#fff;font-size:1.8rem;padding:18px;border-radius:16px;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,0.5)}
+.dpad-btn:active{background:var(--gold);color:#000;transform:scale(0.9)}
+
+/* DIRAC EQUATION[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span) */
+.dirac-eq{font-family:'Courier New',monospace;font-size:1.8rem;color:#fde68a;text-align:center;margin:15px 0;letter-spacing:2px;text-shadow:0 0 15px rgba(251,191,36,0.6);font-weight:900}
+</style>
+</head>
+<body>
+
+<!-- AUDIO DE FONDO -->
+<button id="audio-control" onclick="toggleMusic()">🎵 Música: ON</button>
+<audio id="bg-music" loop>
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<!-- MOTORES GRÁFICOS (FONDOS) -->
+<canvas id="cosmos-bg-canvas"></canvas>
+<canvas id="weather-canvas"></canvas>
+
+<!-- PORTADA SPLASH (PHOENIX A) -->
+<div class="splash-screen" id="splash-screen">
+    <canvas id="splash-galaxy-canvas"></canvas>
+    <div class="splash-card">
+        <div style="font-size:4rem;margin-bottom:15px;filter:drop-shadow(0 0 20px rgba(251,191,36,0.6))">🌻 👩🏻‍🍳 💻</div>
+        <span class="badge-date" style="font-size:1rem;background:rgba(225,29,72,0.2);border-color:#e11d48;color:#ffe4e6">Arquitectura Perfecta • Día 22</span>
+        <h2 style="font-size:2.2rem;color:#fde68a;margin:15px 0;font-weight:900;text-shadow:0 0 30px rgba(253,230,138,0.6);letter-spacing:1px">La Receta & El Código Fuente</h2>
+        <p class="box-text" style="color:#e2e8f0;font-size:1.05rem;line-height:1.8;font-style:italic">«Tú, con tu talento en la gastronomía, entendiendo los tiempos, las temperaturas y mezclando los ingredientes exactos que tocan el alma. Y yo, buscando la estructura matemática y el entrelazamiento cuántico para que nuestro presente compile sin errores. Tú pones la magia y yo escribo el código de nuestro futuro.»</p>
+        <button class="splash-btn" onclick="enterEcosystem()">✨ Activar Ecosistema y Entrelazamiento</button>
+    </div>
+</div>
+
+<!-- MODAL DE ELEMENTOS -->
+<div class="modal-overlay" id="element-modal">
+    <div class="modal-card">
+        <button class="close-modal" onclick="closeElementModal()">×</button>
+        <div id="modal-icon" style="font-size:4.5rem;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(255,255,255,0.3))"></div>
+        <h3 id="modal-title" style="color:var(--gold);margin-bottom:15px;font-size:1.5rem;font-weight:900"></h3>
+        <p id="modal-body" style="color:#e2e8f0;font-size:1.05rem;line-height:1.8"></p>
+    </div>
+</div>
+
+<div class="app-container" id="main-app">
+    
+    <!-- WIDGET HORARIO Y CLIMA REALISTA (NASA LEVEL) -->
+    <div class="time-widget">
+        <div class="tw-top">
+            <span id="weather-text" style="color:#fde68a;font-size:0.95rem">☀️ Analizando ubicación...</span>
+            <span style="color:var(--muted)">Sincronizado Cuánticamente</span>
+        </div>
+        <div class="loc-toggles">
+            <button class="loc-btn active" onclick="cambiarLoc(this, 'Auto')">📍 Auto (Local)</button>
+            <button class="loc-btn" onclick="cambiarLoc(this, 'Atlixco')">🌸 Atlixco, Puebla</button>
+            <button class="loc-btn" onclick="cambiarLoc(this, 'Orizaba')">⛰️ Orizaba, Veracruz</button>
+        </div>
+        <div class="clock-display">
+            <span id="reloj-icono" class="clock-icon">⏳</span>
+            <span id="reloj-tiempo-real">Cargando tiempo...</span>
+        </div>
+        <div class="phase-alert" id="phase-alert">Calculando ciclo solar...</div>
+    </div>
+
+    <header>
+        <h1>Nuestro Ecosistema</h1>
+        <p class="subtitle">Un jardín vivo sincronizado con nuestro cielo, tu ciclo biológico, tus gustos exactos y nuestras soluciones en el presente absoluto.</p>
+        <div class="kpi-grid">
+            <div class="kpi-card"><span class="kpi-lbl">⏱️ Tiempo Juntos (Desde 22 Jul)</span><div class="kpi-val" id="kpi-uptime">Calculando...</div><span class="kpi-lbl" style="color:var(--pink)">Contando cada segundo de entrelazamiento</span></div>
+            <div class="kpi-card"><span class="kpi-lbl">🌱 Vitalidad del Jardín</span><div class="kpi-val" id="health-percent">10% (0/14 hojas sanadas)</div><div style="width:100%;height:10px;background:#02040a;border-radius:99px;overflow:hidden;margin-top:6px;border:1px solid #334155"><div id="health-fill" style="height:100%;width:10%;background:linear-gradient(90deg,#f43f5e,#fbbf24,#22c55e);transition:width 0.8s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 0 10px rgba(34,197,94,0.5)"></div></div></div>
+            <div class="kpi-card"><span class="kpi-lbl">👩‍❤️‍👨 Nuestro Próximo Encuentro</span><div class="kpi-val" style="color:#4ade80;text-shadow:0 0 15px rgba(74,222,128,0.4)">Presente Activo ❤️‍🔥</div><span class="kpi-lbl">Listo para abrazarte sin pretextos ni distancia</span></div>
+        </div>
+    </header>
+
+    <section class="elements-bar">
+        <div class="element-card" onclick="openElementModal('sun')"><div class="element-icon">☀️</div><div><div class="box-label" style="color:var(--gold)">Lo que significas</div><strong style="font-size:1.05rem">El Sol: Tu Luz</strong><p class="box-text" style="font-size:.85rem;color:var(--muted)">Toca para leer</p></div></div>
+        <div class="element-card" onclick="openElementModal('water')"><div class="element-icon">💧</div><div><div class="box-label" style="color:var(--blue)">Lo que me entregas</div><strong style="font-size:1.05rem">El Agua: Tu Amor</strong><p class="box-text" style="font-size:.85rem;color:var(--muted)">Toca para leer</p></div></div>
+        <div class="element-card" onclick="openElementModal('earth')"><div class="element-icon">🌱</div><div><div class="box-label" style="color:var(--green)">Adonde vamos</div><strong style="font-size:1.05rem">La Tierra: Hogar</strong><p class="box-text" style="font-size:.85rem;color:var(--muted)">Toca para leer</p></div></div>
+    </section>
+
+    <!-- ANÁLISIS PROFESIONAL CLÍNICO -->
+    <section id="view-analysis" class="view-section">
+        <div class="inspector-panel" style="border-color:#c084fc;box-shadow:0 20px 60px rgba(192,132,252,0.15)">
+            <span class="badge-date" style="background:rgba(192,132,252,0.2);color:#d8b4fe;border-color:#c084fc">🧠 Diagnóstico Clínico Relacional</span>
+            <h2 style="font-size:1.6rem;color:#fde68a;font-weight:900;margin:15px 0">Dinámica de Ansiedad y Evitación</h2>
+            
+            <div class="info-box psych" style="padding:20px">
+                <span class="box-label" style="color:#d8b4fe;font-size:0.85rem">📉 1. Mis Errores Clínicos (Evitación y Racionalización)</span>
+                <p class="box-text">Como mecanismo de defensa ante mi pasado (la supervivencia a los 15 años, el combate), activo una <strong>Racionalización Defensiva Extrema</strong>. En lugar de procesar la emoción o el miedo, lo intelectualizo a través del código[span_7](start_span)[span_7](end_span). Cuando a las 3:00 AM te pido "hacer un registro lógico de problemas", anulo tu necesidad humana de contención afectiva[span_8](start_span)[span_8](end_span). Mi hiper-futurismo (la angustia por la renta, los gastos, la escuela) me hace poner barreras en el presente. Creo que te protejo limitando tus visitas para que no gastes, pero en realidad te hago sentir rechazada cuando tú ofreces soluciones puras y desde el corazón.</p>
+            </div>
+
+            <div class="info-box empathy" style="padding:20px">
+                <span class="box-label" style="color:#7dd3fc;font-size:0.85rem">🌊 2. Tus Heridas, Mi Reina (Saturación y Resignación)</span>
+                <p class="box-text">Tu lenguaje principal es el Servicio y el Contacto Físico. Tú me esperas en Discord, me recuerdas mis gotas, anotas mis gustos[span_9](start_span)[span_9](end_span). Cuando te sientes rechazada por mis muros lógicos o mis "peros", experimentas <strong>Saturación Emocional</strong> ("estoy cansada jefe")[span_10](start_span)[span_10](end_span). Esto te empuja a una resignación pasivo-agresiva ("ya cedí", "ya no pediré nada"). Esta retirada es tu mecanismo para no salir lastimada al sentir que inviertes más cuidado y romance que yo en el momento[span_11](start_span)[span_11](end_span).</p>
+            </div>
+
+            <div class="info-box expert" style="padding:20px;border-left-color:#10b981;background:rgba(16,185,129,0.1)">
+                <span class="box-label" style="color:#6ee7b7;font-size:0.85rem">🤝 3. El Algoritmo de la Solución (Entrelazamiento)</span>
+                <div class="dirac-eq">(∂ + m) ψ = 0</div>
+                <p class="box-text" style="text-align:center;margin-bottom:15px"><em>"Si dos sistemas interactúan y se separan, ya no son distintos, sino un único sistema. Lo que le pasa a uno afecta al otro.[span_12](start_span)[span_13](start_span)"[span_12](end_span)[span_13](end_span)</em></p>
+                <p class="box-text"><strong>Para Mí:</strong> Entender que no eres un bug de código en Termux[span_14](start_span)[span_14](end_span). Debo bajar mi coraza, validar tus emociones sin analizarlas matemáticamente y priorizarte en mi <em>presente</em>.<br><br>
+                <strong>Para Ti:</strong> Entender que mi silencio no es desinterés, sino sobrecarga de sistema. No asumas que dejé de amarte cuando mi mente se bloquea.<br><br>
+                <strong>El Acuerdo Final:</strong> Usar la señal (🌻) para pausar la lógica, no discutir de madrugada y entregarnos apapacho real.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISTA JARDÍN DE GIRASOLES (3D SVG) -->
+    <section id="view-garden" class="view-section active">
+        <div class="garden-layout">
+            <div class="garden-stage">
+                <div class="box-text" style="text-align:center;font-size:.9rem;background:rgba(0,0,0,0.6);padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.15)">👆 Toca cada <strong>Girasol (Mes)</strong> y sus <strong>Hojas</strong> para sanar nuestros errores.</div>
+                <div class="flowers-row" id="flowers-container"></div>
+                <div class="soil-bed">🌍 Tierra Fértil: Lealtad, Presente Vivo y Amor Real</div>
+                <div style="margin-top:15px;padding-top:18px;border-top:1px solid var(--border);text-align:center">
+                    <span class="box-label" style="color:var(--gold);font-size:0.85rem">📊 Radar de Equilibrio Relacional en Tiempo Real</span>
+                    <svg id="radar-svg" viewBox="0 0 220 175" style="width:100%;max-width:280px;height:175px;margin:0 auto;display:block;filter:drop-shadow(0 0 15px rgba(34,197,94,0.3))"></svg>
+                </div>
+            </div>
+            <div class="inspector-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:12px">
+                    <div><span class="box-label" style="color:var(--gold)" id="flower-month-tag">ETAPA</span><h2 style="font-size:1.25rem;color:#fde68a;font-weight:900" id="flower-title"></h2></div>
+                    <span id="flower-status-badge" style="font-size:.8rem;font-weight:900;padding:6px 12px;border-radius:99px"></span>
+                </div>
+                <div style="margin-top:15px"><span class="box-label" style="color:var(--muted)">🍃 Hojas del Girasol (Problemas a sanar):</span><div class="leaves-selector" id="leaves-buttons"></div></div>
+                <div class="info-box" style="margin-top:15px"><span class="box-label" style="color:#fb7185">🥀 1. Mi Error / Lo que dañó la hoja:</span><p class="box-text" id="leaf-error-text"></p></div>
+                <div class="info-box psych"><span class="box-label" style="color:var(--purple)">🧠 2. Diagnóstico Psicológico:</span><p class="box-text" id="leaf-psych-text"></p></div>
+                <div class="info-box empathy"><span class="box-label" style="color:var(--blue)">💭 3. Cómo te hice sentir (Empatía):</span><p class="box-text" id="leaf-empathy-text"></p></div>
+                <div class="proposals-grid" style="margin-top:15px">
+                    <div class="proposal-card" style="border-top:3px solid #64748b"><span class="box-label" style="color:#94a3b8">💔 4. Promesa Rota:</span><p class="box-text" id="leaf-broken-text"></p></div>
+                    <div class="proposal-card" style="border-top:3px solid var(--green);background:rgba(34,197,94,0.08)"><span class="box-label" style="color:#4ade80">✨ 5. Solución Juntos:</span><p class="box-text" id="leaf-new-text"></p></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px">
+                    <button class="water-btn secondary" id="heal-leaf-btn" onclick="toggleHealLeaf()">🌿 Sanar Hoja</button>
+                    <button class="water-btn" id="water-flower-btn" onclick="toggleWaterFlower()">💧 Regar Girasol</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISTA SIENTO (ESPEJO) -->
+    <section id="view-mirror" class="view-section">
+        <div class="info-box" style="margin-bottom:18px;background:rgba(244,63,94,0.15);border-color:#f43f5e;padding:20px">
+            <strong style="color:#ffe4e6;font-size:1.1rem;display:block;margin-bottom:8px">❤️‍🩹 Puntos que Noto y Siento:</strong> 
+            <p class="box-text" style="color:#fecdd3">Mi amor, no eres un proyecto escolar ni un código a depurar; eres el proyecto de mi vida. Estos son los puntos que noto y siento en mi corazón, hablados con amor para que nunca nos gane el silencio ni el dolor de la distancia.</p>
+        </div>
+        <div class="mirror-grid" id="mirror-container"></div>
+    </section>
+
+    <!-- VISTA TUS DÍAS Y GUSTOS -->
+    <section id="view-care" class="view-section">
+        <div class="care-layout">
+            <div class="lunar-card">
+                <div><span class="box-label" style="color:var(--pink)">🌙 Biología y Apapacho</span><h2 style="font-size:1.4rem;color:#ffe4e6;font-weight:900">Monitor Hormonal & Curva Lunar</h2></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;background:var(--glass);padding:12px 16px;border-radius:12px;font-size:.9rem;margin-top:15px;font-weight:700">
+                    <span>⚙️ Duración de tu ciclo:</span>
+                    <select id="cycle-length-select" class="crud-select" style="font-weight:900"><option value="28" selected>28 días</option><option value="29">29 días</option><option value="30">30 días</option></select>
+                </div>
+                <div style="background:rgba(0,0,0,0.5);border-radius:16px;padding:20px;text-align:center;margin-top:15px;border:1px solid rgba(253,164,175,0.3);box-shadow:inset 0 0 20px rgba(244,63,94,0.1)">
+                    <span class="box-label" style="color:var(--gold)">📈 Curva de Energía vs. Necesidad de Apapacho</span>
+                    <svg id="lunar-wave-svg" viewBox="0 0 300 95" style="width:100%;height:100px;overflow:visible;margin-top:10px">
+                        <path d="M0,45 Q75,10 150,45 T300,45" fill="none" stroke="#fda4af" stroke-width="4" filter="drop-shadow(0 0 8px #fda4af)"/>
+                        <circle cx="150" cy="45" r="6" fill="#fde68a" filter="drop-shadow(0 0 10px #fde68a)"/>
+                    </svg>
+                </div>
+                <div class="info-box" style="border-left-color:var(--gold);background:rgba(251,191,36,0.1);margin-top:15px;padding:20px">
+                    <span class="box-label" style="color:#fde68a;font-size:0.9rem">🌸 Fase Folicular / Alta Energía</span>
+                    <p class="box-text">Tu energía está subiendo. Es el mejor momento para disfrutar, reír, hornear juntas tus recetas de Gastronomía y entrenar al fallo en el gym.</p>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN DE GUSTOS DE ANALY -->
+            <div class="likes-panel">
+                <div><span class="box-label" style="color:var(--gold)">🍓 Mi Libreta Digital de Ti</span><h2 style="font-size:1.4rem;color:#fde68a;font-weight:900">El Mapa Exacto de Tus Gustos</h2></div>
+                <div class="likes-categories" style="margin-top:15px">
+                    <div class="like-category-box"><h4 style="color:#fde68a;font-size:.95rem;margin-bottom:10px">🍰 Postres, Dulces y Bebidas</h4><div class="tag-cloud"><span class="taste-tag pink">Pastel de Chocolate y 3 Leches</span><span class="taste-tag pink">Pastel de mil hojas</span><span class="taste-tag pink">Arroz con leche</span><span class="taste-tag pink">Chocolatito caliente con pan</span><span class="taste-tag pink">Cafecito para el sueño</span><span class="taste-tag pink">Tepache bien frío pa' la calor</span><span class="taste-tag pink">Miches, cantaritos y tequila</span></div></div>
+                    <div class="like-category-box"><h4 style="color:#fde68a;font-size:.95rem;margin-bottom:10px">🍝 Platillos Favoritos</h4><div class="tag-cloud"><span class="taste-tag">Lasaña (te gusta muchooo)</span><span class="taste-tag">Comida China (Pollo agridulce, rollitos y spaghetti)</span><span class="taste-tag">Mole con pollo, Enmoladas y Tamal de mole</span><span class="taste-tag">Sopecitos con quesillo y carne</span><span class="taste-tag">Chilaquiles verdes o rojos</span><span class="taste-tag">Pizza con orilla de queso</span><span class="taste-tag">Huevitos rancheritos (¡NUNCA revueltos!)</span></div></div>
+                    <div class="like-category-box"><h4 style="color:#fde68a;font-size:.95rem;margin-bottom:10px">🌸 Flores, Colores y Amor</h4><div class="tag-cloud"><span class="taste-tag blue">Gerberas, Rosas y Girasoles</span><span class="taste-tag blue">Flor hecha con lata de Monster</span><span class="taste-tag blue">Jardín para colibríes y abejas</span><span class="taste-tag blue">Colores: Rosa bonito y Verde</span><span class="taste-tag blue">Contacto físico: abrazos, besos y masajitos</span><span class="taste-tag blue">Cocinarme y escuchar "Te adoro"</span></div></div>
+                    <div class="like-category-box"><h4 style="color:#fde68a;font-size:.95rem;margin-bottom:10px">🏋🏻‍♀️ Tu Mundo y Nosotros</h4><div class="tag-cloud"><span class="taste-tag green">Tu Recetario de Gastronomía</span><span class="taste-tag green">Gym: Piernita al fallo y espalda</span><span class="taste-tag green">Cuidar a Rogelio y a "Nuestros niños" :3</span><span class="taste-tag green">Ver SAO, Jujutsu Kaisen y The Boys juntos</span><span class="taste-tag green">Casita en el Realm y jugar COD (BY15)</span><span class="taste-tag green">Recordarme mi Omeprazol y mis gotitas</span></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISTA PACMAN JUGABLE NATIVO JS -->
+    <section id="view-pacman" class="view-section">
+        <div class="pacman-container" style="text-align:center;padding:30px">
+            <h2 style="color:#fde68a;margin-bottom:8px;font-size:1.6rem;font-weight:900">👾 Recolector de Gustos (Mini-Juego)</h2>
+            <p class="box-text" style="margin-bottom:20px;color:#cbd5e1;font-size:0.95rem">Mueve a tu personaje (👩🏻‍🍳) para recolectar tus gustos (🍓🍰🌻) y evita el estrés (👻) de la semana.</p>
+            
+            <div style="position:relative; width:100%; max-width:320px; height:320px; margin:0 auto; background:#02040a; border:3px solid #38bdf8; border-radius:12px; box-shadow:0 15px 40px rgba(56,189,248,0.3)">
+                <canvas id="pacman-canvas" width="320" height="320" style="position:absolute; top:0; left:0; width:100%; height:100%"></canvas>
+            </div>
+            
+            <div class="pacman-controls" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;max-width:240px;margin:25px auto">
+                <div></div>
+                <button class="dpad-btn" onclick="if(typeof window.movePacman === 'function') window.movePacman(0, -1)">⬆️</button>
+                <div></div>
+                <button class="dpad-btn" onclick="if(typeof window.movePacman === 'function') window.movePacman(-1, 0)">⬅️</button>
+                <button class="dpad-btn" onclick="if(typeof window.movePacman === 'function') window.movePacman(0, 1)">⬇️</button>
+                <button class="dpad-btn" onclick="if(typeof window.movePacman === 'function') window.movePacman(1, 0)">➡️</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISTA TERMINAL STARK-OS -->
+    <section id="view-fullstack" class="view-section">
+        <div class="garden-layout">
+            <div class="inspector-panel">
+                <span class="badge-date">💻 Stark-OS • Terminal Root</span>
+                <h2 style="font-size:1.4rem;color:#fde68a;font-weight:900;margin-top:5px">Ejecución en Tiempo Real</h2>
+                <p class="box-text" style="color:var(--muted);font-size:.9rem;margin-bottom:15px;margin-top:8px">Comandos disponibles (Python, Node, Java)[span_15](start_span)[span_15](end_span):</p>
+                <div class="cmd-grid">
+                    <button class="cmd-btn" onclick="runStarkCmd('flores')">🌻 1. python3 campo_flores.py</button>
+                    <button class="cmd-btn" onclick="runStarkCmd('dados')">🎲 2. java JuegoDados.java</button>
+                    <button class="cmd-btn" onclick="runStarkCmd('estacion')">🍂 3. python3 estacion.py</button>
+                    <button class="cmd-btn" onclick="runStarkCmd('dirac')">⚛️ 4. node dirac_equation.js</button>
+                </div>
+                <div class="terminal-window">
+                    <div class="terminal-bar">
+                        <div style="display:flex;gap:8px"><span style="width:12px;height:12px;border-radius:50%;background:#ef4444;display:inline-block"></span><span style="width:12px;height:12px;border-radius:50%;background:#f59e0b;display:inline-block"></span><span style="width:12px;height:12px;border-radius:50%;background:#22c55e;display:inline-block"></span></div>
+                        <span style="font-size:.75rem;color:#94a3b8;font-weight:800;letter-spacing:1px">bash — root@stark-os:~</span>
+                    </div>
+                    <div class="term-body" id="stark-term-output">root@stark-os:~# Sistema maestro v15.0 iniciado. Esperando comandos...</div>
+                </div>
+            </div>
+            <div class="inspector-panel">
+                <div>
+                    <span class="badge-date">📝 Libreta Digital Bilateral</span>
+                    <h2 style="font-size:1.4rem;color:#fda4af;font-weight:900;margin-top:5px">Nuestro Buzón Sincronizado</h2>
+                </div>
+                <div class="crud-form" style="margin-top:15px">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                        <select id="note-author" class="crud-select" style="font-weight:800"><option value="👩🏻‍🍳 Mi Reina">👩🏻‍🍳 Mi Reina</option><option value="💻 Mi Inge">💻 Mi Inge</option></select>
+                        <select id="note-tag" class="crud-select" style="font-weight:800"><option value="🌻 Sentimiento">🌻 Sentimiento</option><option value="🌮 Antojo">🌮 Antojo</option><option value="💌 Promesa">💌 Promesa</option></select>
+                    </div>
+                    <input type="text" id="note-input" class="crud-input" placeholder="Escribe tu nota, antojo o recordatorio aquí..." style="width:100%;font-size:0.9rem">
+                    <button class="water-btn" onclick="addFullstackNote()">💾 Guardar Nota Local</button>
+                </div>
+                <div class="notes-list" id="fullstack-notes-list"></div>
+                <button class="water-btn healed" style="margin-top:15px" onclick="sendWhatsAppSync()">📲 Sincronizar Todo a WhatsApp</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- DIARIO MI VIDA -->
+    <section id="view-diary-me" class="view-section">
+        <div class="info-box psych" style="margin-bottom:18px;padding:20px">
+            <strong style="font-size:1.1rem;display:block;margin-bottom:8px">📖 El Diario de Mi Vida (Por qué soy quien soy):</strong> 
+            <p class="box-text">Mi amor, estructuré mi vida desde el inicio para que comprendas que mis silencios, mis miedos con el dinero y mi afán de control lógico (Termux, código, encriptación) nunca fueron falta de amor hacia ti, sino las cicatrices y mecanismos de defensa de cómo aprendí a sobrevivir antes de que llegaras a mi vida[span_16](start_span)[span_16](end_span).</p>
+        </div>
+        <div class="leaves-selector" style="margin-bottom:18px" id="diary-me-tabs"></div>
+        <div class="inspector-panel" id="diary-me-content"></div>
+    </section>
+
+    <!-- DIARIO TU VIDA -->
+    <section id="view-diary-her" class="view-section">
+        <div class="info-box" style="margin-bottom:18px;border-left-color:#ec4899;background:rgba(236,72,153,0.15);padding:20px">
+            <strong style="color:#fecdd3;font-size:1.1rem;display:block;margin-bottom:8px">🦋 El Diario de Tu Alma (Cómo te veo y te admiro):</strong> 
+            <p class="box-text" style="color:#ffe4e6">Así como analicé mis sombras, quise escribir la historia de quién eres tú ante mis ojos: tu nobleza cocinando, el porqué de tus silencios cuando la distancia asfixia, tu disciplina en el gym y la forma tan pura, leal y de servicio en que me amas[span_17](start_span)[span_17](end_span).</p>
+        </div>
+        <div class="leaves-selector" style="margin-bottom:18px" id="diary-her-tabs"></div>
+        <div class="inspector-panel" id="diary-her-content"></div>
+    </section>
+
+    <!-- VISTA BOTIQUÍN SOS -->
+    <section id="view-sos" class="view-section">
+        <div class="info-box empathy" style="margin-bottom:18px;padding:20px">
+            <strong style="color:#bae6fd;font-size:1.1rem;display:block;margin-bottom:8px">🛠️ Botiquín de Emergencia Emocional:</strong> 
+            <p class="box-text">Todo problema tiene un método de comprobación para resolverlo en equipo sin que nadie salga lastimado. Toca qué necesitas hoy para activar nuestro protocolo:</p>
+        </div>
+        <div class="sos-grid" id="sos-container"></div>
+    </section>
+
+    <!-- VISTA INVERNADERO DE ACUERDOS -->
+    <section id="view-agreements" class="view-section">
+        <div class="greenhouse-box">
+            <h2 style="font-size:1.4rem;color:#fde68a;font-weight:900;margin-bottom:10px">🏡 Invernadero de Acuerdos</h2>
+            <p class="box-text" style="margin-bottom:15px;color:var(--muted)">Marca la casilla cada vez que cumplamos nuestra palabra.</p>
+            <div id="pacts-container" style="display:flex;flex-direction:column;gap:12px"></div>
+        </div>
+    </section>
+
+</div>
+
+<!-- BARRA INFERIOR DE NAVEGACIÓN -->
+<nav class="bottom-nav" id="main-nav" style="display:none">
+    <button class="b-tab active" onclick="switchTab('garden',this)"><span>🌻</span>Jardín</button>
+    <button class="b-tab" onclick="switchTab('care',this)"><span>🌙</span>Tus Días</button>
+    <button class="b-tab" onclick="switchTab('diary-her',this)"><span>🦋</span>Tu Vida</button>
+    <button class="b-tab" onclick="switchTab('diary-me',this)"><span>📖</span>Mi Vida</button>
+    <button class="b-tab" onclick="switchTab('analysis',this)"><span>🧠</span>Análisis</button>
+    <button class="b-tab" onclick="switchTab('pacman',this)"><span>👾</span>Pac-Man</button>
+    <button class="b-tab" onclick="switchTab('fullstack',this)"><span>💻</span>Stark-OS</button>
+    <button class="b-tab" onclick="switchTab('sos',this)"><span>🛠️</span>Botiquín</button>
+    <button class="b-tab" onclick="switchTab('agreements',this)"><span>🤝</span>Acuerdos</button>
+</nav>
+
+<script>
+/* ================= DATOS COMPLETOS DE LA RELACIÓN Y DIARIOS ================= */
+const elementsData = {
+    sun: { icon: "☀️", title: "El Sol: Lo que tu luz despierta en mí", body: "Durante años me acostumbré a vivir aislado apagando mi empatía emocional. Cuando llegaste tú, despertaste en mí una ternura que no conocía. Eres quien me dice 'Ánimo mi inge' o 'Tienes mis respetos Stark' cuando me arden los ojos de programar[span_18](start_span)[span_18](end_span)." },
+    water: { icon: "💧", title: "El Agua: Tu cuidado y entrega 24/7", body: "El agua de este jardín es cada vez que me ofreces un masajito, cada vez que me recuerdas mi Omeprazol o gotitas en los ojos. Es tu paciencia esperándome en Discord[span_19](start_span)[span_19](end_span)." },
+    earth: { icon: "🌱", title: "La Tierra: Nuestro Presente y Hogar", body: "La tierra firme es mi palabra de que en mi vida solo existes tú. Hoy comprendo que la tierra no solo sirve para soñar con la casita, sino para pisar firme en el PRESENTE absoluto." }
+};
+
+const myDiaryData = [
+    { stage: "1. Infancia (R1)", title: "El Niño que Cruzaba Solo", facts: "Crecí en la R1 cruzando solo avenidas sin puentes. En casa, mi papá era explosivo y con mi mamá sentía que abrazarla le incomodaba.", psych: "Condicionamiento Evitativo: Asimilé que mostrar vulnerabilidad o dolor era peligroso.", impact: "Por qué actúo así: Al sentirme herido contigo, mi reflejo es ponerme distante para protegerme." },
+    { stage: "2. Los 15 Años", title: "Supervivencia y Anestesia", facts: "Entornos pesados, trabajos de riesgo y 'tratamiento quirúrgico' sin margen de error.", psych: "Disociación y aislamiento emocional absoluto para soportar la presión.", impact: "Por qué actúo así: La hipervigilancia de aquellos años hace que cualquier cambio brusco active mi alarma interna." },
+    { stage: "3. Combate y Código", title: "El Refugio en la Lógica", facts: "Entrenar al límite y buscar refugio en la programación y bases de datos estructuradas. Me emociono clonando apps en Termux y probando mis dispositivos con fines académicos[span_20](start_span)[span_20](end_span).", psych: "Intelectualización: Convertir caos en tablas lógicas para calmar la ansiedad. Me meto a encriptar bases de datos para no pensar de más[span_21](start_span)[span_21](end_span).", impact: "Por qué actúo así: Pedir registros a las 3 AM es mi intento desesperado por ordenar lo que amo. En mi tiempo libre me refugio en la terminal de Android[span_22](start_span)[span_22](end_span)." },
+    { stage: "4. Despertar Contigo", title: "Mi Entrega a los 23 Años", facts: "Rechacé lo efímero toda la vida hasta que tu dulzura despertó una ternura inédita en mí. Me encanta esperarte para jugar COD Mobile y compartir mis partidas contigo[span_23](start_span)[span_23](end_span).", psych: "Ruptura de coraza: Romper 23 años de aislamiento para aprender a depender de alguien.", impact: "Por qué actúo así: El vértigo de un corazón que por fin encontró su hogar en ti." },
+    { stage: "5. Dinero y Presente", title: "El Miedo al Hoy", facts: "Renuncié al pasado, vendí mi moto y estudio limpio, pero el apuro económico me genera pánico. Cada 6 meses renuevo contrato de renta[span_24](start_span)[span_24](end_span).", psych: "Hiper-futurismo por orgullo: Obsesión por asegurar el mañana que bloquea mi capacidad de disfrutar el presente.", impact: "Por qué actúo así: Poner peros a tu visita fue miedo financiero; hoy elijo abrazarte sin excusas." }
+];
+
+const herDiaryData = [
+    { stage: "1. Tus Raíces", title: "Tu Esfuerzo en Gastronomía", facts: "Amas tus domingos familiares, cuidas a Rogelio y estudias con pasión Gastronomía.", psych: "Identidad basada en el trabajo honesto y el valor de los tuyos.", impact: "Lo que admiro: Tu escuela y tu familia son sagrados porque formaron a la mujer más noble que conozco." },
+    { stage: "2. Tu Coraza", title: "El Miedo a lo Efímero", facts: "Desprecias la apariencia vacía y valoras la valentía de un vínculo seguro y real.", psych: "Reserva emocional: Filtro inicial para comprobar que tus sentimientos están a salvo.", impact: "Lo que admiro: Valoro como un tesoro que hayas decidido confiarme tu corazón." },
+    { stage: "3. Tu Arte de Amar", title: "La Libreta de Detalles", facts: "Anotas lo que me gusta, me recuerdas el Omeprazol y me esperas en Discord. Siempre estás pendiente cuando cocino feite o llego a casa[span_25](start_span)[span_25](end_span).", psych: "Lenguaje de servicio y amor sensorial: Entregas atenciones y calidez las 24 horas.", impact: "Lo que admiro: Jamás daré por sentado tu cuidado; eres la prueba más pura de amor." },
+    { stage: "4. Tu Fuerza", title: "Disciplina y Empatía", facts: "Gym al fallo, jugar COD siendo zurda (tratando de ajustar tu HUD al mío) y compartir mis pasiones con orgullo[span_26](start_span)[span_26](end_span).", psych: "Integración de mundos: Construir puentes para caminar siempre en equipo.", impact: "Lo que admiro: Me enamora verte jugar y entrenar a mi lado, incluso cuando te desesperas por sacar camuflajes de oro en Nuketown[span_27](start_span)[span_27](end_span)." },
+    { stage: "5. Tu Corazón", title: "El Dolor de la Distancia", facts: "La pantalla asfixia y cuando sientes distancia dices 'ya no pediré nada'. Te frustra cuando no te aviso que entro a jugar a Guerra de Clanes (GDC)[span_28](start_span)[span_28](end_span).", psych: "Resignación protectora: Apagón emocional para no mendigar cariño y no salir herida.", impact: "Mi promesa: Nunca más tendrás que apagar tus deseos; te llenaré de amor presente." }
+];
+
+const flowersData = [
+    { id: 0, month: "Mayo-Jun", title: "1. Girasol del Alba: Confianza Nocturna", bloomed: false, leaves: [
+        { name: "1: Madrugada en Discord", healed: false, error: "Cuando cambiaron tus planes y me muteaste en Discord para no despertarme, me emperré de madrugada y me muteé como castigo.", psych: "Hipervigilancia afectiva: Ante un cambio imprevisto, mi mente activó defensas interpretando tu cuidado como ocultamiento.", empathy: "Te hice sentir juzgada injustamente.", broken: "Prometí hablar sin asumir lo peor.", newProp: "Preguntar con ternura y jamás usar el silencio como castigo." },
+        { name: "2: Miedo a no ser prioridad", healed: false, error: "Sobreanalizar detalles en redes sociales dudando de mi lugar contigo.", psych: "Apego ansioso por temor a abrir mi corazón y salir lastimado.", empathy: "Sentiste que todo tu amor no bastaba.", broken: "Decir que estaba asimilado cuando seguía dudando.", newProp: "Pedir apapacho con vulnerabilidad limpia." },
+        { name: "3: Desvelos extremos", healed: false, error: "Emocionarme a las 3 am con comandos Bash en Termux en lugar de dormir contigo[span_29](start_span)[span_29](end_span).", psych: "Sobrecompensación en el rendimiento. Intelectualizo el amor en lugar de relajarme[span_30](start_span)[span_30](end_span).", empathy: "Te preocupas por mi salud mientras me esperas despierta.", broken: "Decir 'acabo temprano' y seguir de largo.", newProp: "Cerrar pantallas a tiempo para acurrucarnos." }
+    ]},
+    { id: 1, month: "Jul-Ago", title: "2. Girasol de Agosto: Iniciativa", bloomed: false, leaves: [
+        { name: "1: Fotos a cuenta gotas", healed: false, error: "Darte vueltas cuando me pedías una foto mía.", psych: "Coraza evitativa: Subestimar que una foto tuya es tu forma de sentirme cerca.", empathy: "Sentiste que tenías que mendigar mi imagen.", broken: "Decir que me iría soltando pero cerrarme.", newProp: "Mandarte fotos mías y videos sin que me los pidas." },
+        { name: "2: El 1 de Agosto y Fechas", healed: false, error: "Pasar por alto el Día de la Novia.", psych: "Racionalización práctica: Olvidar que las fechas validan tu lugar.", empathy: "Ilusión rota al ver el día en blanco.", broken: "Pedir la lista de fechas pero dejar que la rutina gane.", newProp: "Honrar cada día 22 y tu cumpleaños con anticipación." },
+        { name: "3: Terminal en iOS", healed: false, error: "Mandar comandos de Termux o scripts de Python que tu iPhone no puede correr, asumiendo que sabrías cómo hacerlo[span_31](start_span)[span_31](end_span).", psych: "Ceguera técnica. Asumo que mi entorno Linux funcionará en Apple[span_32](start_span)[span_32](end_span).", empathy: "Te frustraste y extrañaste Android[span_33](start_span)[span_33](end_span).", broken: "Te di un dolor de cabeza en vez de un regalo[span_34](start_span)[span_34](end_span).", newProp: "Optimizar todo a web-app para ti[span_35](start_span)[span_35](end_span)." }
+    ]},
+    { id: 2, month: "Ago-Sept", title: "3. Girasol de Fuego: Juego y Palabra", bloomed: false, leaves: [
+        { name: "1: Tono en el Juego (COD)", healed: false, error: "Ponerme cortante en COD Mobile o forzarte a competir en Guerra de Clanes (GDC) sin avisarte[span_36](start_span)[span_36](end_span).", psych: "Desplazamiento de estrés a la competencia. Quiero mantener el Top 3 a toda costa[span_37](start_span)[span_37](end_span).", empathy: "Te sentiste relegada por un juego y dejaste de competir[span_38](start_span)[span_38](end_span).", broken: "Jugar solo por diversión.", newProp: "Prioridad a tu paz; jugar Nuketown juntos y ayudarte con camuflajes[span_39](start_span)[span_39](end_span)." },
+        { name: "2: Regreso a DS ntz", healed: false, error: "Jurar que el ciclo estaba cerrado y volver a meterme.", psych: "Apego al rol de salvador del pasado.", empathy: "Sentiste que mis promesas se rompen.", broken: "Volver a hacer lo que dije que terminaría.", newProp: "Honrar mi palabra: mi única tribu eres tú." },
+        { name: "3: Límites con excesos", healed: false, error: "Hablar de volver a la loquera a fin de año.", psych: "Minimización del riesgo frente a quien me ama.", empathy: "Desperté tu miedo de verme recaer.", broken: "Tentación de viejos hábitos.", newProp: "Priorizar mi bienestar por nuestra futura familia." }
+    ]},
+    { id: 3, month: "Sept I", title: "4. Girasol de la Escucha", bloomed: false, leaves: [
+        { name: "1: Audios del Servicio", healed: false, error: "Leer transcripciones sin escuchar tus audios y criticar escuelas públicas.", psych: "Solucionismo sin escucha activa.", empathy: "Te sentiste no escuchada y juzgada.", broken: "Prometer apoyar tu carrera.", newProp: "Escuchar tus audios completos y honrar tu gastronomía." },
+        { name: "2: Ironía en mensajes", healed: false, error: "Escribirte con sarcasmo tras tu día familiar.", psych: "Pasivo-agresividad para llamar la atención.", empathy: "Te cayó como balde de agua fría.", broken: "Hablar directo sin sarcasmos.", newProp: "Pedir atención con ternura y sin reproches." },
+        { name: "3: Peleas por Batería", healed: false, error: "Decirte en tono mamón que si no cargas tu celular, no quieres 'apapachos' o no quieres jugar[span_40](start_span)[span_40](end_span).", psych: "Proyección de mis inseguridades. Relaciono el porcentaje de pila con tu interés[span_41](start_span)[span_41](end_span).", empathy: "Te fastidió mi presión innecesaria[span_42](start_span)[span_42](end_span).", broken: "Ser comprensivo.", newProp: "Esperar pacientemente sin reclamar por la batería[span_43](start_span)[span_43](end_span)." }
+    ]},
+    { id: 4, month: "Sept II", title: "5. Girasol del Presente", bloomed: false, leaves: [
+        { name: "1: Peros a tu visita", healed: false, error: "Poner barreras de horarios o dinero cuando planeabas venir.", psych: "Orgullo mal enfocado e hiper-futurismo (miedo a la renta).", empathy: "Te sentiste rechazada física y emocionalmente.", broken: "Enfriar el fin de semana de hoy por un futuro incierto.", newProp: "Recibirte con los brazos abiertos sin que el dinero sea pretexto." },
+        { name: "2: Lógica a las 3 AM", healed: false, error: "Forzar debates de madrugada pidiendo registros lógicos.", psych: "Intelectualización defensiva extrema.", empathy: "Sentiste que te trataba como proyecto escolar.", broken: "No alargar discusiones de madrugada.", newProp: "Regla de las 12 AM: usar la señal 🌻 y descansar." }
+    ]}
+];
+
+const mirrorData = [
+    { title: "1. Callarte cosas hasta sobrepensar", feel: "Por no molestarme te callas incomodidades hasta que crecen en tu mente.", broken: "Decirnos todo al momento.", solution: "Mandarme un 🌻 ('código abrazo') para dejar todo y escucharte." },
+    { title: "2. El escudo de 'Ya cedí'", feel: "Cuando dices 'ahí muere' siento que apagas una parte de ti[span_44](start_span)[span_44](end_span).", broken: "Anular tus deseos te da falsa paz[span_45](start_span)[span_45](end_span).", solution: "Nunca prohibirte pedirme amor y romance." },
+    { title: "3. La sed de contacto físico", feel: "La pantalla pesa y anhelas masajitos y abrazos en persona.", broken: "Dejar pasar semanas sin fecha firme.", solution: "Activar nuestra próxima cita y cenar en videollamada." },
+    { title: "4. Temor al desborde", feel: "Temes que la emoción te gane al hablar de problemas.", broken: "Interrogarte por horas.", solution: "Hablar solo 10 minutos de un solo punto, sin agobiarte." },
+    { title: "5. Sentir tu esfuerzo menos", feel: "Mi impulsividad te hizo sentir juzgada en tu escuela y carrera.", broken: "Hablar sin medir mis palabras lógicas.", solution: "Honrar a la gran chef que eres." },
+    { title: "6. Sensibilidad a tonos cortos", feel: "Contestar 'Meno' te hace sentir que mi interés bajó.", broken: "Dar por sentado que sabes que estoy ocupado programando.", solution: "Mandarte audios llenos de ternura antes de irme al código." }
+];
+
+const sosData = [
+    { btn: "🥺 «Hoy te extraño demasiado y te necesito»", title: "Protocolo de Presencia", steps: "1. Pausa total al código/juegos por 10 min.\n2. Llamada mirándonos.\n3. Reafirmar nuestro próximo fin de semana." },
+    { btn: "💔 «Siento que ya no pediré nada / Ya cedí»", title: "Protocolo Anti-Resignación", steps: "1. Ninguno se rinde ni se aleja.\n2. Yo asumo mi falta de iniciativa.\n3. Tomo el volante con un detalle sorpresa." },
+    { btn: "🌙 «Estoy en mis días / Bajoneada»", title: "Protocolo Lunar", steps: "1. Cero debates lógicos ni ironías.\n2. Lluvia de bechitos y reafirmación afectiva.\n3. Cobijita y ver SAO o The Boys juntos." },
+    { btn: "🕒 «Son las 3 AM y me pides lógica»", title: "Regla de Medianoche", steps: "1. Prohibido discutir con sueño o exigir registros lógicos.\n2. Mandar señal 🌻.\n3. Decirnos que nos amamos y dormir en paz." }
+];
+
+const pactsData = [
+    "1. Usar nuestra señal (🌻) para pausar discusiones lógicas.",
+    "2. Recibir nuestras visitas en el PRESENTE sin excusas de dinero.",
+    "3. Iniciativa constante: mandarnos fotos y audios tiernos.",
+    "4. Escuchar tus audios completos de tu escuela de Gastronomía.",
+    "5. Mantener COD Mobile como refugio de risas (Nada de peleas en GDC)[span_46](start_span)[span_46](end_span).",
+    "6. Regla de las 12 AM: Cero terminal, solo apapacharnos y descansar."
+];
+
+let currentFlowerIndex = 0, currentLeafIndex = 0;
+let customNotes = JSON.parse(localStorage.getItem('ecosistema_notes_v15') || '[]');
+let musicPlaying = false;
+let currentLocation = 'Auto'; // Default
+let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+/* ================= CONTROL DE AUDIO ================= */
+function toggleMusic() {
+    const audio = document.getElementById('bg-music');
+    const btn = document.getElementById('audio-control');
+    if(musicPlaying) {
+        audio.pause();
+        btn.textContent = "🎵 Música: OFF";
+        musicPlaying = false;
+    } else {
+        audio.play().catch(e => console.log(e));
+        btn.textContent = "🎵 Música: ON";
+        musicPlaying = true;
+    }
+}
+
+/* ================= FUNCIONES MODALES ================= */
+function openElementModal(key) {
+    const data = elementsData[key];
+    document.getElementById('modal-icon').textContent = data.icon;
+    document.getElementById('modal-title').textContent = data.title;
+    document.getElementById('modal-body').textContent = data.body;
+    document.getElementById('element-modal').classList.add('open');
+}
+function closeElementModal() {
+    document.getElementById('element-modal').classList.remove('open');
+}
+
+/* ================= LÓGICA DEL JARDÍN (SVG 3D HIPERREALISTA) ================= */
+function renderFlowersStage() {
+    const cont = document.getElementById('flowers-container'); if (!cont) return;
+    cont.innerHTML = '';
+    flowersData.forEach((f, idx) => {
+        const u = document.createElement('div');
+        u.className = `flower-unit ${f.bloomed ? 'bloomed' : 'wilted'} ${idx === currentFlowerIndex ? 'selected' : ''}`;
+        u.onclick = () => { currentFlowerIndex = idx; currentLeafIndex = 0; updateInspector(); renderFlowersStage(); };
+        const l1 = f.leaves[0]?.healed ? '#22c55e' : '#475569', l2 = f.leaves[1]?.healed ? '#22c55e' : '#475569', l3 = f.leaves[2]?.healed ? '#22c55e' : '#475569';
+        
+        const defs = `<defs>
+            <radialGradient id="petGrad${idx}" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#d97706"/></radialGradient>
+            <radialGradient id="coreGrad${idx}" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#78350f"/><stop offset="100%" stop-color="#451a03"/></radialGradient>
+        </defs>`;
+        
+        u.innerHTML = `<svg class="flower-svg" viewBox="0 0 120 240">${defs}<path class="stem-path" d="M60 235 Q55 160 60 90" stroke-width="6" fill="none"/><path fill="${l1}" d="M58 180 Q18 160 24 190 Q40 205 58 186 Z"/><path fill="${l2}" d="M60 150 Q100 130 94 160 Q78 175 60 156 Z"/>${f.leaves.length > 2 ? `<path fill="${l3}" d="M58 122 Q20 105 26 132 Q42 142 58 128 Z"/>` : ''}<g class="flower-head"><g><ellipse cx="60" cy="48" rx="9" ry="22" fill="url(#petGrad${idx})"/><ellipse cx="60" cy="112" rx="9" ry="22" fill="url(#petGrad${idx})"/><ellipse cx="28" cy="80" rx="22" ry="9" fill="url(#petGrad${idx})"/><ellipse cx="92" cy="80" rx="22" ry="9" fill="url(#petGrad${idx})"/><ellipse cx="37" cy="57" rx="18" ry="8" transform="rotate(45 37 57)" fill="url(#petGrad${idx})"/><ellipse cx="83" cy="103" rx="18" ry="8" transform="rotate(45 83 103)" fill="url(#petGrad${idx})"/><ellipse cx="83" cy="57" rx="18" ry="8" transform="rotate(-45 83 57)" fill="url(#petGrad${idx})"/><ellipse cx="37" cy="103" rx="18" ry="8" transform="rotate(-45 37 103)" fill="url(#petGrad${idx})"/></g><circle cx="60" cy="80" r="20" fill="url(#coreGrad${idx})" stroke="#78350f" stroke-width="3"/><circle cx="54" cy="75" r="2" fill="#fbbf24"/><circle cx="66" cy="75" r="2" fill="#fbbf24"/><path d="${f.bloomed ? 'M53 84 Q60 91 67 84' : 'M53 87 Q60 81 67 87'}" stroke="#fbbf24" stroke-width="2" fill="none"/></g></svg><div class="flower-label"><span class="status-dot"></span>${f.month}</div>`;
+        cont.appendChild(u);
+    });
+    renderRadarChart();
+}
+
+function updateInspector() {
+    const f = flowersData[currentFlowerIndex], l = f.leaves[currentLeafIndex];
+    if(f) {
+        document.getElementById('flower-title').textContent = f.title;
+        document.getElementById('flower-month-tag').textContent = `ETAPA ${currentFlowerIndex + 1} DE 5`;
+        const b = document.getElementById('flower-status-badge');
+        b.textContent = f.bloomed ? "🌻 Florecido" : "🥀 Por Sanar";
+        b.style.background = f.bloomed ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)";
+        b.style.color = f.bloomed ? "#86efac" : "#fca5a5";
+    }
+    if(l) {
+        const lc = document.getElementById('leaves-buttons'); lc.innerHTML = '';
+        f.leaves.forEach((leaf, idx) => {
+            const btn = document.createElement('button');
+            btn.className = `leaf-btn ${idx === currentLeafIndex ? 'active' : ''}`;
+            btn.textContent = (leaf.healed ? '✅ ' : '') + leaf.name;
+            btn.onclick = () => { currentLeafIndex = idx; updateInspector(); };
+            lc.appendChild(btn);
+        });
+        document.getElementById('leaf-error-text').textContent = l.error;
+        document.getElementById('leaf-psych-text').textContent = l.psych;
+        document.getElementById('leaf-empathy-text').textContent = l.empathy;
+        document.getElementById('leaf-broken-text').textContent = l.broken;
+        document.getElementById('leaf-new-text').textContent = l.newProp;
+        document.getElementById('heal-leaf-btn').textContent = l.healed ? "🌿 Hoja Sanada" : "🌿 Sanar esta Hoja";
+        document.getElementById('water-flower-btn').textContent = f.bloomed ? "✨ Girasol Florecido" : "💧 Regar Girasol";
+    }
+}
+
+function toggleHealLeaf() {
+    const f = flowersData[currentFlowerIndex]; f.leaves[currentLeafIndex].healed = !f.leaves[currentLeafIndex].healed;
+    f.bloomed = f.leaves.every(l => l.healed);
+    renderFlowersStage(); updateInspector(); updateHealthBar();
+}
+
+function toggleWaterFlower() {
+    const f = flowersData[currentFlowerIndex]; f.bloomed = !f.bloomed; f.leaves.forEach(l => l.healed = f.bloomed);
+    renderFlowersStage(); updateInspector(); updateHealthBar();
+}
+
+function updateHealthBar() {
+    let tot = 0, healed = 0; flowersData.forEach(f => f.leaves.forEach(l => { tot++; if (l.healed) healed++; }));
+    const checks = document.querySelectorAll('.pact-check:checked').length;
+    const p = Math.min(100, Math.round(10 + ((healed / tot) * 65) + ((checks / pactsData.length) * 25)));
+    const fill = document.getElementById('health-fill'), pct = document.getElementById('health-percent');
+    if (fill) fill.style.width = p + '%';
+    if (pct) pct.textContent = `${p}% (${healed}/${tot} hojas • ${checks}/6 acuerdos)`;
+}
+
+function renderRadarChart() {
+    const svg = document.getElementById('radar-svg'); if (!svg) return;
+    const labels = ["Confianza", "Iniciativa", "Juego/Paz", "Escucha", "Presente"];
+    const cx = 110, cy = 90, r = 65;
+    let gridHtml = '', pts = [];
+    [0.35, 0.68, 1].forEach(scale => {
+        let pStr = labels.map((_, i) => {
+            const a = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+            return `${cx + Math.cos(a) * r * scale},${cy + Math.sin(a) * r * scale}`;
+        }).join(' ');
+        gridHtml += `<polygon points="${pStr}" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>`;
+    });
+    flowersData.forEach((f, i) => {
+        const ratio = 0.35 + (f.leaves.filter(l => l.healed).length / f.leaves.length) * 0.65;
+        const a = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+        pts.push(`${cx + Math.cos(a) * r * ratio},${cy + Math.sin(a) * r * ratio}`);
+        const lx = cx + Math.cos(a) * (r + 26), ly = cy + Math.sin(a) * (r + 18);
+        gridHtml += `<text x="${lx}" y="${ly}" fill="#fde68a" font-size="9" font-weight="800" text-anchor="middle" filter="drop-shadow(0 0 5px rgba(251,191,36,0.5))">${labels[i]}</text>`;
+    });
+    svg.innerHTML = gridHtml + `<polygon points="${pts.join(' ')}" fill="rgba(34,197,94,0.35)" stroke="#22c55e" stroke-width="2.5" filter="drop-shadow(0 0 10px rgba(34,197,94,0.5))"/>`;
+}
+
+function renderCustomDiary(data, tabsId, contId, prefix, colorHex) {
+    if (typeof window[prefix + 'Idx'] !== 'number') window[prefix + 'Idx'] = 0;
+    const idx = window[prefix + 'Idx'];
+    const tabs = document.getElementById(tabsId), cont = document.getElementById(contId);
+    if (!tabs || !cont) return;
+    tabs.innerHTML = '';
+    data.forEach((d, i) => {
+        const b = document.createElement('button');
+        b.className = 'leaf-btn ' + (i === idx ? 'active' : '');
+        b.textContent = d.stage;
+        b.onclick = () => { window[prefix + 'Idx'] = i; renderCustomDiary(data, tabsId, contId, prefix, colorHex); };
+        tabs.appendChild(b);
+    });
+    const item = data[idx];
+    cont.innerHTML = `
+        <div style="border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:12px">
+            <span class="box-label" style="color:${colorHex};font-size:0.8rem">CAPÍTULO ${idx+1} DE 5 • ${item.stage}</span>
+            <h2 style="font-size:1.3rem;color:#fde68a;font-weight:900;text-shadow:0 0 10px rgba(251,191,36,0.3)">${item.title}</h2>
+        </div>
+        <div class="info-box" style="border-left-color:${colorHex};background:rgba(0,0,0,0.4);padding:18px"><span class="box-label" style="color:${colorHex}">📌 1. Historia Real:</span><p class="box-text">${item.facts}</p></div>
+        <div class="info-box psych" style="padding:18px"><span class="box-label" style="color:var(--purple)">🧠 2. Análisis Psicológico:</span><p class="box-text">${item.psych}</p></div>
+        <div class="info-box empathy" style="padding:18px"><span class="box-label" style="color:#4ade80">🌻 3. Conexión con el Presente:</span><p class="box-text">${item.impact}</p></div>
+    `;
+}
+
+function openDiaryView(type) {
+    renderCustomDiary(myDiaryData, 'diary-me-tabs', 'diary-me-content', 'meDiary', '#f59e0b');
+    renderCustomDiary(herDiaryData, 'diary-her-tabs', 'diary-her-content', 'herDiary', '#ec4899');
+    switchTab(type, document.getElementById('tab-btn-' + type.split('-')[1]));
+}
+
+/* ================= STARK-OS TERMINAL Y BUZÓN ================= */
+let termTimer = null;
+function runStarkCmd(cmd) {
+    const out = document.getElementById('stark-term-output');
+    clearInterval(termTimer);
+    let lines = [];
+    if (cmd === 'flores') {
+        lines = ["root@stark-os:~# python3 campo_flores.py[span_47](start_span)[span_47](end_span)", "Iluminando el cielo y cultivando tu campo de girasoles...", "[OK] Compilado sin errores en tu iPhone. Cada girasol brilla por ti, mi Reina hermosa."];
+    } else if (cmd === 'dados') {
+        const dReina = Math.floor(Math.random() * 6) + 1;
+        const dInge = Math.floor(Math.random() * 6) + 1;
+        const win = dReina >= dInge ? "¡Mi Reina gana la partida y se lleva besitos extra!" : "¡Gana tu Inge, me debes un beso!";
+        lines = ["root@stark-os:~# javac JuegoDados.java && java JuegoDados", "Tirando dados...", "Tirada Jugador 1 (Mi Reina): ==> [" + dReina + "]", "Tirada Jugador 2 (Mi Inge): ==> [" + dInge + "]", win];
+    } else if (cmd === 'estacion') {
+        lines = ["root@stark-os:~# python3 determinar_estacion.py", "Evaluando def determinar_estacion(dia_input, mes_input):", "Fecha 1: 22 de Julio -> Estación: VERANO", "Fecha 2: 22 de Septiembre -> Estación: OTOÑO", "Fecha 3: Hoy -> Estación: La estación de amarte en nuestro PRESENTE.", "print('100% Aprobado por el profe y por mi corazón')"];
+    } else if (cmd === 'dirac') {
+        lines = ["root@stark-os:~# node dirac_equation.js", "Analizando Ecuación de Dirac: (∂ + m) ψ = 0[span_48](start_span)[span_48](end_span)", "Interpretación Cuántica: Si dos sistemas interactúan, ya no son distintos.", "Lo que le pasa a uno afecta al otro sin importar la distancia[span_49](start_span)[span_49](end_span)[span_50](start_span)[span_50](end_span).", "Resultado: Entrelazamiento Cuántico Activo. Te amo Ponanita 🐼✨"];
+    }
+
+    out.textContent = "";
+    let i = 0;
+    termTimer = setInterval(() => {
+        if (i < lines.length) {
+            out.textContent += (i > 0 ? "\n" : "") + lines[i];
+            out.scrollTop = out.scrollHeight;
+            i++;
+        } else {
+            clearInterval(termTimer);
+        }
+    }, 300);
+}
+
+function renderFullstackNotes() {
+    const list = document.getElementById('fullstack-notes-list');
+    if (!list) return;
+    list.innerHTML = '';
+    customNotes.forEach((n, idx) => {
+        const div = document.createElement('div');
+        div.className = 'note-item';
+        div.innerHTML = `<div><span class="box-label" style="color:#fde68a">${n.author} • ${n.tag} (${n.date})</span><p class="box-text">${n.text}</p></div><button class="close-modal" style="position:relative;top:0;right:0;font-size:1.5rem" onclick="deleteFullstackNote(${idx})">×</button>`;
+        list.appendChild(div);
+    });
+}
+
+function addFullstackNote() {
+    const inp = document.getElementById('note-input');
+    const author = document.getElementById('note-author').value;
+    const tag = document.getElementById('note-tag').value;
+    if (!inp.value.trim()) return;
+    const now = new Date();
+    customNotes.unshift({ author, tag, text: inp.value.trim(), date: `${now.getDate()}/${now.getMonth()+1}` });
+    localStorage.setItem('ecosistema_notes_v15', JSON.stringify(customNotes));
+    inp.value = '';
+    renderFullstackNotes();
+}
+
+function deleteFullstackNote(idx) {
+    customNotes.splice(idx, 1);
+    localStorage.setItem('ecosistema_notes_v15', JSON.stringify(customNotes));
+    renderFullstackNotes();
+}
+
+function sendWhatsAppSync() {
+    const msg = `*Sincronización Fullstack Nuestro Ecosistema*\nMi amor, dejé una nota en nuestro buzón digital. ¡Te amo!`;
+    window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+}
+
+/* ================= RELOJ, CLIMA ANIMADO Y CICLO SOLAR ================= */
+function cambiarLoc(btn, locName) {
+    document.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentLocation = locName;
+    actualizarReloj();
+}
+
+function actualizarReloj() {
+    const ahora = new Date();
+    let horas = ahora.getHours(), minutos = ahora.getMinutes(), segundos = ahora.getSeconds();
+    const ampm = horas >= 12 ? 'p.m.' : 'a.m.';
+    
+    const weatherText = document.getElementById('weather-text');
+    const phase = document.getElementById('phase-alert');
+    const icon = document.getElementById('reloj-icono');
+
+    // Lógica del Clima y Fase
+    let wEmoji = "☀️"; let temp = "24°C"; let cond = "Despejado";
+    
+    if(horas >= 6 && horas < 12) { 
+        phase.innerHTML = "🌅 Amanecer • Un nuevo día para amarte más y compilar nuestro futuro."; 
+        icon.textContent = "🌅"; wEmoji = "🌅"; cond = "Amaneciendo";
+    }
+    else if(horas >= 12 && horas < 18) { 
+        phase.innerHTML = "☀️ Día Activo • Echándole ganas por nuestro presente. Te pienso."; 
+        icon.textContent = "☀️"; wEmoji = "☀️"; cond = "Soleado";
+    }
+    else if(horas >= 18 && horas < 20) { 
+        phase.innerHTML = "🌇 Atardecer • Hora de bajar el ritmo de código y pensarte."; 
+        icon.textContent = "🌇"; wEmoji = "🌇"; cond = "Atardecer";
+    }
+    else { 
+        phase.innerHTML = "🌙 Noche • Descansa mi amor, apaga las pantallas. Nos vemos en sueños."; 
+        icon.textContent = "🌙"; wEmoji = "🌙"; cond = "Estrellado";
+    }
+
+    if(currentLocation === 'Atlixco') temp = horas > 18 || horas < 6 ? "16°C" : "25°C";
+    if(currentLocation === 'Orizaba') temp = horas > 18 || horas < 6 ? "13°C" : "19°C";
+    if(currentLocation === 'Auto') { temp = "Clima Local"; cond = "Sincronizado"; }
+
+    weatherText.textContent = `${wEmoji} ${currentLocation === 'Auto' ? '' : temp + ' en '}${currentLocation} • ${cond}`;
+
+    horas = horas % 12; horas = horas ? horas : 12;
+    minutos = minutos < 10 ? '0' + minutos : minutos;
+    segundos = segundos < 10 ? '0' + segundos : segundos;
+    const el = document.getElementById('reloj-tiempo-real');
+    if(el) el.textContent = `${horas}:${minutos}:${segundos} ${ampm}`;
+}
+
+/* ================= NAVEGACIÓN Y ENTRADA ================= */
+function enterEcosystem() {
+    warpSpeed = true;
+    const sp = document.getElementById('splash-screen');
+    const audio = document.getElementById('bg-music');
+    if(audio) {
+        audio.volume = 0.5;
+        audio.play().catch(e => console.log("Se requiere interacción para audio."));
+        musicPlaying = true;
+        document.getElementById('audio-control').textContent = "🎵 Música: ON";
+    }
+    
+    if (sp) {
+        sp.classList.add('hidden');
+        setTimeout(() => {
+            sp.style.display = 'none';
+            document.getElementById('main-app').classList.add('active');
+            document.getElementById('main-nav').style.display = 'flex';
+        }, 1000);
+    }
+}
+
+function switchTab(t, btn) {
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.b-tab').forEach(b => b.classList.remove('active'));
+    const sec = document.getElementById('view-' + t);
+    if (sec) sec.classList.add('active');
+    if (btn) btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateKpiClock() {
+    const start = new Date(2026, 6, 22, 0, 0, 0), now = new Date();
+    const diff = Math.max(0, now - start);
+    const days = Math.floor(diff / 86400000), hrs = Math.floor((diff % 86400000) / 3600000), mins = Math.floor((diff % 3600000) / 60000), secs = Math.floor((diff % 60000) / 1000);
+    const up = document.getElementById('kpi-uptime');
+    if (up) up.textContent = `${days}d ${hrs}h ${mins}m ${secs}s`;
+}
+
+/* ================= PAC-MAN EMOCIONAL JS NATIVO ================= */
+const pacCanvas = document.getElementById('pacman-canvas');
+const pacCtx = pacCanvas ? pacCanvas.getContext('2d') : null;
+
+let pac = { x: 1, y: 1 };
+let pacDir = { x: 1, y: 0 };
+const cols = 10, rows = 10;
+let cellSize = 32; // Responsive en draw
+let pacScore = 0;
+let pacLoopId = null;
+
+// Mapa 1: Muro, 0: Camino
+const pacMap = [
+    [1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,1,0,0,0,0,1],
+    [1,0,1,0,1,0,1,1,0,1],
+    [1,0,1,0,0,0,0,0,0,1],
+    [1,0,0,0,1,1,1,0,1,1],
+    [1,1,1,0,0,0,1,0,0,1],
+    [1,0,0,0,1,0,0,0,0,1],
+    [1,0,1,1,1,1,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1]
+];
+
+let pacItems = [];
+const pacEmojis = ["🍓", "🍰", "🌻", "☕", "🍕"];
+let pacGhosts = [
+    { x: 8, y: 8, color: "#ef4444" },
+    { x: 1, y: 8, color: "#c084fc" }
+];
+
+window.movePacman = function(dx, dy) {
+    if(pacMap[pac.y + dy][pac.x + dx] === 0) pacDir = { x: dx, y: dy };
+}
+
+function initPacman() {
+    if(!pacCtx) return;
+    pacItems = [];
+    for(let r=0; r<rows; r++) {
+        for(let c=0; c<cols; c++) {
+            if(pacMap[r][c] === 0 && !(r===1 && c===1)) {
+                if(Math.random() > 0.6) pacItems.push({ x: c, y: r, emoji: pacEmojis[Math.floor(Math.random()*pacEmojis.length)] });
+            }
+        }
+    }
+    pac = { x: 1, y: 1 };
+    pacScore = 0;
+    if(pacLoopId) clearInterval(pacLoopId);
+    pacLoopId = setInterval(updatePacman, 350); // Velocidad jugable
+}
+
+function updatePacman() {
+    if(!pacCtx) return;
+    
+    // Movimiento Reina (Pacman)
+    const nextX = pac.x + pacDir.x;
+    const nextY = pac.y + pacDir.y;
+    if(pacMap[nextY][nextX] === 0) { pac.x = nextX; pac.y = nextY; }
+
+    // Recolectar gustos
+    for(let i=0; i<pacItems.length; i++) {
+        if(pacItems[i].x === pac.x && pacItems[i].y === pac.y) {
+            pacItems.splice(i, 1);
+            pacScore += 10;
+            break;
+        }
+    }
+
+    // Movimiento IA Fantasmas
+    pacGhosts.forEach(g => {
+        let poss = [
+            {x: g.x+1, y: g.y}, {x: g.x-1, y: g.y},
+            {x: g.x, y: g.y+1}, {x: g.x, y: g.y-1}
+        ].filter(p => pacMap[p.y][p.x] === 0);
+        
+        if(poss.length > 0) {
+            const move = poss[Math.floor(Math.random() * poss.length)];
+            g.x = move.x; g.y = move.y;
+        }
+        // Colisión (Estrés)
+        if(g.x === pac.x && g.y === pac.y) {
+            alert("¡El estrés (👻) te atrapó, mi Reina! Pero no pasa nada, respira y volvemos a intentar.");
+            initPacman();
+        }
+    });
+
+    // Win condition
+    if(pacItems.length === 0) {
+        alert("¡Ganaste mi Reina! Recolectaste todos tus gustos. Te mereces una Lasaña.");
+        initPacman();
+    }
+
+    drawPacman();
+}
+
+function drawPacman() {
+    cellSize = pacCanvas.width / cols;
+    pacCtx.fillStyle = "#02040a";
+    pacCtx.fillRect(0, 0, pacCanvas.width, pacCanvas.height);
+
+    for(let r=0; r<rows; r++) {
+        for(let c=0; c<cols; c++) {
+            if(pacMap[r][c] === 1) {
+                pacCtx.fillStyle = "#0f172a";
+                pacCtx.fillRect(c*cellSize, r*cellSize, cellSize, cellSize);
+                pacCtx.strokeStyle = "#38bdf8";
+                pacCtx.lineWidth = 1;
+                pacCtx.strokeRect(c*cellSize, r*cellSize, cellSize, cellSize);
+            }
+        }
+    }
+
+    pacCtx.font = "20px Arial";
+    pacCtx.textAlign = "center";
+    pacCtx.textBaseline = "middle";
+    
+    pacItems.forEach(i => pacCtx.fillText(i.emoji, i.x*cellSize + cellSize/2, i.y*cellSize + cellSize/2));
+    pacCtx.fillText("👩🏻‍🍳", pac.x*cellSize + cellSize/2, pac.y*cellSize + cellSize/2); // Ella
+    pacGhosts.forEach(g => pacCtx.fillText("👻", g.x*cellSize + cellSize/2, g.y*cellSize + cellSize/2)); // Fantasmas
+
+    pacCtx.fillStyle = "#fde68a";
+    pacCtx.font = "bold 16px Arial";
+    pacCtx.textAlign = "left";
+    pacCtx.fillText(`Gustos: ${pacScore}`, 10, 20);
+}
+
+/* ================= MOTOR GRÁFICO GIROSCÓPICO (AGUJERO NEGRO, VÍA LÁCTEA Y CLIMA) ================= */
+const sCanvas = document.getElementById('splash-galaxy-canvas');
+const bgCanvas = document.getElementById('cosmos-bg-canvas');
+const wCanvas = document.getElementById('weather-canvas');
+
+const sCtx = sCanvas ? sCanvas.getContext('2d') : null;
+const bgCtx = bgCanvas ? bgCanvas.getContext('2d') : null;
+const wCtx = wCanvas ? wCanvas.getContext('2d') : null;
+
+let timeTickCosmos = 0, mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+let targetTiltX = 0, targetTiltY = 0, currentTiltX = 0, currentTiltY = 0;
+
+// Estrellas Universales
+const qStars = [];
+for (let i = 0; i < 450; i++) {
+    qStars.push({ 
+        dist: Math.random() * 500 + 20, 
+        angle: Math.random() * Math.PI * 2, 
+        size: Math.random() * 2.5 + 0.5, 
+        color: ['#38bdf8','#fde68a','#f43f5e','#c084fc','#ffffff','#6ee7b7'][i%6], 
+        speed: 0.001 + Math.random() * 0.003 
+    });
+}
+
+// Partículas del Clima (Lluvia/Nubes)
+const weatherParticles = [];
+for (let i = 0; i < 150; i++) {
+    weatherParticles.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, speed: 8 + Math.random() * 7, size: Math.random() * 40 + 20 });
+}
+
+// Escuchar Sensores
+window.addEventListener('pointermove', (e) => { 
+    if(isMobile) return;
+    mouseX = e.clientX; mouseY = e.clientY; 
+    targetTiltX = (mouseX / window.innerWidth - 0.5) * 80;
+    targetTiltY = (mouseY / window.innerHeight - 0.5) * 80;
+});
+
+// Acelerar lectura de giroscopio en móviles
+if (window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", (e) => {
+        if(e.gamma !== null && e.beta !== null) {
+            isMobile = true;
+            let gamma = e.gamma; let beta = e.beta;
+            // Limitar ángulos para que no se voltee
+            if(gamma > 45) gamma = 45; if(gamma < -45) gamma = -45;
+            if(beta > 45) beta = 45; if(beta < -45) beta = -45;
+            targetTiltX = gamma * 2;
+            targetTiltY = beta * 2;
+        }
+    }, true);
+}
+
+function drawBlackHole(ctx, cx, cy) {
+    // Disco de acreción Phoenix A (Supermasivo)
+    const gradient = ctx.createRadialGradient(cx, cy, 35, cx, cy, 220);
+    gradient.addColorStop(0, "rgba(255,255,255,1)");
+    gradient.addColorStop(0.08, "rgba(253,230,138,0.9)");
+    gradient.addColorStop(0.3, "rgba(225,29,72,0.5)"); // Rosa/Rojo
+    gradient.addColorStop(0.6, "rgba(192,132,252,0.2)"); // Morado
+    gradient.addColorStop(1, "transparent");
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath(); ctx.arc(cx, cy, 220, 0, Math.PI * 2); ctx.fill();
+
+    // Event Horizon (El Abismo)
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(cx, cy, 55, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "rgba(251,191,36,0.9)";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    
+    // Anillo exterior de luz
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.lineWidth = 10;
+    ctx.beginPath(); ctx.arc(cx, cy, 65, 0, Math.PI * 2); ctx.stroke();
+}
+
+function drawGalaxyScene(ctx, w, h, isSplash) {
+    if (!ctx) return;
+    
+    // Suavizado del movimiento giroscópico (Lerp)
+    currentTiltX += (targetTiltX - currentTiltX) * 0.1;
+    currentTiltY += (targetTiltY - currentTiltY) * 0.1;
+
+    ctx.fillStyle = warpSpeed ? 'rgba(0,0,0,0.2)' : 'rgba(2,3,10,0.35)'; // Estela para efecto warp
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'lighter';
+    
+    const cx = w / 2 + currentTiltX;
+    const cy = h * (isSplash ? 0.45 : 0.35) + currentTiltY;
+    
+    if (isSplash) drawBlackHole(ctx, cx, cy);
+
+    qStars.forEach(st => {
+        st.angle += warpSpeed ? st.speed * 20 : st.speed;
+        const r = warpSpeed ? st.dist * 1.5 : st.dist;
+        const sx = cx + Math.cos(st.angle) * r;
+        const sy = cy + Math.sin(st.angle) * r * (isSplash ? 0.4 : 0.8);
+        
+        ctx.fillStyle = st.color; 
+        ctx.beginPath(); 
+        ctx.arc(sx, sy, warpSpeed ? st.size * 3 : st.size, 0, Math.PI * 2); 
+        ctx.fill();
+        
+        // Estrellas fugaces en Splash
+        if (isSplash && Math.random() > 0.995 && !warpSpeed) {
+            ctx.strokeStyle = "rgba(255,255,255,0.9)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(sx - 40 * Math.cos(st.angle), sy - 40 * Math.sin(st.angle));
+            ctx.stroke();
+        }
+    });
+
+    ctx.globalCompositeOperation = 'source-over';
+}
+
+function drawWeather(ctx, w, h) {
+    if(!ctx) return;
+    ctx.clearRect(0,0,w,h);
+    const ahora = new Date();
+    const horas = ahora.getHours();
+    
+    // Si es Orizaba o Atlixco de tarde/noche (18h a 6h) -> Lluvia Activa
+    if((currentLocation === 'Orizaba' || currentLocation === 'Atlixco') && (horas >= 18 || horas < 6)) {
+        ctx.strokeStyle = "rgba(186,230,253,0.3)";
+        ctx.lineWidth = 1.5;
+        weatherParticles.forEach(drop => {
+            drop.y += drop.speed;
+            if(drop.y > h) { drop.y = -20; drop.x = Math.random() * w; }
+            ctx.beginPath();
+            ctx.moveTo(drop.x, drop.y);
+            ctx.lineTo(drop.x - 3, drop.y + 15);
+            ctx.stroke();
+        });
+    } 
+    // Si es Día (6h a 18h) -> Nubes ligeras pasando
+    else if (horas >= 6 && horas < 18) {
+        ctx.fillStyle = "rgba(255,255,255,0.03)";
+        weatherParticles.forEach(cloud => {
+            cloud.x += cloud.speed * 0.1;
+            if(cloud.x > w + 50) { cloud.x = -50; cloud.y = Math.random() * (h/2); }
+            ctx.beginPath();
+            ctx.arc(cloud.x, cloud.y, cloud.size, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+}
+
+function animateEngines() {
+    timeTickCosmos += 0.02;
+    if (sCanvas && document.getElementById('splash-screen').style.display !== 'none') {
+        sCanvas.width = window.innerWidth; sCanvas.height = window.innerHeight;
+        drawGalaxyScene(sCtx, sCanvas.width, sCanvas.height, true);
+    }
+    if (bgCanvas && document.getElementById('splash-screen').style.display === 'none') {
+        bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight;
+        drawGalaxyScene(bgCtx, bgCanvas.width, bgCanvas.height, false);
+    }
+    if (wCanvas && document.getElementById('splash-screen').style.display === 'none') {
+        wCanvas.width = window.innerWidth; wCanvas.height = window.innerHeight;
+        drawWeather(wCtx, wCanvas.width, wCanvas.height);
+    }
+    requestAnimationFrame(animateEngines);
+}
+
+/* ================= INICIALIZACIÓN MÁSTER ================= */
+window.onload = () => { 
+    initPacman();
+    
+    const mc = document.getElementById('mirror-container');
+    if(mc) mirrorData.forEach(m => { mc.innerHTML += `<div class="mirror-card"><h3 style="color:#fda4af;font-size:1.05rem;font-weight:900;margin-bottom:10px">🌸 ${m.title}</h3><div class="info-box"><span class="box-label" style="color:#fda4af">💭 Lo que siento:</span><p class="box-text">${m.feel}</p></div><div class="proposal-card" style="border-top:2px solid #64748b"><span class="box-label" style="color:#94a3b8">💔 Lo que lastima:</span><p class="box-text">${m.broken}</p></div><div class="proposal-card" style="border-top:2px solid var(--green)"><span class="box-label" style="color:#4ade80">🌱 Solución juntos:</span><p class="box-text">${m.solution}</p></div></div>`; });
+
+    const sc = document.getElementById('sos-container');
+    if(sc) sosData.forEach(s => { sc.innerHTML += `<div class="sos-card"><h3 style="color:#fde68a;font-size:1.05rem;font-weight:900;margin-bottom:10px">${s.btn}</h3><div class="info-box empathy"><span class="box-label" style="color:var(--blue)">🛠️ ${s.title}:</span><p class="box-text" style="white-space:pre-line">${s.steps}</p></div></div>`; });
+
+    const pc = document.getElementById('pacts-container');
+    if(pc) pactsData.forEach((t, i) => { pc.innerHTML += `<label style="display:flex;gap:12px;align-items:center;background:rgba(255,255,255,0.03);padding:15px;border-radius:12px;border:1px solid var(--border);cursor:pointer;transition:background 0.2s"><input type="checkbox" class="pact-check" style="width:22px;height:22px;accent-color:#22c55e" onchange="updateHealthBar()"><span class="box-text" style="font-size:0.95rem"><strong>${t}</strong></span></label>`; });
+
+    renderFlowersStage(); 
+    updateInspector(); 
+    updateHealthBar();
+    renderFullstackNotes();
+    setInterval(actualizarReloj, 1000); 
+    actualizarReloj();
+    updateKpiClock();
+    setInterval(updateKpiClock, 1000);
+    animateEngines();
+};
+</script>
+</body>
+</html>
