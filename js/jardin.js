@@ -1,55 +1,60 @@
-// js/jardin.js - Datos e Interacción de Girasoles
-
-const GIRASOLES_DATOS = [
+// js/jardin.js - Invernadero de Girasoles
+const GIRASOLES = [
     {
         id: 1,
         titulo: "Girasol del Alba: Confianza Nocturna",
         hojas: [
-            { id: "h1", titulo: "1. Madrugada en Discord", sanada: true },
-            { id: "h2", titulo: "2. Miedo a no ser prioridad", sanada: true },
-            { id: "h3", titulo: "3. Desvelos extremos", sanada: false }
+            { txt: "Madrugada en Discord", sanada: true },
+            { txt: "Miedo a no ser prioridad", sanada: true },
+            { txt: "Desvelos extremos", sanada: false }
         ],
-        miError: "Cuando cambiaron tus planes y me muteé en Discord para no despertarme, no preví que se interpretara como silencio punitivo.",
-        diagnostico: "Hipervigilancia afectiva ante cambios imprevistos + retraimiento defensivo por fatiga.",
-        empatia: "Te hice sentir juzgada e insegura sobre tu lugar en mi vida.",
-        compromiso: "Comunicar siempre con ternura y despedirme amorosamente antes de apagar la llamada."
+        miError: "Mutear la llamada sin aviso claro por cansancio extremo, interpretándose como distancia.",
+        diagnostico: "Hipervigilancia afectiva ante cambios repentinos de dinámica comunicativa.",
+        compromiso: "Despedirme siempre con calidez y ternura antes de desconectarme."
     },
     {
         id: 2,
         titulo: "Girasol de la Claridad: Transparencia Digital",
         hojas: [
-            { id: "h4", titulo: "1. Notificaciones de FB Parejas", sanada: true },
-            { id: "h5", titulo: "2. Asunciones rápidas", sanada: true }
+            { txt: "Notificaciones de FB Parejas", sanada: true },
+            { txt: "Incertidumbre inmediata", sanada: true }
         ],
-        miError: "No explicar con suficiente rapidez mi historial en redes, generando dudas sobre otras opciones.",
-        diagnostico: "Necesidad de reafirmación inmediata de seguridad comunicativa.",
-        empatia: "Te hizo sentir que debías defender tu lugar o dudar de mi entrega.",
-        compromiso: "Reafirmar que solo tengo ojos y corazón para ti, aclarando dudas con calma."
+        miError: "Falta de explicación oportuna respecto a funciones o historial de redes sociales.",
+        diagnostico: "Necesidad de reafirmación explícita sobre la elección de pareja consciente.",
+        compromiso: "Reafirmar activamente que Analy es mi única elección de vida."
+    },
+    {
+        id: 3,
+        titulo: "Girasol del Foco: Tiempos de Calidad",
+        hojas: [
+            { txt: "Distracción en series/juegos", sanada: true },
+            { txt: "Multitarea comunicativa", sanada: false }
+        ],
+        miError: "Dividir mi atención mientras veíamos contenido juntos.",
+        diagnostico: "Para Analy, compartir una actividad exige presencia y conexión plena.",
+        compromiso: "Dedicar bloques de tiempo libre de distracciones al estar con ella."
     }
 ];
 
-function renderizarInvernadero() {
-    const contenedor = document.getElementById('girasolesContainer');
-    if (!contenedor) return;
+function renderizarGirasoles() {
+    const grid = document.getElementById('girasolesGrid');
+    if (!grid) return;
 
-    contenedor.innerHTML = GIRASOLES_DATOS.map(girasol => `
+    grid.innerHTML = GIRASOLES.map(g => `
         <div class="girasol-card">
-            <h3>🌻 ${girasol.titulo}</h3>
+            <h3>🌻 ${g.titulo}</h3>
             <div class="hojas-list">
-                ${girasol.hojas.map(h => `
+                ${g.hojas.map(h => `
                     <span class="badge ${h.sanada ? 'sanada' : 'pendiente'}">
-                        ${h.sanada ? '🍃 Sanada:' : '🍂 Por Sanar:'} ${h.titulo}
+                        ${h.sanada ? '🍃 Sanada:' : '🍂 En proceso:'} ${h.txt}
                     </span>
                 `).join('')}
             </div>
-            <div class="analisis-box">
-                <p><strong>Mi Error:</strong> ${girasol.miError}</p>
-                <p><strong>Diagnóstico Psicológico:</strong> ${girasol.diagnostico}</p>
-                <p><strong>Empatía:</strong> ${girasol.empatia}</p>
-                <p class="compromiso-text"><strong>Nuevo Compromiso:</strong> ${girasol.compromiso}</p>
-            </div>
+            <p style="margin-top:10px;"><strong>Mi Error:</strong> ${g.miError}</p>
+            <p><strong>Diagnóstico:</strong> ${g.diagnostico}</p>
+            <p style="color:#eccc68; margin-top:5px;"><strong>Nuevo Compromiso:</strong> ${g.compromiso}</p>
         </div>
     `).join('');
 }
 
-document.addEventListener('DOMContentLoaded', renderizarInvernadero);
+document.addEventListener('DOMContentLoaded', renderizarGirasoles);
