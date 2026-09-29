@@ -1,42 +1,46 @@
-// Importaciones directas seguras para iOS (Sin ImportMap)
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
-import { DeviceOrientationControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/DeviceOrientationControls.js';
+// 1. URLs seguras que Safari aprueba
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js';
+import { DeviceOrientationControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/DeviceOrientationControls.js';
 
-// Importamos la lógica de nuestra base de datos
-import { cargarEcosistema, regarJardin, sanarHoja, actualizarInterfaz } from './jardin.js';
-
-// ... (Aquí continúa todo el resto de tu código de let scene, camera, etc.)
-DeviceOrientationControls.js';
-// Importamos la lógica de nuestro ecosistema
-import { cargarEcosistema, regarJardin, sanarHoja, actualizarInterfaz } from './jardin.js';
+// 2. Base de datos del invernadero
+import { cargarEcosistema, actualizarInterfaz } from './jardin.js';
 
 let scene, camera, renderer, controls, starMesh, phoenixA, clock;
 let isEcosystemActive = false;
 
-// 1. Solicitud de Permisos para iOS (Giroscopio)
+// 3. Activador central
 document.getElementById('btn-enter').addEventListener('click', async () => {
+    // Desaparece la tarjeta visualmente al instante
+    const startScreen = document.getElementById('start-screen');
+    startScreen.style.opacity = '0';
+    setTimeout(() => { startScreen.style.display = 'none'; }, 800);
+    document.getElementById('ui-layer').style.display = 'block';
+
+    // Pide permiso al iPhone para el giroscopio
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         try {
-            const permissionState = await DeviceOrientationEvent.requestPermission();
-            if (permissionState === 'granted') {
-                iniciarEcosistema();
+            const permission = await DeviceOrientationEvent.requestPermission();
+            if (permission === 'granted') {
+                iniciarUniverso();
             } else {
-                alert("Mi amor, necesito acceso a los sensores para que el universo gire contigo. 🐼");
+                iniciarUniverso(); // Inicia aunque rechace el sensor
             }
         } catch (error) {
-            console.error(error);
-            iniciarEcosistema(); // Forzar inicio en caso de error de API
+            iniciarUniverso();
         }
     } else {
-        iniciarEcosistema(); // Dispositivos Android o PC
+        iniciarUniverso(); // Android o PC
     }
 });
 
-function iniciarEcosistema() {
+function iniciarUniverso() {
     if (isEcosystemActive) return;
     isEcosystemActive = true;
 
-    // 2. Configuración de Three.js
+    // Cargar datos de vitalidad
+    const db = cargarEcosistema();
+    actualizarInterfaz(db);
+
     const container = document.getElementById('canvas-container');
     scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x0b0c10, 0.002);
@@ -51,7 +55,7 @@ function iniciarEcosistema() {
 
     controls = new DeviceOrientationControls(camera);
 
-    // 3. Generación de Galaxia (Tonos Rosas y Verdes)
+    // Creación de las estrellas rosas y verdes
     const starsGeometry = new THREE.BufferGeometry();
     const starsCount = 4000;
     const posArray = new Float32Array(starsCount * 3);
@@ -62,29 +66,20 @@ function iniciarEcosistema() {
         posArray[i+1] = (Math.random() - 0.5) * 100;
         posArray[i+2] = (Math.random() - 0.5) * 100;
 
-        const colorType = Math.random();
-        if(colorType > 0.8) {
-            colorArray[i] = 1.0; colorArray[i+1] = 0.2; colorArray[i+2] = 0.4; // Rosa
-        } else if (colorType > 0.6) {
-            colorArray[i] = 0.2; colorArray[i+1] = 0.8; colorArray[i+2] = 0.2; // Verde
-        } else {
-            colorArray[i] = 1.0; colorArray[i+1] = 1.0; colorArray[i+2] = 1.0; // Blanco
-        }
+        const type = Math.random();
+        if(type > 0.8) { colorArray[i] = 1; colorArray[i+1] = 0.2; colorArray[i+2] = 0.4; } // Rosa
+        else if (type > 0.6) { colorArray[i] = 0.2; colorArray[i+1] = 0.8; colorArray[i+2] = 0.2; } // Verde
+        else { colorArray[i] = 1; colorArray[i+1] = 1; colorArray[i+2] = 1; } // Blanco
     }
 
     starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
     starsGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
 
-    starMesh = new THREE.Points(starsGeometry, new THREE.PointsMaterial({
-        size: 0.15, vertexColors: true, transparent: true, opacity: 0.8
-    }));
+    starMesh = new THREE.Points(starsGeometry, new THREE.PointsMaterial({ size: 0.15, vertexColors: true, transparent: true, opacity: 0.8 }));
     scene.add(starMesh);
 
-    // 4. Agujero Negro Phoenix A (Modelo Matemático Básico)
-    const blackHoleGeometry = new THREE.TorusGeometry(3, 0.8, 16, 100);
-    phoenixA = new THREE.Mesh(blackHoleGeometry, new THREE.MeshBasicMaterial({ 
-        color: 0xff3366, wireframe: true, transparent: true, opacity: 0.6
-    }));
+    // Agujero Negro
+    phoenixA = new THREE.Mesh(new THREE.TorusGeometry(3, 0.8, 16, 100), new THREE.MeshBasicMaterial({ color: 0xff3366, wireframe: true, transparent: true, opacity: 0.6 }));
     phoenixA.position.set(0, 0, -20);
     scene.add(phoenixA);
 
@@ -94,53 +89,18 @@ function iniciarEcosistema() {
 
 function animate() {
     requestAnimationFrame(animate);
-    const elapsedTime = clock.getElapsedTime();
+    const elapsed = clock.getElapsedTime();
 
-    controls.update();
-
-    starMesh.rotation.y = elapsedTime * 0.02;
-    starMesh.rotation.x = elapsedTime * 0.01;
+    if(controls) controls.update();
     
-    phoenixA.rotation.x = elapsedTime * 0.5;
-    phoenixA.rotation.y = elapsedTime * 0.5;
+    if(starMesh) {
+        starMesh.rotation.y = elapsed * 0.02;
+        starMesh.rotation.x = elapsed * 0.01;
+    }
+    if(phoenixA) {
+        phoenixA.rotation.x = elapsed * 0.5;
+        phoenixA.rotation.y = elapsed * 0.5;
+    }
 
     renderer.render(scene, camera);
 }
-
-window.addEventListener('resize', () => {
-    if(!camera) return;
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-// --- EVENTOS DEL ECOSISTEMA (CRUD) ---
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. Cargar la base de datos al inicio
-    const db = cargarEcosistema();
-    actualizarInterfaz(db);
-    document.getElementById('barra-vitalidad').style.width = db.vitalidad + '%';
-
-    // 2. Acción: Regar el Girasol
-    document.getElementById('btn-regar').addEventListener('click', () => {
-        if (regarJardin()) {
-            const nuevaDb = cargarEcosistema();
-            document.getElementById('barra-vitalidad').style.width = nuevaDb.vitalidad + '%';
-            
-            // Efecto visual rápido: Aceleramos el agujero negro un segundo para simular energía
-            if(phoenixA) phoenixA.rotation.x += 1;
-            
-            // Vibración nativa en el iPhone para dar feedback táctil de que la tierra recibió agua
-            if (navigator.vibrate) navigator.vibrate(100); 
-        }
-    });
-
-    // 3. Acción: Sanar la Hoja (Discord)
-    document.getElementById('btn-sanar').addEventListener('click', (e) => {
-        sanarHoja(1, 1); // ID Girasol 1, ID Hoja 1
-        const nuevaDb = cargarEcosistema();
-        document.getElementById('barra-vitalidad').style.width = nuevaDb.vitalidad + '%';
-        e.target.innerHTML = "✅ Hoja Sanada con Éxito";
-        e.target.style.background = "#4caf50"; // Cambia a verde
-        
-        if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Vibración de éxito
-    });
-});
