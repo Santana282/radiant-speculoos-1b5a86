@@ -111,4 +111,35 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+// --- EVENTOS DEL ECOSISTEMA (CRUD) ---
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Cargar la base de datos al inicio
+    const db = cargarEcosistema();
+    actualizarInterfaz(db);
+    document.getElementById('barra-vitalidad').style.width = db.vitalidad + '%';
+
+    // 2. Acción: Regar el Girasol
+    document.getElementById('btn-regar').addEventListener('click', () => {
+        if (regarJardin()) {
+            const nuevaDb = cargarEcosistema();
+            document.getElementById('barra-vitalidad').style.width = nuevaDb.vitalidad + '%';
+            
+            // Efecto visual rápido: Aceleramos el agujero negro un segundo para simular energía
+            if(phoenixA) phoenixA.rotation.x += 1;
+            
+            // Vibración nativa en el iPhone para dar feedback táctil de que la tierra recibió agua
+            if (navigator.vibrate) navigator.vibrate(100); 
+        }
+    });
+
+    // 3. Acción: Sanar la Hoja (Discord)
+    document.getElementById('btn-sanar').addEventListener('click', (e) => {
+        sanarHoja(1, 1); // ID Girasol 1, ID Hoja 1
+        const nuevaDb = cargarEcosistema();
+        document.getElementById('barra-vitalidad').style.width = nuevaDb.vitalidad + '%';
+        e.target.innerHTML = "✅ Hoja Sanada con Éxito";
+        e.target.style.background = "#4caf50"; // Cambia a verde
+        
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]); // Vibración de éxito
+    });
 });
