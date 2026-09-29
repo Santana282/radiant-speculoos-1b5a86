@@ -1,88 +1,104 @@
 import * as THREE from 'three';
 import { DeviceOrientationControls } from 'three/addons/controls/DeviceOrientationControls.js';
 
-// 1. Inicialización de la Escena, Cámara y Renderizador
-const container = document.getElementById('canvas-container');
-const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x0b0c10, 0.002);
+let scene, camera, renderer, controls, starMesh, phoenixA, clock;
+let isEcosystemActive = false;
 
-// Cámara perspectiva ajustada para el campo de visión humano (75 grados)
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 0, 5);
-
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimización para Retina Display del iPhone
-container.appendChild(renderer.domElement);
-
-// 2. Controladores de Giroscopio (DeviceOrientation)
-// Esto conectará los sensores físicos del celular de Analy con la cámara 3D
-const controls = new DeviceOrientationControls(camera);
-
-// 3. Creación del Universo: Polvo Estelar y Galaxias
-const starsGeometry = new THREE.BufferGeometry();
-const starsCount = 4000;
-const posArray = new Float32Array(starsCount * 3);
-const colorArray = new Float32Array(starsCount * 3);
-
-for(let i = 0; i < starsCount * 3; i+=3) {
-    // Distribuimos las estrellas en una esfera gigante
-    posArray[i] = (Math.random() - 0.5) * 100;     // X
-    posArray[i+1] = (Math.random() - 0.5) * 100;   // Y
-    posArray[i+2] = (Math.random() - 0.5) * 100;   // Z
-
-    // Asignamos colores sutiles: mezcla de tonos verdosos (Monster) y rosas/dorados (Gerberas/Girasoles)
-    const colorType = Math.random();
-    if(colorType > 0.8) {
-        // Rosa intenso
-        colorArray[i] = 1.0; colorArray[i+1] = 0.2; colorArray[i+2] = 0.4; 
-    } else if (colorType > 0.6) {
-        // Verde sutil
-        colorArray[i] = 0.2; colorArray[i+1] = 0.8; colorArray[i+2] = 0.2;
+// 1. Configurar el evento del botón de entrada (Crucial para iOS)
+document.getElementById('btn-enter').addEventListener('click', async () => {
+    // Si es un iPhone (iOS 13+), solicitar permiso explícito
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+            const permissionState = await DeviceOrientationEvent.requestPermission();
+            if (permissionState === 'granted') {
+                iniciarEcosistema();
+            } else {
+                alert("Mi amor, necesito acceso a los sensores para que el universo gire contigo. Recarga la página y acepta. 🐼");
+            }
+        } catch (error) {
+            console.error(error);
+            iniciarEcosistema(); // Fallback
+        }
     } else {
-        // Blanco estelar
-        colorArray[i] = 1.0; colorArray[i+1] = 1.0; colorArray[i+2] = 1.0;
+        // Android o PC
+        iniciarEcosistema();
     }
+});
+
+function iniciarEcosistema() {
+    if (isEcosystemActive) return;
+    isEcosystemActive = true;
+
+    // Ocultar pantalla de inicio y mostrar UI
+    const startScreen = document.getElementById('start-screen');
+    startScreen.style.opacity = '0';
+    setTimeout(() => { startScreen.style.display = 'none'; }, 1000);
+    document.getElementById('ui-layer').style.display = 'block';
+
+    // 2. Inicializar Three.js
+    const container = document.getElementById('canvas-container');
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0b0c10, 0.002);
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 5);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Giroscopio
+    controls = new DeviceOrientationControls(camera);
+
+    // 3. Estrellas y Nebulosa (Tonos rosas y verdes de sus gustos)
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 4000;
+    const posArray = new Float32Array(starsCount * 3);
+    const colorArray = new Float32Array(starsCount * 3);
+
+    for(let i = 0; i < starsCount * 3; i+=3) {
+        posArray[i] = (Math.random() - 0.5) * 100;
+        posArray[i+1] = (Math.random() - 0.5) * 100;
+        posArray[i+2] = (Math.random() - 0.5) * 100;
+
+        const colorType = Math.random();
+        if(colorType > 0.8) {
+            colorArray[i] = 1.0; colorArray[i+1] = 0.2; colorArray[i+2] = 0.4; // Rosa
+        } else if (colorType > 0.6) {
+            colorArray[i] = 0.2; colorArray[i+1] = 0.8; colorArray[i+2] = 0.2; // Verde
+        } else {
+            colorArray[i] = 1.0; colorArray[i+1] = 1.0; colorArray[i+2] = 1.0; // Blanco
+        }
+    }
+
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    starsGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
+    starMesh = new THREE.Points(starsGeometry, new THREE.PointsMaterial({
+        size: 0.15, vertexColors: true, transparent: true, opacity: 0.8
+    }));
+    scene.add(starMesh);
+
+    // 4. Agujero Negro Básico
+    const blackHoleGeometry = new THREE.TorusGeometry(3, 0.8, 16, 100);
+    phoenixA = new THREE.Mesh(blackHoleGeometry, new THREE.MeshBasicMaterial({ 
+        color: 0xff3366, wireframe: true, transparent: true, opacity: 0.6
+    }));
+    phoenixA.position.set(0, 0, -20);
+    scene.add(phoenixA);
+
+    clock = new THREE.Clock();
+    animate();
 }
 
-starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-starsGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
-
-const starsMaterial = new THREE.PointsMaterial({
-    size: 0.15,
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.8
-});
-
-const starMesh = new THREE.Points(starsGeometry, starsMaterial);
-scene.add(starMesh);
-
-// 4. El Núcleo: Representación Matemática del Agujero Negro Phoenix A
-// Utilizamos un shader básico aquí para no sobrecargar el GPU desde el navegador móvil, 
-// simulando el disco de acreción con geometría interactiva.
-const blackHoleGeometry = new THREE.TorusGeometry(3, 0.8, 16, 100);
-const blackHoleMaterial = new THREE.MeshBasicMaterial({ 
-    color: 0xff3366, 
-    wireframe: true,
-    transparent: true,
-    opacity: 0.6
-});
-const phoenixA = new THREE.Mesh(blackHoleGeometry, blackHoleMaterial);
-phoenixA.position.set(0, 0, -20);
-scene.add(phoenixA);
-
-// 5. Bucle de Animación Cuántica (Ciclo de Vida)
-const clock = new THREE.Clock();
-
+// 5. Bucle de Animación
 function animate() {
     requestAnimationFrame(animate);
     const elapsedTime = clock.getElapsedTime();
 
-    // Actualizamos el giroscopio para que la cámara siga el movimiento del celular
     controls.update();
 
-    // Rotación perpetua del universo y del disco de acreción
     starMesh.rotation.y = elapsedTime * 0.02;
     starMesh.rotation.x = elapsedTime * 0.01;
     
@@ -92,13 +108,9 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// 6. Ajuste dinámico de pantalla si el iPhone rota
 window.addEventListener('resize', () => {
+    if(!camera) return;
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
-
-// Nota de usabilidad para iOS: Los sensores del giroscopio a veces requieren un clic previo
-// En la siguiente iteración añadiremos el botón "Entrar a nuestro ecosistema" para solicitar este permiso.
-animate();
