@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Nuestro Ecosistema 🌻</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#090d16">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
 <style>
 :root{--bg1:#090d16;--bg2:#161f33;--bg3:#231917;--gold:#fbbf24;--amber:#f59e0b;--rose:#f43f5e;--pink:#fda4af;--green:#22c55e;--purple:#c084fc;--blue:#38bdf8;--card:rgba(15,23,42,0.88);--glass:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.14);--txt:#f8fafc;--muted:#cbd5e1}
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
@@ -105,12 +109,12 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 <h1>Nuestro Ecosistema</h1>
 <p class="subtitle">Un jardín no se cuida solo deseando que crezca en el futuro; se riega hoy, en el presente. Aquí están mis flores marchitas para asumir dónde te he fallado, mi análisis para sanarlo, lo que siento en silencio, tus ciclos, tus gustos y nuestro método de comprobación.</p>
 
-<!-- Reproductor Musical de Fondo: Golden Hour Piano -->
+<!-- Reproductor Musical de Fondo Local -->
 <div class="music-player-bar">
   <button id="music-btn" class="music-btn" onclick="toggleMusic()">▶ Reproducir Música</button>
   <span class="music-info">🎹 JVKE - Golden Hour (Piano Cover)</span>
   <audio id="bg-audio" loop preload="auto">
-    <source src="https://ia801503.us.archive.org/15/items/golden-hour-piano/GoldenHourPiano.mp3" type="audio/mpeg">
+    <source src="audio/golden-hour.mp3" type="audio/mpeg">
   </audio>
 </div>
 
@@ -172,9 +176,10 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 </section>
 
 <section id="view-mirror" class="view-section">
-<div class="mirror-intro"><strong>❤️‍GF Comunicación Asertiva y Desde el Amor:</strong> Mi amor, como te dije una vez, tú no eres un proyecto de universidad; eres el proyecto de mi vida. Este apartado aplica psicología afectiva sin culpas: son las cosas que <strong>noto y siento en mi corazón</strong> cuando interactuamos, expresadas con ternura para que jamás nos gane la resignación ni el silencio.</div>
+<div class="mirror-intro"><strong>❤️‍‍GF Comunicación Asertiva y Desde el Amor:</strong> Mi amor, como te dije una vez, tú no eres un proyecto de universidad; eres el proyecto de mi vida. Este apartado aplica psicología afectiva sin culpas: son las cosas que <strong>noto y siento en mi corazón</strong> cuando interactuamos, expresadas con ternura para que jamás nos gane la resignación ni el silencio.</div>
 <div class="mirror-grid" id="mirror-container"></div>
 </section>
+
 <section id="view-care" class="view-section">
 <div class="care-layout">
 <div class="lunar-card">
@@ -226,6 +231,15 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 </div>
 
 <script>
+// Registro del Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('Service Worker registrado correctamente:', reg.scope))
+      .catch(err => console.log('Error al registrar Service Worker:', err));
+  });
+}
+
 // Reproductor de audio - Golden Hour Piano
 function toggleMusic() {
     const audio = document.getElementById('bg-audio');
@@ -243,7 +257,7 @@ function toggleMusic() {
 }
 
 const elementsData = {
-sun: { icon: "☀️️", title: "El Sol: Lo que tu luz despierta en mí", body: "Durante años me acostumbré a vivir aislado 'haciendo lo mío', apagando mi empatía emocional como coraza. Cuando llegaste tú, despertaste en mí una ternura y una curiosidad emocional que no conocía. Eres quien me dice 'Ánimo mi inge' o 'Tienes mis respetos Stark' cuando me arden los ojos de programar en la madrugada; eres el calor al que siempre quiero regresar." },
+sun: { icon: "☀️", title: "El Sol: Lo que tu luz despierta en mí", body: "Durante años me acostumbré a vivir aislado 'haciendo lo mío', apagando mi empatía emocional como coraza. Cuando llegaste tú, despertaste en mí una ternura y una curiosidad emocional que no conocía. Eres quien me dice 'Ánimo mi inge' o 'Tienes mis respetos Stark' cuando me arden los ojos de programar en la madrugada; eres el calor al que siempre quiero regresar." },
 water: { icon: "💧", title: "El Agua: Tu cuidado y entrega 24/7", body: "El agua de este jardín es cada vez que me ofreces un masajito cuando salgo cansado de hornear, cada vez que me recuerdas cargar mi Omeprazol para la gastritis o ponerme gotitas en los ojos porque no parpadeo al programar. Es tu paciencia esperándome en Discord, tus canciones dedicadas y ese amor 24/7 que me entregas sin que yo tenga que pedirlo." },
 earth: { icon: "🌱", title: "La Tierra: Nuestro Presente y Nuestro Hogar", body: "La tierra firme es mi lealtad absoluta de que en mi vida solo existes tú. Pero hoy comprendo que la tierra no solo sirve para soñar con la casita y tus utensilios de gastronomía del futuro; sirve para pisar firme en el PRESENTE, recibirte con los brazos abiertos cuando vienes a verme y disfrutar cada domingo y cada noche juntos." }
 };
