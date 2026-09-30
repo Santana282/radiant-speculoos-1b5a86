@@ -58,7 +58,6 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 .flower-unit.wilted .flower-head{transform:translateY(16px) rotate(26deg);transform-origin:60px 90px;filter:grayscale(75%) brightness(.7);transition:all .7s ease}
 .flower-unit.bloomed .flower-head{transform:translateY(0) rotate(0deg);filter:drop-shadow(0 0 12px rgba(251,191,36,0.65));transition:all .7s ease}
 .flower-unit.wilted .stem-path{stroke:#64748b}.flower-unit.bloomed .stem-path{stroke:#22c55e}
-.leaf-svg-item{transition:fill .4s}
 .soil-bed{height:40px;background:linear-gradient(180deg,#451a03 0%,#1f0b01 100%);margin:0 -8px;border-top:3px solid #78350f;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fde68a;font-weight:600;text-align:center;padding:0 8px}
 .flower-label{margin:4px 0 10px;background:rgba(15,23,42,0.92);border:1px solid var(--border);padding:4px 6px;border-radius:99px;font-size:.65rem;text-align:center;white-space:nowrap}
 .status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px}
@@ -98,22 +97,21 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 .cycle-select{background:#090d16;color:#fde68a;border:1px solid var(--border);padding:5px 8px;border-radius:8px;font-weight:700}
 .taste-tag{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#fef3c7;padding:5px 10px;border-radius:99px;font-size:.75rem}
 
+/* Formulario Diarios */
 .diary-input,.diary-textarea{width:100%;background:#090d16;border:1px solid var(--border);color:#fff;padding:10px 12px;border-radius:10px;font-size:.85rem;margin-bottom:8px}
 .diary-textarea{height:90px;resize:none}
 
-/* Estilos Contenedor de Juegos */
-.games-switch{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
-.game-switch-btn{background:var(--glass);border:1px solid var(--border);color:#fff;padding:8px 16px;border-radius:12px;font-weight:700;cursor:pointer}
-.game-switch-btn.active{background:linear-gradient(135deg,var(--amber),var(--rose));border-color:transparent}
+/* Modulo Juegos Arcade */
+.game-selector-nav{display:flex;justify-content:center;gap:10px;margin-bottom:12px}
+.game-nav-btn{background:var(--glass);border:1px solid var(--border);color:var(--txt);padding:8px 16px;border-radius:12px;font-weight:800;font-size:.82rem;cursor:pointer}
+.game-nav-btn.active{background:linear-gradient(135deg,var(--gold),var(--rose));color:#000;border-color:transparent}
+.game-subpanel{display:none;flex-direction:column;align-items:center;gap:10px}.game-subpanel.active{display:flex}
 
-.game-subpanel{display:none;flex-direction:column;align-items:center;gap:10px}
-.game-subpanel.active{display:flex}
-
-canvas#pongCanvas, canvas#pacmanCanvas{background:#090d16;border:2px solid var(--gold);border-radius:16px;max-width:100%;box-shadow:0 0 20px rgba(251,191,36,0.2)}
-.pong-controls,.pacman-dpad{display:flex;gap:10px;width:100%;max-width:320px;justify-content:center;margin-top:8px}
-.pong-btn,.dpad-btn{flex:1;padding:12px;background:rgba(251,191,36,0.15);border:1px solid var(--gold);color:#fde68a;font-weight:800;border-radius:12px;cursor:pointer;text-align:center}
-
-.pacman-grid-dpad{display:grid;grid-template-columns:repeat(3,60px);gap:6px;justify-content:center;margin-top:10px}
+/* Estilos Pacman & Ping Pong */
+canvas.game-canvas{background:#090d16;border:2px solid var(--gold);border-radius:16px;max-width:100%;box-shadow:0 0 20px rgba(251,191,36,0.2)}
+.pong-controls,.d-pad-grid{display:flex;gap:10px;width:100%;max-width:340px;justify-content:center}
+.pong-btn,.d-btn{padding:10px 14px;background:rgba(251,191,36,0.15);border:1px solid var(--gold);color:#fde68a;font-weight:800;border-radius:12px;cursor:pointer;font-size:.85rem}
+.d-pad-layout{display:grid;grid-template-columns:repeat(3,50px);gap:6px;margin-top:8px}
 
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal-overlay.open{display:flex}
@@ -154,7 +152,7 @@ canvas#pongCanvas, canvas#pacmanCanvas{background:#090d16;border:2px solid var(-
 </div>
 <div class="element-card" onclick="openElementModal('earth')">
 <div class="element-top"><div class="element-icon">🌱</div><div><div class="element-role">Nuestra raíz y destino</div><div class="element-title">La Tierra: Lealtad y Hogar</div></div></div>
-<p class="element-desc">Saber que solo eres tú, honrar nuestro presente cada fin de semana y construir nuestra casita y tu cocina soñada. (Toca para abrir)</p>
+<p class="element-desc">Saber que solo eres tú, honrar nuestro presente en Atlixco cada fin de semana y construir nuestra casita y tu cocina soñada para tu carrera de Gastronomía. (Toca para abrir)</p>
 </div>
 </section>
 
@@ -165,7 +163,7 @@ canvas#pongCanvas, canvas#pacmanCanvas{background:#090d16;border:2px solid var(-
 <button class="tab-btn" onclick="switchTab('sos',this)">🛠️ 4. Método de Comprobación</button>
 <button class="tab-btn" onclick="switchTab('greenhouse',this)">🏡 5. Invernadero de Acuerdos</button>
 <button class="tab-btn" onclick="switchTab('diarios',this)">📖 6. Diarios Afectivos</button>
-<button class="tab-btn" onclick="switchTab('juegos',this)">🎮 7. Arcade del Amor</button>
+<button class="tab-btn" onclick="switchTab('arcade',this)">🎮 7. Arcade (Ping Pong & Pac-Man)</button>
 </nav>
 
 <!-- 1. JARDIN DE ERRORES -->
@@ -224,7 +222,7 @@ canvas#pongCanvas, canvas#pacmanCanvas{background:#090d16;border:2px solid var(-
 </div>
 
 <div class="likes-panel">
-<div><span class="box-label" style="color:var(--gold)">🍓 Mi Libreta Digital de Ti</span><h2 class="inspector-title">El Mapa Completo de Tus Gustos y Esencia</h2><p class="box-text" style="font-size:.82rem;color:var(--muted)">Tú me enseñaste que amar es anotar los detalles de la otra persona en una libreta. Aquí está todo lo que observo, admiro y amo de ti:</p></div>
+<div><span class="box-label" style="color:var(--gold)">🍓 Mi Libreta Digital de Ti (Analy Monserrat Vázquez Gómez)</span><h2 class="inspector-title">El Mapa Completo de Tus Gustos y Esencia</h2><p class="box-text" style="font-size:.82rem;color:var(--muted)">Tú me enseñaste que amar es anotar los detalles de la otra persona en una libreta. Aquí está todo lo que observo, admiro y amo de ti:</p></div>
 <div class="likes-categories">
 <div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🍰 Postres, Dulces y Café</h4><div class="tag-cloud"><span class="taste-tag pink">Pastel de Chocolate y Mil Hojas 😋</span><span class="taste-tag pink">Arroz con leche</span><span class="taste-tag pink">Chocolatito caliente con pan</span><span class="taste-tag pink">Cafecito para quitar el sueño</span><span class="taste-tag pink">Palomitas o postre viendo pelis</span><span class="taste-tag pink">Agua bien fría</span></div></div>
 <div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🌮 Comida Salada y Bebidas</h4><div class="tag-cloud"><span class="taste-tag">Mole y Tamales de mole</span><span class="taste-tag">Chilaquiles verdes</span><span class="taste-tag">Enmoladas, Sopecitos y Taquitos</span><span class="taste-tag">Pizza con orilla de queso</span><span class="taste-tag">Lasaña y Comida China (Pollo agridulce)</span><span class="taste-tag">Huevitos rancheritos</span><span class="taste-tag">Miches, cantaritos, tepache y tequila 😌</span></div></div>
@@ -268,24 +266,25 @@ canvas#pongCanvas, canvas#pacmanCanvas{background:#090d16;border:2px solid var(-
 </div>
 </section>
 
-<!-- 7. ARCADE DEL AMOR (JUEGOS: PING PONG Y PAC-MAN) -->
-<section id="view-juegos" class="view-section">
+<!-- 7. ARCADE DE JUEGOS (PING PONG Y PAC-MAN) -->
+<section id="view-arcade" class="view-section">
 <div class="game-card">
-<div class="inspector-header"><div><span class="box-label" style="color:var(--pink)">🎮 Espacio de Complicidad</span><h2 class="inspector-title">Arcade del Amor 🏓🟡</h2></div></div>
-<p class="box-text">Un espacio de juego rápido para desestresarnos juntos. Elige el juego que prefieras:</p>
+<div class="inspector-header">
+<div><span class="box-label" style="color:var(--pink)">🎮 Sala Arcade de Complicidad</span><h2 class="inspector-title">Nuestros Juegos 🏓 🟡</h2></div>
+</div>
 
-<div class="games-switch">
-<button class="game-switch-btn active" id="btn-show-pong" onclick="selectGame('pong')">🏓 Ping Pong</button>
-<button class="game-switch-btn" id="btn-show-pacman" onclick="selectGame('pacman')">🟡 Pac-Man Love</button>
+<div class="game-selector-nav">
+<button id="btn-game-pingpong" class="game-nav-btn active" onclick="selectGame('pingpong')">🏓 Ping Pong del Amor</button>
+<button id="btn-game-pacman" class="game-nav-btn" onclick="selectGame('pacman')">🟡 Pac-Man Love Edition</button>
 </div>
 
 <!-- JUEGO 1: PING PONG -->
-<div class="game-subpanel active" id="subpanel-pong">
-<div style="display:flex;justify-content:space-between;width:100%;max-width:320px;font-weight:800;font-size:.9rem;color:var(--gold)">
+<div id="game-subpanel-pingpong" class="game-subpanel active">
+<div style="display:flex;justify-content:space-between;width:100%;max-width:340px;font-weight:800;font-size:.9rem;color:var(--gold)">
 <span>Puntos: <span id="pong-score">0</span></span>
 <span>Récord: <span id="pong-highscore">0</span></span>
 </div>
-<canvas id="pongCanvas" width="320" height="360"></canvas>
+<canvas id="pongCanvas" class="game-canvas" width="320" height="360"></canvas>
 <div class="pong-controls">
 <button class="pong-btn" onmousedown="movePongPaddle(-30)" ontouchstart="movePongPaddle(-30)">👈 Izq</button>
 <button class="pong-btn" onclick="startPongGame()">🔄 Reiniciar</button>
@@ -294,21 +293,23 @@ canvas#pongCanvas, canvas#pacmanCanvas{background:#090d16;border:2px solid var(-
 </div>
 
 <!-- JUEGO 2: PAC-MAN -->
-<div class="game-subpanel" id="subpanel-pacman">
-<div style="display:flex;justify-content:space-between;width:100%;max-width:300px;font-weight:800;font-size:.9rem;color:var(--pink)">
-<span>Puntos: <span id="pacman-score">0</span></span>
-<span>Estado: <span id="pacman-status">En marcha</span></span>
+<div id="game-subpanel-pacman" class="game-subpanel">
+<div style="display:flex;justify-content:space-between;width:100%;max-width:340px;font-weight:800;font-size:.9rem;color:var(--gold)">
+<span>Corazones: <span id="pacman-score">0</span></span>
+<span>Récord: <span id="pacman-highscore">0</span></span>
 </div>
-<canvas id="pacmanCanvas" width="300" height="300"></canvas>
-<div class="pacman-grid-dpad">
+<canvas id="pacmanCanvas" class="game-canvas" width="300" height="300"></canvas>
+
+<!-- Controles D-Pad Táctiles para Celular -->
+<div class="d-pad-layout">
 <div></div>
-<button class="dpad-btn" onclick="moverPacman('UP')">⬆️</button>
+<button class="d-btn" onclick="setPacmanDir(0, -1)">⬆️</button>
 <div></div>
-<button class="dpad-btn" onclick="moverPacman('LEFT')">⬅️</button>
-<button class="dpad-btn" onclick="iniciarPacman()">🔄</button>
-<button class="dpad-btn" onclick="moverPacman('RIGHT')">➡️</button>
+<button class="d-btn" onclick="setPacmanDir(-1, 0)">⬅️</button>
+<button class="d-btn" onclick="initPacman()">🔄</button>
+<button class="d-btn" onclick="setPacmanDir(1, 0)">➡️</button>
 <div></div>
-<button class="dpad-btn" onclick="moverPacman('DOWN')">⬇️</button>
+<button class="d-btn" onclick="setPacmanDir(0, 1)">⬇️</button>
 <div></div>
 </div>
 </div>
@@ -326,7 +327,7 @@ canvas#pongCanvas, canvas#pacmanCanvas{background:#090d16;border:2px solid var(-
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('SW registrado:', reg.scope))
+            .then(reg => console.log('SW activo:', reg.scope))
             .catch(err => console.error('Error SW:', err));
     });
 }
@@ -345,7 +346,7 @@ function toggleMusic() {
 const elementsData = {
 sun: { icon: "☀️", title: "El Sol: Lo que tu luz despierta en mí", body: "Durante años me acostumbré a vivir aislado 'haciendo lo mío'. Cuando llegaste tú, despertaste en mí una ternura y una curiosidad emocional que no conocía. Eres quien me dice 'Ánimo mi inge' cuando me arden los ojos de programar en la madrugada; eres el calor al que siempre quiero regresar." },
 water: { icon: "💧", title: "El Agua: Tu cuidado y entrega 24/7", body: "El agua de este jardín es cada vez que me ofreces un masajito cuando salgo cansado de hornear, cada vez que me recuerdas cargar mi Omeprazol para la gastritis o ponerme gotitas en los ojos. Es tu paciencia esperándome en Discord, tus canciones dedicadas y tu amor de 24 horas." },
-earth: { icon: "🌱", title: "La Tierra: Nuestro Presente y Nuestro Hogar", body: "La tierra firme es mi lealtad absoluta de que en mi vida solo existes tú. Servirá para construir nuestra casita y tu cocina soñada, pero sobre todo para disfrutar estar acurrucados en el presente cada fin de semana." }
+earth: { icon: "🌱", title: "La Tierra: Nuestro Presente y Nuestro Hogar", body: "La tierra firme es mi lealtad absoluta de que en mi vida solo existes tú. Servirá para construir nuestra casita y tu cocina soñada para tu carrera de Gastronomía, pero sobre todo para disfrutar estar acurrucados en el presente cada fin de semana en Atlixco." }
 };
 
 const flowersData = [
@@ -395,7 +396,7 @@ const mirrorData = [
 { title: "2. El escudo de 'Ya no pediré nada, ahí muere'", feel: "Siento un vacío cuando levantas una muralla y te resignas a no pedir cariño.", broken: "Anular tus deseos para evitar peleas distancia.", solution: "Decir 'Hoy necesito que te acerques primero', pero jamás cerrar la puerta." },
 { title: "3. La sed de contacto físico a distancia", feel: "Comprendo cuánto te pesa estar lejos porque tu amor es tocar, abrazar y cocinar.", broken: "Dejar pasar semanas sin fecha clara para vernos.", solution: "Tener siempre la próxima fecha de encuentro en el calendario y cocinar en llamadas." },
 { title: "4. Temor a que la emoción te desborde", feel: "Me dices que no eres lógica como yo y temes enojarte al hablar.", broken: "Empujarte con preguntas de madrugada.", solution: "Hablar en dosis de 10 minutos de día y abrazar con palabras primero." },
-{ title: "5. Sentir que tus esfuerzos son menos", feel: "Me dolía cuando pedías perdón pensando que menospreciaba tu escuela o entorno.", broken: "Hablar sin medir el peso de mis palabras.", solution: "Recordarte todos los días cuánto admiro a la chef que eres y tu esfuerzo." },
+{ title: "5. Sentir que tus esfuerzos son menos", feel: "Me dolía cuando pedías perdón pensando que menospreciaba tu escuela de Gastronomía o entorno.", broken: "Hablar sin medir el peso de mis palabras.", solution: "Recordarte todos los días cuánto admiro a la chef que eres y tu esfuerzo." },
 { title: "6. Sensibilidad a tonos y ausencias", feel: "Percibes de inmediato si mi tono es seco ('Meno :v') o si me ausento sin avisar.", broken: "Descuidar la calidez en mensajes cortos.", solution: "Mandarte un 'Te adoro mi vida' aunque tenga 10 segundos entre tareas." }
 ];
 
@@ -465,7 +466,7 @@ function initGarden() {
         p.style.left = (Math.random()*100)+'%'; p.style.animationDuration = (Math.random()*8+7)+'s';
         pCont.appendChild(p);
     }
-    renderPacts(); renderFlowersStage(); selectFlower(0); renderMirrorSection(); renderSosSection(); renderDiaries(); calculateCycleDates(); updateHealthBar(); initPong(); initPacman();
+    renderPacts(); renderFlowersStage(); selectFlower(0); renderMirrorSection(); renderSosSection(); renderDiaries(); calculateCycleDates(); updateHealthBar(); initPong();
 }
 
 function calculateCycleDates() {
@@ -599,7 +600,8 @@ function addNewDiaryEntry() {
     const textInput = document.getElementById('diary-text');
     if (!titleInput.value.trim() || !textInput.value.trim()) return;
     const now = new Date();
-    const dateStr = `${now.getDate()} de Septiembre de ${now.getFullYear()}`;
+    const months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    const dateStr = `${now.getDate()} de ${months[now.getMonth()]} de ${now.getFullYear()}`;
     presetDiaries.unshift({ date: dateStr, title: titleInput.value.trim(), text: textInput.value.trim() });
     titleInput.value = ''; textInput.value = '';
     saveProgress(); renderDiaries();
@@ -627,7 +629,7 @@ function renderSosSection() {
     const c = document.getElementById('sos-container'); c.innerHTML = '';
     sosData.forEach(item => {
         const d = document.createElement('div'); d.className = 'sos-card';
-        d.innerHTML = `<h3 style="color:#fde68a;font-size:.98rem">${item.btn}</h3><div class="info-box empathy"><span class="box-label" style="color:var(--blue)">🛠️ ${item.title}:</span><p class="box-text" style="white-space:pre-line">${item.steps}</p></div>`;
+        d.innerHTML = `<h3 style="color:#fde68a;font-size:.98rem">${item.btn}</h3><div class="info-box empathy"><span class="box-label" style="color:var(--blue)">🛠️️ ${item.title}:</span><p class="box-text" style="white-space:pre-line">${item.steps}</p></div>`;
         c.appendChild(d);
     });
 }
@@ -647,24 +649,24 @@ function openElementModal(type) {
 }
 function closeElementModal(e) { if (e.target.id === 'element-modal') document.getElementById('element-modal').classList.remove('open'); }
 
-/* SELECCIÓN Y CONTROL DE JUEGOS */
+/* GESTIÓN DE MINI-JUEGOS ARCADE */
 function selectGame(game) {
-    document.getElementById('btn-show-pong').classList.remove('active');
-    document.getElementById('btn-show-pacman').classList.remove('active');
-    document.getElementById('subpanel-pong').classList.remove('active');
-    document.getElementById('subpanel-pacman').classList.remove('active');
+    document.getElementById('game-subpanel-pingpong').classList.remove('active');
+    document.getElementById('game-subpanel-pacman').classList.remove('active');
+    document.getElementById('btn-game-pingpong').classList.remove('active');
+    document.getElementById('btn-game-pacman').classList.remove('active');
 
-    if (game === 'pong') {
-        document.getElementById('btn-show-pong').classList.add('active');
-        document.getElementById('subpanel-pong').classList.add('active');
+    if (game === 'pingpong') {
+        document.getElementById('game-subpanel-pingpong').classList.add('active');
+        document.getElementById('btn-game-pingpong').classList.add('active');
     } else {
-        document.getElementById('btn-show-pacman').classList.add('active');
-        document.getElementById('subpanel-pacman').classList.add('active');
-        iniciarPacman();
+        document.getElementById('game-subpanel-pacman').classList.add('active');
+        document.getElementById('btn-game-pacman').classList.add('active');
+        initPacman();
     }
 }
 
-/* MINI JUEGO 1: PING PONG */
+/* 1. JUEGO PING PONG */
 let pongCanvas, pongCtx;
 let paddleWidth = 80, paddleHeight = 12, paddleX = 120;
 let ballX = 160, ballY = 180, ballDX = 3, ballDY = -3;
@@ -701,7 +703,6 @@ function movePongPaddle(dir) {
 
 function drawPong() {
     pongCtx.clearRect(0, 0, pongCanvas.width, pongCanvas.height);
-    
     pongCtx.fillStyle = '#fbbf24';
     pongCtx.beginPath();
     pongCtx.roundRect(paddleX, pongCanvas.height - 20, paddleWidth, paddleHeight, 6);
@@ -711,7 +712,6 @@ function drawPong() {
     pongCtx.fillText("💖", ballX - 10, ballY + 7);
     
     ballX += ballDX; ballY += ballDY;
-    
     if (ballX + ballDX > pongCanvas.width - 10 || ballX + ballDX < 10) ballDX = -ballDX;
     if (ballY + ballDY < 15) ballDY = -ballDY;
     
@@ -728,19 +728,19 @@ function drawPong() {
         } else if (ballY > pongCanvas.height) {
             clearInterval(pongInterval);
             pongCtx.fillStyle = '#f43f5e';
-            pongCtx.font = "16px sans-serif";
+            pongCtx.font = "18px sans-serif";
             pongCtx.fillText("¡Casi! Toca Reiniciar 🌻", 60, 180);
         }
     }
 }
 
-/* MINI JUEGO 2: PAC-MAN LOVE EDITION */
+/* 2. JUEGO PAC-MAN LOVE EDITION */
 let pacCanvas, pacCtx;
 const tileSize = 20;
-let pacScore = 0;
+let pacScore = 0, pacHighScore = localStorage.getItem('pacman_high') || 0;
 let pacInterval = null;
 
-const initialMap = [
+const mapTemplate = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
   [1,0,1,1,0,1,1,0,1,1,0,1,1,0,1],
@@ -758,7 +758,7 @@ const initialMap = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-let currentMap = [];
+let activeMap = [];
 let pacman = { x: 1, y: 1, dirX: 1, dirY: 0, nextDirX: 1, nextDirY: 0 };
 let ghost = { x: 7, y: 7, dirX: 0, dirY: -1 };
 
@@ -766,82 +766,89 @@ function initPacman() {
     pacCanvas = document.getElementById('pacmanCanvas');
     if (!pacCanvas) return;
     pacCtx = pacCanvas.getContext('2d');
-}
+    document.getElementById('pacman-highscore').textContent = pacHighScore;
 
-function iniciarPacman() {
     if (pacInterval) clearInterval(pacInterval);
-    currentMap = JSON.parse(JSON.stringify(initialMap));
+    activeMap = JSON.parse(JSON.stringify(mapTemplate));
     pacScore = 0;
     document.getElementById('pacman-score').textContent = pacScore;
-    document.getElementById('pacman-status').textContent = "En marcha";
     pacman = { x: 1, y: 1, dirX: 1, dirY: 0, nextDirX: 1, nextDirY: 0 };
     ghost = { x: 7, y: 7, dirX: 0, dirY: -1 };
-    pacInterval = setInterval(gameLoopPacman, 220);
+    
+    pacInterval = setInterval(gameLoopPacman, 210);
 }
 
-function moverPacman(dir) {
-    if (dir === 'UP') { pacman.nextDirX = 0; pacman.nextDirY = -1; }
-    if (dir === 'DOWN') { pacman.nextDirX = 0; pacman.nextDirY = 1; }
-    if (dir === 'LEFT') { pacman.nextDirX = -1; pacman.nextDirY = 0; }
-    if (dir === 'RIGHT') { pacman.nextDirX = 1; pacman.nextDirY = 0; }
+function setPacmanDir(dx, dy) {
+    pacman.nextDirX = dx;
+    pacman.nextDirY = dy;
 }
 
 window.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowUp') moverPacman('UP');
-    if (e.key === 'ArrowDown') moverPacman('DOWN');
-    if (e.key === 'ArrowLeft') moverPacman('LEFT');
-    if (e.key === 'ArrowRight') moverPacman('RIGHT');
+    if (e.key === 'ArrowUp' || e.key === 'w') setPacmanDir(0, -1);
+    if (e.key === 'ArrowDown' || e.key === 's') setPacmanDir(0, 1);
+    if (e.key === 'ArrowLeft' || e.key === 'a') setPacmanDir(-1, 0);
+    if (e.key === 'ArrowRight' || e.key === 'd') setPacmanDir(1, 0);
 });
 
 function gameLoopPacman() {
-    if (currentMap[pacman.y + pacman.nextDirY][pacman.x + pacman.nextDirX] !== 1) {
+    if (activeMap[pacman.y + pacman.nextDirY][pacman.x + pacman.nextDirX] !== 1) {
         pacman.dirX = pacman.nextDirX;
         pacman.dirY = pacman.nextDirY;
     }
     
-    if (currentMap[pacman.y + pacman.dirY][pacman.x + pacman.dirX] !== 1) {
+    if (activeMap[pacman.y + pacman.dirY][pacman.x + pacman.dirX] !== 1) {
         pacman.x += pacman.dirX;
         pacman.y += pacman.dirY;
     }
 
-    if (currentMap[pacman.y][pacman.x] === 0) {
-        currentMap[pacman.y][pacman.x] = 2;
+    if (activeMap[pacman.y][pacman.x] === 0) {
+        activeMap[pacman.y][pacman.x] = 2;
         pacScore += 10;
         document.getElementById('pacman-score').textContent = pacScore;
+        if (pacScore > pacHighScore) {
+            pacHighScore = pacScore;
+            localStorage.setItem('pacman_high', pacHighScore);
+            document.getElementById('pacman-highscore').textContent = pacHighScore;
+        }
     }
 
-    const posibles = [
+    const options = [
         {x:0, y:-1}, {x:0, y:1}, {x:-1, y:0}, {x:1, y:0}
-    ].filter(d => currentMap[ghost.y + d.y][ghost.x + d.x] !== 1);
+    ].filter(d => activeMap[ghost.y + d.y][ghost.x + d.x] !== 1);
     
-    if (posibles.length > 0) {
-        const move = posibles[Math.floor(Math.random() * posibles.length)];
+    if (options.length > 0) {
+        const move = options[Math.floor(Math.random() * options.length)];
         ghost.x += move.x;
         ghost.y += move.y;
     }
 
     if (pacman.x === ghost.x && pacman.y === ghost.y) {
         clearInterval(pacInterval);
-        document.getElementById('pacman-status').textContent = "¡Atrapado! 💔";
+        drawPacmanBoard();
+        pacCtx.fillStyle = '#f43f5e';
+        pacCtx.font = "16px sans-serif";
+        pacCtx.fillText("¡Casi! Reiniciando...", 70, 150);
+        setTimeout(initPacman, 1500);
         return;
     }
 
-    dibujarPacmanGame();
+    drawPacmanBoard();
 }
 
-function dibujarPacmanGame() {
+function drawPacmanBoard() {
     pacCtx.clearRect(0, 0, pacCanvas.width, pacCanvas.height);
 
     for (let r = 0; r < 15; r++) {
         for (let c = 0; c < 15; c++) {
-            if (currentMap[r][c] === 1) {
-                pacCtx.fillStyle = '#3f51b5';
+            if (activeMap[r][c] === 1) {
+                pacCtx.fillStyle = '#1e293b';
                 pacCtx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
-            } else if (currentMap[r][c] === 0) {
-                pacCtx.fillStyle = '#ff4081';
-                pacCtx.beginPath();
-                pacCtx.arc(c * tileSize + 10, r * tileSize + 10, 3, 0, Math.PI * 2);
-                pacCtx.fill();
+                pacCtx.strokeStyle = '#38bdf8';
+                pacCtx.strokeRect(c * tileSize, r * tileSize, tileSize, tileSize);
+            } else if (activeMap[r][c] === 0) {
+                pacCtx.fillStyle = '#f43f5e';
+                pacCtx.font = "10px sans-serif";
+                pacCtx.fillText("💖", c * tileSize + 3, r * tileSize + 14);
             }
         }
     }
@@ -852,10 +859,8 @@ function dibujarPacmanGame() {
     pacCtx.lineTo(pacman.x * tileSize + 10, pacman.y * tileSize + 10);
     pacCtx.fill();
 
-    pacCtx.fillStyle = '#f43f5e';
-    pacCtx.beginPath();
-    pacCtx.arc(ghost.x * tileSize + 10, ghost.y * tileSize + 10, 8, 0, Math.PI * 2);
-    pacCtx.fill();
+    pacCtx.font = "14px sans-serif";
+    pacCtx.fillText("👻", ghost.x * tileSize + 2, ghost.y * tileSize + 15);
 }
 
 window.onload = initGarden;
