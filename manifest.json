@@ -1,18 +1,21 @@
 {
-  "name": "Ecosistema Cuántico",
-  "short_name": "Nuestro Jardín",
-  "description": "Un jardín vivo sincronizado con nuestro cielo y el tiempo real.",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#0b0c10",
-  "theme_color": "#ff3366",
-  "orientation": "portrait-primary",
+  "short_name": "Kevin&Analy",
+  "name": "Nuestro Ecosistema Cósmico - Kevin & Analy",
   "icons": [
     {
-      "src": "https://fonts.gstatic.com/s/e/notoemoji/latest/1f33b/512.webp",
-      "sizes": "512x512",
-      "type": "image/webp",
-      "purpose": "any maskable"
+      "src": "https://emojiapi.dev/api/v1/sunflower/192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://emojiapi.dev/api/v1/sunflower/512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "index.html",
+  "background_color": "#030308",
+  "theme_color": "#030308",
+  "display": "standalone",
+  "orientation": "portrait"
 }
