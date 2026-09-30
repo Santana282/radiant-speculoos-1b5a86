@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#090d16">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>Nuestro Ecosistema 🌻</title>
 <style>
 :root{--bg1:#090d16;--bg2:#161f33;--bg3:#231917;--gold:#fbbf24;--amber:#f59e0b;--rose:#f43f5e;--pink:#fda4af;--green:#22c55e;--purple:#c084fc;--blue:#38bdf8;--card:rgba(15,23,42,0.88);--glass:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.14);--txt:#f8fafc;--muted:#cbd5e1}
@@ -23,7 +22,7 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 .subtitle{color:var(--muted);max-width:780px;margin:0 auto;font-size:.94rem}
 
 .music-player-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin:12px auto;background:rgba(15,23,42,0.75);border:1px solid var(--border);border-radius:99px;padding:6px 16px;width:fit-content;box-shadow:0 4px 15px rgba(0,0,0,0.3)}
-.music-btn{background:linear-gradient(135deg,var(--amber),var(--rose));border:none;color:#fff;padding:6px 14px;border-radius:99px;font-weight:700;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:transform .2s,box-shadow .2s}
+.music-btn{background:linear-gradient(135deg,var(--amber),var(--rose));border:none;color:#fff;padding:6px 14px;border-radius:99px;font-weight:700;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:transform .2s}
 .music-btn:active{transform:scale(.95)}
 .music-info{font-size:.78rem;color:var(--gold);font-weight:600}
 
@@ -31,19 +30,22 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 .health-header{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:8px;font-weight:700}
 .progress-track{width:100%;height:12px;background:rgba(0,0,0,0.5);border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,0.08)}
 .progress-fill{height:100%;width:15%;background:linear-gradient(90deg,#f43f5e,#f59e0b,#22c55e);border-radius:99px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+
 .elements-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin:22px 0}
-.element-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;cursor:pointer;transition:transform .25s,border-color .25s;position:relative;overflow:hidden}
+.element-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;cursor:pointer;transition:transform .25s;position:relative;overflow:hidden}
 .element-card:active{transform:scale(.98)}
 .element-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 .element-icon{font-size:1.8rem;width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--glass);border:1px solid var(--border)}
 .element-title{font-weight:800;font-size:1rem;color:#fff}
 .element-role{font-size:.7rem;color:var(--gold);text-transform:uppercase;font-weight:700;letter-spacing:.5px}
 .element-desc{font-size:.84rem;color:var(--muted)}
+
 .nav-tabs{display:flex;justify-content:center;gap:8px;margin:22px 0;flex-wrap:wrap}
 .tab-btn{background:rgba(15,23,42,0.75);border:1px solid var(--border);color:var(--txt);padding:10px 16px;border-radius:99px;cursor:pointer;font-weight:700;font-size:.83rem;transition:all .25s}
 .tab-btn.active{background:linear-gradient(135deg,#f59e0b,#e11d48);border-color:transparent;box-shadow:0 6px 18px rgba(225,29,72,0.45)}
 .view-section{display:none;animation:fadeIn .35s ease}.view-section.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
 .garden-layout,.care-layout{display:grid;grid-template-columns:1.05fr 1.15fr;gap:18px;align-items:start}
 @media(max-width:920px){.garden-layout,.care-layout{grid-template-columns:1fr}}
 .garden-stage{background:radial-gradient(circle at 50% 18%,rgba(251,191,36,0.15),rgba(15,23,42,0.95) 72%);border:1px solid var(--border);border-radius:22px;padding:16px 8px 0;min-height:430px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
@@ -61,7 +63,8 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 .flower-label{margin:4px 0 10px;background:rgba(15,23,42,0.92);border:1px solid var(--border);padding:4px 6px;border-radius:99px;font-size:.65rem;text-align:center;white-space:nowrap}
 .status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px}
 .wilted .status-dot{background:#ef4444}.bloomed .status-dot{background:#22c55e}
-.inspector-panel,.lunar-card,.likes-panel,.greenhouse-box,.mirror-card,.sos-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 12px 30px rgba(0,0,0,0.3)}
+
+.inspector-panel,.lunar-card,.likes-panel,.greenhouse-box,.mirror-card,.sos-card,.diary-box,.game-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 12px 30px rgba(0,0,0,0.3)}
 .inspector-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border-bottom:1px solid var(--border);padding-bottom:10px}
 .inspector-title{font-size:1.12rem;font-weight:800;color:#fde68a}
 .inspector-status{padding:4px 10px;border-radius:99px;font-size:.68rem;font-weight:800;white-space:nowrap}
@@ -71,28 +74,47 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 .leaf-btn{background:var(--glass);border:1px solid var(--border);color:var(--txt);padding:8px 11px;border-radius:10px;cursor:pointer;font-size:.77rem;transition:all .2s}
 .leaf-btn.active{background:rgba(251,191,36,0.22);border-color:var(--gold);color:#fde68a;font-weight:700}
 .leaf-btn.healed-leaf{border-color:rgba(34,197,94,0.5);color:#86efac}
+
 .info-box{background:rgba(0,0,0,0.32);border-radius:12px;padding:12px;border-left:4px solid var(--rose)}
 .info-box.psych{background:rgba(192,132,252,0.08);border-left-color:var(--purple)}
 .info-box.empathy{background:rgba(56,189,248,0.08);border-left-color:var(--blue)}
 .box-label{font-size:.69rem;text-transform:uppercase;font-weight:800;margin-bottom:4px;display:block;letter-spacing:.4px}
 .box-text{font-size:.85rem;color:#e2e8f0;line-height:1.5}
-.proposals-grid,.likes-categories,.mirror-grid,.sos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
-.proposal-card,.like-category-box{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:12px}
+.proposals-grid,.likes-categories,.mirror-grid,.sos-grid,.diaries-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.proposal-card,.like-category-box,.diary-card{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px}
 .proposal-card.broken{border-top:3px solid #64748b}.proposal-card.new-prop{border-top:3px solid var(--green);background:rgba(34,197,94,0.06)}
+
 .action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
 @media(max-width:520px){.action-row{grid-template-columns:1fr}}
-.water-btn{width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#0284c7,#2563eb);color:#fff;font-weight:800;font-size:.84rem;cursor:pointer}
+.water-btn{width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#0284c7,#2563eb);color:#fff;font-weight:800;font-size:.84rem;cursor:pointer;transition:transform .2s}
+.water-btn:active{transform:scale(.97)}
 .water-btn.secondary{background:linear-gradient(135deg,#d97706,#b45309)}
 .water-btn.healed{background:linear-gradient(135deg,#16a34a,#059669)}
+
 .mirror-intro{background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);border-radius:16px;padding:15px;margin-bottom:16px;font-size:.88rem}
 .phase-banner{background:linear-gradient(135deg,rgba(244,63,94,0.18),rgba(192,132,252,0.18));border:1px solid rgba(244,63,94,0.4);border-radius:14px;padding:14px}
 .cycle-controls,.date-pill,.pact-item{display:flex;justify-content:space-between;align-items:center;background:var(--glass);border:1px solid var(--border);padding:10px 12px;border-radius:12px;font-size:.81rem;gap:8px;flex-wrap:wrap}
 .pact-item{justify-content:flex-start;align-items:flex-start}
 .cycle-select{background:#090d16;color:#fde68a;border:1px solid var(--border);padding:5px 8px;border-radius:8px;font-weight:700}
 .taste-tag{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#fef3c7;padding:5px 10px;border-radius:99px;font-size:.75rem}
-.taste-tag.pink{background:rgba(244,63,94,0.14);border-color:rgba(244,63,94,0.35);color:#ffe4e6}
-.taste-tag.blue{background:rgba(56,189,248,0.14);border-color:rgba(56,189,248,0.35);color:#e0f2fe}
-.taste-tag.green{background:rgba(34,197,94,0.14);border-color:rgba(34,197,94,0.35);color:#dcfce7}
+
+.diary-input,.diary-textarea{width:100%;background:#090d16;border:1px solid var(--border);color:#fff;padding:10px 12px;border-radius:10px;font-size:.85rem;margin-bottom:8px}
+.diary-textarea{height:90px;resize:none}
+
+/* Estilos Contenedor de Juegos */
+.games-switch{display:flex;gap:10px;justify-content:center;margin-bottom:14px}
+.game-switch-btn{background:var(--glass);border:1px solid var(--border);color:#fff;padding:8px 16px;border-radius:12px;font-weight:700;cursor:pointer}
+.game-switch-btn.active{background:linear-gradient(135deg,var(--amber),var(--rose));border-color:transparent}
+
+.game-subpanel{display:none;flex-direction:column;align-items:center;gap:10px}
+.game-subpanel.active{display:flex}
+
+canvas#pongCanvas, canvas#pacmanCanvas{background:#090d16;border:2px solid var(--gold);border-radius:16px;max-width:100%;box-shadow:0 0 20px rgba(251,191,36,0.2)}
+.pong-controls,.pacman-dpad{display:flex;gap:10px;width:100%;max-width:320px;justify-content:center;margin-top:8px}
+.pong-btn,.dpad-btn{flex:1;padding:12px;background:rgba(251,191,36,0.15);border:1px solid var(--gold);color:#fde68a;font-weight:800;border-radius:12px;cursor:pointer;text-align:center}
+
+.pacman-grid-dpad{display:grid;grid-template-columns:repeat(3,60px);gap:6px;justify-content:center;margin-top:10px}
+
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal-overlay.open{display:flex}
 .modal-card{background:#161f33;border:1px solid var(--border);border-radius:20px;max-width:520px;width:100%;padding:24px;position:relative}
@@ -103,9 +125,9 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 <div class="particles" id="particles"></div>
 <div class="app-container">
 <header>
-<span class="badge-date">🌻 Nuestro Jardín Vivo • Día 22 de cada mes 🌻</span>
+<span class="badge-date">🌻 Nuestro Jardín Vivo • Aniversario Día 22 de cada mes 🌻</span>
 <h1>Nuestro Ecosistema</h1>
-<p class="subtitle">Un jardín no se cuida solo deseando que crezca en el futuro; se riega hoy, en el presente. Aquí están mis flores marchitas para asumir dónde te he fallado, mi análisis para sanarlo, lo que siento en silencio, tus ciclos, tus gustos y nuestro método de comprobación.</p>
+<p class="subtitle">Un jardín no se cuida solo deseando que crezca en el futuro; se riega hoy, en el presente. Aquí están mis flores marchitas para asumir mis errores, mis reflexiones, nuestro diario, tus ciclos, tus gustos y nuestros momentos de juego.</p>
 
 <div class="music-player-bar">
   <button id="music-btn" class="music-btn" onclick="toggleMusic()">▶ Reproducir Música</button>
@@ -123,7 +145,7 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 
 <section class="elements-bar">
 <div class="element-card" onclick="openElementModal('sun')">
-<div class="element-top"><div class="element-icon">☀️</div><div><div class="element-role">Lo que significas para mí</div><div class="element-title">El Sol: Tu Luz y Presencia</div></div></div>
+<div class="element-top"><div class="element-icon">☀️️</div><div><div class="element-role">Lo que significas para mí</div><div class="element-title">El Sol: Tu Luz y Presencia</div></div></div>
 <p class="element-desc">Incluso a kilómetros de distancia, eres el calor que me saca de mi aislamiento y le da sentido a mis desvelos. (Toca para abrir)</p>
 </div>
 <div class="element-card" onclick="openElementModal('water')">
@@ -142,8 +164,11 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 <button class="tab-btn" onclick="switchTab('care',this)">🌙 3. Tus Días y Tu Esencia</button>
 <button class="tab-btn" onclick="switchTab('sos',this)">🛠️ 4. Método de Comprobación</button>
 <button class="tab-btn" onclick="switchTab('greenhouse',this)">🏡 5. Invernadero de Acuerdos</button>
+<button class="tab-btn" onclick="switchTab('diarios',this)">📖 6. Diarios Afectivos</button>
+<button class="tab-btn" onclick="switchTab('juegos',this)">🎮 7. Arcade del Amor</button>
 </nav>
 
+<!-- 1. JARDIN DE ERRORES -->
 <section id="view-garden" class="view-section active">
 <div class="garden-layout">
 <div class="garden-stage">
@@ -172,11 +197,13 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 </div>
 </section>
 
+<!-- 2. ESPEJO Y PUNTOS -->
 <section id="view-mirror" class="view-section">
-<div class="mirror-intro"><strong>❤️‍GF Comunicación Asertiva y Desde el Amor:</strong> Mi amor, como te dije una vez, tú no eres un proyecto de universidad; eres el proyecto de mi vida. Este apartado aplica psicología afectiva sin culpas: son las cosas que <strong>noto y siento en mi corazón</strong> cuando interactuamos, expresadas con ternura para que jamás nos gane la resignación ni el silencio.</div>
+<div class="mirror-intro"><strong>❤️‍GF Comunicación Asertiva y Desde el Amor:</strong> Mi amor, tú eres el proyecto de mi vida. Este apartado aplica psicología afectiva sin culpas: son las cosas que <strong>noto y siento en mi corazón</strong> cuando interactuamos, expresadas con ternura para que jamás nos gane la resignación ni el silencio.</div>
 <div class="mirror-grid" id="mirror-container"></div>
 </section>
 
+<!-- 3. TUS DIAS Y ESENCIA -->
 <section id="view-care" class="view-section">
 <div class="care-layout">
 <div class="lunar-card">
@@ -199,20 +226,22 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 <div class="likes-panel">
 <div><span class="box-label" style="color:var(--gold)">🍓 Mi Libreta Digital de Ti</span><h2 class="inspector-title">El Mapa Completo de Tus Gustos y Esencia</h2><p class="box-text" style="font-size:.82rem;color:var(--muted)">Tú me enseñaste que amar es anotar los detalles de la otra persona en una libreta. Aquí está todo lo que observo, admiro y amo de ti:</p></div>
 <div class="likes-categories">
-<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🍰 Postres, Dulces y Café</h4><div class="tag-cloud"><span class="taste-tag pink">Pastel de Chocolate y Mil Hojas 😋</span><span class="taste-tag pink">Arroz con leche</span><span class="taste-tag pink">Chocolatito caliente con pan</span><span class="taste-tag pink">Cafecito para quitar el sueño</span><span class="taste-tag pink">Palomitas o postre viendo pelis</span><span class="taste-tag pink">Agua bien fría (aunque yo tiemble jsjs)</span></div></div>
-<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🌮 Comida Salada y Bebidas</h4><div class="tag-cloud"><span class="taste-tag">Mole y Tamales de mole</span><span class="taste-tag">Chilaquiles verdes</span><span class="taste-tag">Enmoladas, Sopecitos y Taquitos</span><span class="taste-tag">Pizza con orilla de queso</span><span class="taste-tag">Lasaña y Comida China (Pollo agridulce)</span><span class="taste-tag">Huevitos rancheritos (¡nunca revueltos!)</span><span class="taste-tag">Picante solo por antojo</span><span class="taste-tag">Miches, cantaritos, tepache y tequila 😌</span></div></div>
-<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🥰 Tus Lenguajes del Amor</h4><div class="tag-cloud"><span class="taste-tag blue">Contacto físico: abrazos, besos y darme masajitos</span><span class="taste-tag blue">Cocinarme y hacerme de desayunar</span><span class="taste-tag blue">Escuchar que te diga "Te adoro" :3</span><span class="taste-tag blue">Mis textos largos de buenos días</span><span class="taste-tag blue">Audios dándote besos</span><span class="taste-tag blue">Que te mande fotos mías y videos directo a ti</span><span class="taste-tag blue">Una flor hecha con lata de Monster y fotos de nuestros meñiques</span></div></div>
-<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🏋🏻‍♀️ Tu Mundo, Rutinas y Nosotros</h4><div class="tag-cloud"><span class="taste-tag green">Tu Recetario y amor por Gastronomía</span><span class="taste-tag green">Gym: Espalda/hombro y piernita de pollo al fallo</span><span class="taste-tag green">Cuidar a Rogelio (tu gallo)</span><span class="taste-tag green">Cuidar a "Nuestros niños" :3</span><span class="taste-tag green">Ver SAO, Jujutsu Kaisen y The Boys juntos</span><span class="taste-tag green">Casita en el Realm y jugar COD</span><span class="taste-tag green">Tu cobijita cuando llueve</span><span class="taste-tag green">Recordarme mi Omeprazol y mis gotitas para los ojos</span></div></div>
+<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🍰 Postres, Dulces y Café</h4><div class="tag-cloud"><span class="taste-tag pink">Pastel de Chocolate y Mil Hojas 😋</span><span class="taste-tag pink">Arroz con leche</span><span class="taste-tag pink">Chocolatito caliente con pan</span><span class="taste-tag pink">Cafecito para quitar el sueño</span><span class="taste-tag pink">Palomitas o postre viendo pelis</span><span class="taste-tag pink">Agua bien fría</span></div></div>
+<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🌮 Comida Salada y Bebidas</h4><div class="tag-cloud"><span class="taste-tag">Mole y Tamales de mole</span><span class="taste-tag">Chilaquiles verdes</span><span class="taste-tag">Enmoladas, Sopecitos y Taquitos</span><span class="taste-tag">Pizza con orilla de queso</span><span class="taste-tag">Lasaña y Comida China (Pollo agridulce)</span><span class="taste-tag">Huevitos rancheritos</span><span class="taste-tag">Miches, cantaritos, tepache y tequila 😌</span></div></div>
+<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🥰 Tus Lenguajes del Amor</h4><div class="tag-cloud"><span class="taste-tag blue">Contacto físico: abrazos, besos y masajitos</span><span class="taste-tag blue">Cocinarme y hacerme de desayunar</span><span class="taste-tag blue">Escuchar que te diga "Te adoro" :3</span><span class="taste-tag blue">Mis textos largos de buenos días</span><span class="taste-tag blue">Audios dándote besos</span><span class="taste-tag blue">Flor de lata Monster y fotos de meñiques</span></div></div>
+<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🏋🏻‍♀️ Tu Mundo, Rutinas y Nosotros</h4><div class="tag-cloud"><span class="taste-tag green">Tu Recetario y Gastronomía</span><span class="taste-tag green">Gym: Espalda/hombro y piernita de pollo</span><span class="taste-tag green">Cuidar a Rogelio (tu gallo)</span><span class="taste-tag green">SAO, Jujutsu Kaisen y The Boys juntos</span><span class="taste-tag green">Casita en el Realm y COD</span><span class="taste-tag green">Recordarme el Omeprazol y mis gotitas</span></div></div>
 </div>
 </div>
 </div>
 </section>
 
+<!-- 4. SOS COMPROBACION -->
 <section id="view-sos" class="view-section">
-<div class="mirror-intro" style="border-color:var(--gold);background:rgba(251,191,36,0.08)"><strong>🛠️ Nuestro «Método de Comprobación» Emocional:</strong> En mayo platicábamos de que en matemáticas y programación todo problema tiene un <em>método de comprobación</em> para saber a tiempo dónde algo falló y corregirlo en orden. Toca cualquiera de estas situaciones cuando la estemos viviendo para activar nuestro protocolo de rescate:</div>
+<div class="mirror-intro" style="border-color:var(--gold);background:rgba(251,191,36,0.08)"><strong>🛠️ Nuestro «Método de Comprobación» Emocional:</strong> En matemáticas y programación todo problema tiene un <em>método de comprobación</em> para saber a tiempo dónde algo falló. Toca cualquiera de estas situaciones cuando la estemos viviendo para activar nuestro protocolo:</div>
 <div class="sos-grid" id="sos-container"></div>
 </section>
 
+<!-- 5. INVERNADERO DE ACUERDOS -->
 <section id="view-greenhouse" class="view-section">
 <div class="greenhouse-box">
 <span class="badge-date">🏡 Invernadero de Acuerdos Permanentes</span>
@@ -221,6 +250,72 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 <div id="pacts-container" style="display:flex;flex-direction:column;gap:10px;margin-top:8px"></div>
 </div>
 </section>
+
+<!-- 6. DIARIOS AFECTIVOS -->
+<section id="view-diarios" class="view-section">
+<div class="diary-box">
+<div class="inspector-header"><div><span class="box-label" style="color:var(--gold)">📖 Bitácora de Nuestro Amor</span><h2 class="inspector-title">Diario de Reflexiones y Momentos</h2></div></div>
+<p class="box-text">Aquí guardamos nuestras notas de amor, memorias importantes y reflexiones para no olvidar nunca lo que construimos juntos día a día.</p>
+
+<div style="background:rgba(0,0,0,0.3);padding:14px;border-radius:14px;border:1px solid var(--border)">
+<h4 style="color:var(--gold);margin-bottom:8px;font-size:.9rem">✍️ Escribir una nueva página en el diario:</h4>
+<input type="text" id="diary-title" class="diary-input" placeholder="Título de la entrada (ej. Nuestro paseo en Atlixco, Palabras de paz...)">
+<textarea id="diary-text" class="diary-textarea" placeholder="Escribe aquí lo que sientes u observaste hoy..."></textarea>
+<button class="water-btn" onclick="addNewDiaryEntry()">📝 Guardar Entrada en el Diario</button>
+</div>
+
+<div class="diaries-grid" id="diaries-container" style="margin-top:10px"></div>
+</div>
+</section>
+
+<!-- 7. ARCADE DEL AMOR (JUEGOS: PING PONG Y PAC-MAN) -->
+<section id="view-juegos" class="view-section">
+<div class="game-card">
+<div class="inspector-header"><div><span class="box-label" style="color:var(--pink)">🎮 Espacio de Complicidad</span><h2 class="inspector-title">Arcade del Amor 🏓🟡</h2></div></div>
+<p class="box-text">Un espacio de juego rápido para desestresarnos juntos. Elige el juego que prefieras:</p>
+
+<div class="games-switch">
+<button class="game-switch-btn active" id="btn-show-pong" onclick="selectGame('pong')">🏓 Ping Pong</button>
+<button class="game-switch-btn" id="btn-show-pacman" onclick="selectGame('pacman')">🟡 Pac-Man Love</button>
+</div>
+
+<!-- JUEGO 1: PING PONG -->
+<div class="game-subpanel active" id="subpanel-pong">
+<div style="display:flex;justify-content:space-between;width:100%;max-width:320px;font-weight:800;font-size:.9rem;color:var(--gold)">
+<span>Puntos: <span id="pong-score">0</span></span>
+<span>Récord: <span id="pong-highscore">0</span></span>
+</div>
+<canvas id="pongCanvas" width="320" height="360"></canvas>
+<div class="pong-controls">
+<button class="pong-btn" onmousedown="movePongPaddle(-30)" ontouchstart="movePongPaddle(-30)">👈 Izq</button>
+<button class="pong-btn" onclick="startPongGame()">🔄 Reiniciar</button>
+<button class="pong-btn" onmousedown="movePongPaddle(30)" ontouchstart="movePongPaddle(30)">Der 👉</button>
+</div>
+</div>
+
+<!-- JUEGO 2: PAC-MAN -->
+<div class="game-subpanel" id="subpanel-pacman">
+<div style="display:flex;justify-content:space-between;width:100%;max-width:300px;font-weight:800;font-size:.9rem;color:var(--pink)">
+<span>Puntos: <span id="pacman-score">0</span></span>
+<span>Estado: <span id="pacman-status">En marcha</span></span>
+</div>
+<canvas id="pacmanCanvas" width="300" height="300"></canvas>
+<div class="pacman-grid-dpad">
+<div></div>
+<button class="dpad-btn" onclick="moverPacman('UP')">⬆️</button>
+<div></div>
+<button class="dpad-btn" onclick="moverPacman('LEFT')">⬅️</button>
+<button class="dpad-btn" onclick="iniciarPacman()">🔄</button>
+<button class="dpad-btn" onclick="moverPacman('RIGHT')">➡️</button>
+<div></div>
+<button class="dpad-btn" onclick="moverPacman('DOWN')">⬇️</button>
+<div></div>
+</div>
+</div>
+
+</div>
+</section>
+
 </div>
 
 <div class="modal-overlay" id="element-modal" onclick="closeElementModal(event)">
@@ -228,25 +323,19 @@ h1{font-size:clamp(2rem,5.5vw,3rem);font-weight:900;background:linear-gradient(9
 </div>
 
 <script>
-// Registro del Service Worker para funcionamiento Offline / PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
-            .catch(err => console.error('Error al registrar Service Worker:', err));
+            .then(reg => console.log('SW registrado:', reg.scope))
+            .catch(err => console.error('Error SW:', err));
     });
 }
 
-// Reproductor de audio - Golden Hour Piano
 function toggleMusic() {
     const audio = document.getElementById('bg-audio');
     const btn = document.getElementById('music-btn');
     if (audio.paused) {
-        audio.play().then(() => {
-            btn.textContent = "⏸ Pausar Música";
-        }).catch(e => {
-            console.log("Error al reproducir audio: ", e);
-        });
+        audio.play().then(() => btn.textContent = "⏸ Pausar Música").catch(e => console.log(e));
     } else {
         audio.pause();
         btn.textContent = "▶ Reproducir Música";
@@ -254,87 +343,93 @@ function toggleMusic() {
 }
 
 const elementsData = {
-sun: { icon: "☀️", title: "El Sol: Lo que tu luz despierta en mí", body: "Durante años me acostumbré a vivir aislado 'haciendo lo mío', apagando mi empatía emocional como coraza. Cuando llegaste tú, despertaste en mí una ternura y una curiosidad emocional que no conocía. Eres quien me dice 'Ánimo mi inge' o 'Tienes mis respetos Stark' cuando me arden los ojos de programar en la madrugada; eres el calor al que siempre quiero regresar." },
-water: { icon: "💧", title: "El Agua: Tu cuidado y entrega 24/7", body: "El agua de este jardín es cada vez que me ofreces un masajito cuando salgo cansado de hornear, cada vez que me recuerdas cargar mi Omeprazol para la gastritis o ponerme gotitas en los ojos porque no parpadeo al programar. Es tu paciencia esperándome en Discord, tus canciones dedicadas y ese amor 24/7 que me entregas sin que yo tenga que pedirlo." },
-earth: { icon: "🌱", title: "La Tierra: Nuestro Presente y Nuestro Hogar", body: "La tierra firme es mi lealtad absoluta de que en mi vida solo existes tú. Pero hoy comprendo que la tierra no solo sirve para soñar con la casita y tus utensilios de gastronomía del futuro; sirve para pisar firme en el PRESENTE, recibirte con los brazos abiertos cuando vienes a verme y disfrutar cada domingo y cada noche juntos." }
+sun: { icon: "☀️", title: "El Sol: Lo que tu luz despierta en mí", body: "Durante años me acostumbré a vivir aislado 'haciendo lo mío'. Cuando llegaste tú, despertaste en mí una ternura y una curiosidad emocional que no conocía. Eres quien me dice 'Ánimo mi inge' cuando me arden los ojos de programar en la madrugada; eres el calor al que siempre quiero regresar." },
+water: { icon: "💧", title: "El Agua: Tu cuidado y entrega 24/7", body: "El agua de este jardín es cada vez que me ofreces un masajito cuando salgo cansado de hornear, cada vez que me recuerdas cargar mi Omeprazol para la gastritis o ponerme gotitas en los ojos. Es tu paciencia esperándome en Discord, tus canciones dedicadas y tu amor de 24 horas." },
+earth: { icon: "🌱", title: "La Tierra: Nuestro Presente y Nuestro Hogar", body: "La tierra firme es mi lealtad absoluta de que en mi vida solo existes tú. Servirá para construir nuestra casita y tu cocina soñada, pero sobre todo para disfrutar estar acurrucados en el presente cada fin de semana." }
 };
 
 const flowersData = [
 {
 id: 0, month: "Mayo - Junio", title: "1. Girasol del Alba: Desvelo y Confianza", bloomed: false,
 leaves: [
-{ name: "🍃 Hoja 1: Madrugada en Discord", healed: false, error: "Cuando cambiaron tus planes al llegar tu hermano y me muteaste en Discord para no despertarme, en lugar de preguntarte con calma me emperré de madrugada, me armé una película negativa y me muteé como castigo.", psych: "Hipervigilancia afectiva y Proyección: Ante un cambio imprevisto sin aviso previo, mi sistema nervioso activó heridas del pasado, interpretando tu cuidado (no despertarme) como ocultamiento.", empathy: "Te hice sentir vigilada, juzgada injustamente y con la impotencia de que hasta un gesto para cuidar mi sueño terminara en enojo.", broken: "Prometí que entendería cuando los planes familiares cambian sin asumir lo peor.", newProp: "Pausar antes de reaccionar de noche. Preguntar siempre desde la confianza ('¿Todo bien, mi amor?') y jamás usar el muteo o el silencio como castigo." },
-{ name: "🍃 Hoja 2: Miedo a no ser prioridad única", healed: false, error: "Sobreanalizar descripciones en perfiles o detalles en redes sociales, proyectando la duda de si yo realmente tenía mi lugar exclusivo contigo.", psych: "Apego ansioso latente: El temor interno a abrir mi corazón al 100% y salir lastimado me llevó a buscar 'pruebas' donde ya había amor y lealtad total de tu parte.", empathy: "Sentiste que todo el amor, las llamadas y el lugar público que me das no eran suficientes para que yo confiara en ti.", broken: "Decir que ya estaba todo asimilado cuando por dentro seguía rumiando inseguridades.", newProp: "Practicar vulnerabilidad limpia: si un día me siento inseguro, pedirte un abrazo o reafirmación con ternura sin disfrazarlo de reclamo." },
-{ name: "🍃 Hoja 3: Hiperfoco y desvelos extremos", healed: false, error: "Clavarme horas programando, actualizando entornos o trabajando hasta que me arden los ojos y el cuerpo colapsa, restándole energía de calidad a nuestro tiempo.", psych: "Sobrecompensación por rendimiento: Refugiarme en el trabajo y el código para sentir control y valía, descuidando el descanso y la presencia afectiva.", empathy: "Te preocupas genuinamente por mi salud (mi gastritis, mis ojos, mi sueño) y muchas veces te quedaste esperándome despierta hasta la madrugada.", broken: "Decir 'acabo antes de las 11 para dormir juntos' y seguir de largo.", newProp: "Respetar nuestras horas de descanso y valorar cuando me cuidas: cerrar pantallas a tiempo para acurrucarnos en llamada como mereces." }
+{ name: "🍃 Hoja 1: Madrugada en Discord", healed: false, error: "Cuando cambiaron tus planes al llegar tu hermano y me muteaste para no despertarme, me moleste de madrugada y me muteé como castigo.", psych: "Hipervigilancia afectiva: Interpreté tu cuidado (no despertarme) como distanciamiento.", empathy: "Te hice sentir vigilada e impotente.", broken: "Prometí entender cambios de plan.", newProp: "Preguntar con amor ('¿Todo bien mi vida?') y jamás usar el silencio como castigo." },
+{ name: "🍃 Hoja 2: Miedo a no ser prioridad única", healed: false, error: "Sobreanalizar detalles en redes proyectando dudas sobre mi lugar exclusivo contigo.", psych: "Apego ansioso: Buscar pruebas de peligro donde hay amor total.", empathy: "Sentiste que tu amor no bastaba para que yo confiara.", broken: "Decir que estaba asimilado cuando rumiaba dudas.", newProp: "Pedir un abrazo o reafirmación con ternura sin disfrazarlo de reclamo." },
+{ name: "🍃 Hoja 3: Hiperfoco y desvelos extremos", healed: false, error: "Clavarme programando hasta que colapso restándole energía a nuestro tiempo.", psych: "Sobrecompensación por rendimiento.", empathy: "Te preocupas por mi salud y te quedabas esperándome despierta.", broken: "Decir 'acabo a las 11' y seguir de largo.", newProp: "Cerrar pantallas a tiempo para acurrucarnos en llamada como mereces." }
 ]
 },
 {
 id: 1, month: "Julio - Agosto", title: "2. Girasol de Agosto: Iniciativa y Detalles", bloomed: false,
 leaves: [
-{ name: "🍃 Hoja 1: Fotos y atención a cuenta gotas", healed: false, error: "Darte vueltas cuando me pedías una foto mía ('Yo quería una foto tuya, no de ellos') o dejar que sintieras que solo te doy atención cuando yo quiero.", psych: "Coraza evitativa de autosuficiencia: Por costumbre de vivir encerrado en mi mundo, subestimé que a distancia una foto espontánea o un video mío es oxígeno afectivo para ti.", empathy: "Te hice sentir que tenías que 'mendigar' mi imagen y mi cariño, llevándote al límite de querer renunciar a pedírmelo.", broken: "Decir que me iría soltando poco a poco pero retroceder cada vez que había tensión.", newProp: "Enviarte fotos mías en el trabajo o en casa y videos solo para ti de forma espontánea varias veces por semana, antes de que me los pidas." },
-{ name: "🍃 Hoja 2: El 1 de Agosto y Fechas", healed: false, error: "Pasar por alto el Día de la Novia (1 de agosto) escudándome en que yo no conocía esas fechas, dejando pasar el día sin un detalle oportuno.", psych: "Racionalización práctica: Creer que el afecto no necesita fechas simbólicas, ignorando que para tu lenguaje del amor ser recordada y presumida en días clave valida tu importancia.", empathy: "Te sentiste pasada por alto e ilusión rota al ver que un día especial para las parejas pasaba en blanco.", broken: "Pedirte la lista de fechas pero dejar que el cansancio diario apagara la sorpresa.", newProp: "Honrar cada día 22, tu cumpleaños y cada fecha simbólica con anticipación, creatividad y detalles que nazcan de mí." },
-{ name: "🍃 Hoja 3: Memes al grupo y Likes de despedida", healed: false, error: "Mandar videos al grupo en vez de a tu chat privado ('Este me lo tuve que robar porque no me lo enviaste, antes me los enviabas') y dar like a posts sobre 'alejarse para dar paz'.", psych: "Autosabotaje por insuficiencia: Cuando siento que te fallo, activo la fantasía defensiva de 'mejor me quito de su camino', mientras descuido los pequeños gestos exclusivos contigo.", empathy: "Sentiste que perdías tu trato especial y que en cualquier momento yo podía tirar la toalla y abandonarte.", broken: "Jurarte firmeza absoluta mientras mis interacciones en redes sembraban incertidumbre.", newProp: "Cuidar la exclusividad de nuestro chat privado mandándote primero a ti lo que me da risa, y erradicar para siempre cualquier indirecta de alejarme." }
+{ name: "🍃 Hoja 1: Fotos y atención a cuenta gotas", healed: false, error: "Darte vueltas cuando me pedías una foto mía o no darte mi atención espontánea.", psych: "Coraza de autosuficiencia a distancia.", empathy: "Te hice sentir que tenías que mendigar mi imagen.", broken: "Decir que me iría soltando y retroceder.", newProp: "Mandarte fotos y videos míos espontáneos varias veces por semana." },
+{ name: "🍃 Hoja 2: El 1 de Agosto y Fechas", healed: false, error: "Pasar por alto el Día de la Novia escudándome en no conocer la fecha.", psych: "Racionalización práctica e insensibilidad a fechas simbólicas.", empathy: "Sentiste ilusión rota al pasar el día en blanco.", broken: "Pedir lista de fechas pero no actuar.", newProp: "Honrar cada día 22, cumpleaños y fecha especial con anticipación." },
+{ name: "🍃 Hoja 3: Memes al grupo y Likes de despedida", healed: false, error: "Mandar videos al grupo antes que a tu chat privado y dar like a posts de alejarme.", psych: "Autosabotaje defensivo.", empathy: "Sentiste que perdías tu trato especial.", broken: "Prometer firmeza pero sembrar duda.", newProp: "Cuidar la exclusividad de nuestro chat y erradicar indirectas." }
 ]
 },
 {
 id: 2, month: "Agosto - Sept", title: "3. Girasol de Fuego: Juegos, Palabra y Salud", bloomed: false,
 leaves: [
-{ name: "🍃 Hoja 1: Tono 'mamón' en el Juego y Yinxi", healed: false, error: "Ponerme cortante por puntos o avisos en el juego, hacer una comparación injusta con la situación de tu mamá, o sonar preocupado por caerle bien a terceras personas del team.", psych: "Desplazamiento de frustración y ceguera situacional: Llevar el estrés externo al juego y no validar de inmediato tu sensibilidad cuando algo te genera ruido.", empathy: "Transformé nuestro lugar seguro de diversión en tensión, haciéndote sentir comparada en una herida familiar sensible y desplazada.", broken: "Decir que jugaríamos solo para desestresarnos y terminar discutiendo por tablas o terceros.", newProp: "En el juego tú y yo somos equipo: cero reclamos por puntos, prioridad absoluta a tu tranquilidad sobre cualquier desconocido del grupo y trato tierno siempre." },
-{ name: "🍃 Hoja 2: Romper mi palabra con DS ntz", healed: false, error: "Haberte asegurado que el ciclo con mi antiguo clan estaba totalmente cerrado, y usar accesos para volver a meterme a resolver problemas de esa tribu.", psych: "Apego al rol de salvador del pasado: Dificultad para soltar la identidad de lo que construí antes, sin medir el costo de contradecir mi palabra frente a ti.", empathy: "Te hice sentir que mis promesas tienen letra chiquita y que cuando digo 'ya cerré eso', puedo romperlo por impulso.", broken: "Promesa rota directa: 'Dijiste que ya había terminado eso para ti y lo volviste a hacer'.", newProp: "Congruencia total entre lo que digo y lo que hago. Lo que queda en el pasado, se queda en el pasado; mi presente y mi tribu eres tú." },
-{ name: "🍃 Hoja 3: Tentación de viejos excesos", healed: false, error: "Hablar con ligereza de volver a 'la loquera' o negociar pases a fin de año, sabiendo cuánto te angustia mi bienestar y mi falta de límites en el pasado.", psych: "Minimización del riesgo: Disfrazar viejos hábitos como 'convivencia o negocios', pasando por alto el dolor que le causa a quien ama mi vida.", empathy: "Desperté tu miedo más profundo de verme recaer o hacerme daño cuando tú rezas por mí y sueñas una familia sana conmigo.", broken: "Admitir que no tengo límites con el vicio pero seguir dejando la puerta entreabierta.", newProp: "Elegir la vida sana que estamos construyendo. Ver tus límites no como prohibición, sino como el abrazo de la mujer que cuida mi vida." }
+{ name: "🍃 Hoja 1: Tono 'mamón' en el Juego y Yinxi", healed: false, error: "Ponerme cortante por puntos en el juego o sonar enfocado en terceros.", psych: "Desplazamiento de frustración.", empathy: "Transformé nuestro lugar de diversión en tensión.", broken: "Prometer jugar solo por desestres.", newProp: "En el juego somos equipo: cero reclamos y prioridad a tu paz." },
+{ name: "🍃 Hoja 2: Romper mi palabra con DS ntz", healed: false, error: "Usar accesos para resolver temas de mi antiguo clan tras decir que estaba cerrado.", psych: "Rol de salvador del pasado.", empathy: "Te hice sentir que mis promesas tienen letra chiquita.", broken: "Romper la palabra dada.", newProp: "Congruencia total: lo del pasado se queda en el pasado." },
+{ name: "🍃 Hoja 3: Tentación de viejos excesos", healed: false, error: "Hablar de volver a excesos o pases sabiendo cuánto te angustia mi bienestar.", psych: "Minimización del riesgo.", empathy: "Desperté tu miedo a verme hacerme daño.", broken: "Admitir falta de límites sin cerrarle la puerta.", newProp: "Elegir la vida sana que construimos juntos." }
 ]
 },
 {
 id: 3, month: "Septiembre I", title: "4. Girasol de la Escucha: Empatía y Comunicación", bloomed: false,
 leaves: [
-{ name: "🍃 Hoja 1: No escuchar tus audios del Servicio Social", healed: false, error: "El 10 de septiembre, por no traer audífonos leí solo transcripciones, te insistí con irte a Puebla y llamé 'cagadas' a las escuelas públicas, haciéndote decir: 'Amor no puedo salir de mi pueblo para que me entiendas... Es pa lo que me alcanzó, perdón'.", psych: "Solucionismo impulsivo sin escucha activa: Querer 'resolverte' la vida desde mi perspectiva sin detenerme primero a escuchar tu voz y tu realidad, invalidando sin querer tu esfuerzo y tu escuela.", empathy: "Te hice sentir no escuchada, juzgada en tus posibilidades económicas y obligada a pedir perdón por el lugar donde estudias con tanto esfuerzo.", broken: "Prometer ser tu apoyo incondicional en tu carrera de Gastronomía.", newProp: "Nunca opinar ni dar soluciones sin antes haber escuchado tus audios completos con atención. Honrar y admirar tu escuela, tu servicio social y cada logro tuyo." },
-{ name: "🍃 Hoja 2: Ironía pasivo-agresiva ('No preguntaste')", healed: false, error: "El 26 de septiembre en la noche, cuando regresaste de convivir con tu familia y tu abuela, te escribí con sarcasmo: 'Me fue bien, algo complejo... no preguntaste pero por si querías saber, no cené y ya me bañé'.", psych: "Comunicación pasivo-agresiva por necesidad de atención: En vez de decirte con amor 'mi vida, hoy tuve un día pesado y quiero contarte cómo me fue', cobré tu distracción con culpa.", empathy: "Después de un día en que me dijiste cuánto me extrañabas y me necesitabas con tu familia, mi mensaje te cayó como un balde de agua fría y reproche.", broken: "Acordar que hablaríamos directo sin indirectas ni sarcasmos que enfrían el chat.", newProp: "Pedir atención de forma limpia y cariñosa: 'Amor, ¿tienes un ratito para que te platique de mi proyecto?' sin cobrar facturas emocionales." },
-{ name: "🍃 Hoja 3: Frustración técnica con la terminal en iPhone", healed: false, error: "El 21 de septiembre, al mandarte las flores amarillas por código en iSH Shell, hacerte pasar más de dos horas borrando letra por letra y lidiando con errores de consola en tu iPhone.", psych: "Proyección técnica: Querer expresarte mi amor en mi propio idioma (código de terminal Linux) sin adaptar la experiencia para que fuera sencilla y placentera para ti.", empathy: "Agradeciste el detalle con todo el amor, pero terminaste frustrada y estresada peleando con el teclado de tu teléfono.", broken: "Hacer detalles digitales sin verificar antes su compatibilidad total con iOS.", newProp: "Adaptar mi conocimiento a tu comodidad: entregarte mis detalles listos en web a un solo clic para que tú solo tengas que disfrutarlos y sonreír." }
+{ name: "🍃 Hoja 1: No escuchar tus audios del Servicio Social", healed: false, error: "Leer transcripciones por no traer audífonos e insistirte en cambiar de planes sin escuchar tu voz.", psych: "Solucionismo impulsivo sin escucha activa.", empathy: "Te hice sentir no escuchada e invalidada en tu esfuerzo.", broken: "Prometer ser apoyo incondicional.", newProp: "Nunca opinar sin escuchar tus audios completos con atención." },
+{ name: "🍃 Hoja 2: Ironía pasivo-agresiva ('No preguntaste')", healed: false, error: "Escribirte con sarcasmo cuando regresaste de estar con tu abuelita.", psych: "Comunicación pasivo-agresiva por atención.", empathy: "Cobrarte con culpa un día que tenías trabajo y familia.", broken: "Acordar no usar sarcasmos.", newProp: "Pedir atención con ternura: 'Amor, ¿tienes un ratito para platicar?'." },
+{ name: "🍃 Hoja 3: Frustración técnica en iPhone", healed: false, error: "Hacerte borrar letras y pelear con la consola en iOS para un detalle de código.", psych: "Proyección técnica descontextualizada.", empathy: "Agradeciste el detalle pero terminaste frustrada.", broken: "No probar detalles en iOS.", newProp: "Entregarte detalles listos en web a un clic para que solo disfrutes." }
 ]
 },
 {
 id: 4, month: "Septiembre II", title: "5. Girasol del Presente: Venir a Verme y Madrugadas", bloomed: false,
 leaves: [
-{ name: "🍃 Hoja 1: Poner 'peros' a tu visita y al presente", healed: false, error: "Cuando tú con toda la ilusión buscaste venir a verme, anteponer que entre semana solo nos veríamos de noche, que el sábado cambio de materia y que me humilla no tener dinero, haciéndote preguntar herida: '¿Te molesta que esté contigo? ¿Ya no te gusto?'.", psych: "Orgullo masculino defensivo e Hiper-futurismo: Por vergüenza a mi falta de liquidez actual (pagos de renta, gastos) y obsesión con asegurar el futuro lejano, saboteé el encuentro físico presente que sostiene nuestro vínculo hoy.", empathy: "Te sentiste rechazada como mujer y como pareja; sentiste que tu esfuerzo por viajar estorbaba en mi agenda y que yo enfriaba tu ilusión de abrazarme.", broken: "Hablar todos los días de vivir juntos en el futuro mientras ponía barreras para vernos un fin de semana hoy.", newProp: "Tu presencia jamás estorba; es mi mayor regalo. Recibirte con ilusión absoluta el fin de semana que vengas, disfrutar estar acurrucados viendo series y comiendo juntos sin que el dinero sea barrera." },
-{ name: "🍃 Hoja 2: Interrogatorios lógicos a las 3:00 AM", healed: false, error: "Forzar debates interminables de madrugada pidiendo crear 'una base de datos o registro lógico de problemas' cuando tú estabas emocionalmente agotada y dolida.", psych: "Intelectualización extrema: Cuando siento miedo de perderte en una discusión, mi cerebro de ingeniero intenta controlar la angustia convirtiendo los sentimientos en tablas y algoritmos a deshoras.", empathy: "Sentiste que te trataba como a una máquina o tarea escolar, invalidando tu naturaleza emocional y llevándote al agotamiento extremo.", broken: "Prometer no alargar dramas de madrugada y respetar cuando necesitas espacio emocional.", newProp: "Regla sagrada de medianoche: después de las 12:00 AM queda prohibido analizar conflictos. Primero nos damos paz, nos decimos que nos amamos, dormimos descansados y construimos soluciones de día." }
+{ name: "🍃 Hoja 1: Poner 'peros' a tu visita y al presente", healed: false, error: "Poner excusas de dinero o trabajo cuando querías venir a verme.", psych: "Orgullo masculino defensivo e hiper-futurismo.", empathy: "Te sentiste rechazada e insegura de mi deseo por ti.", broken: "Hablar de vivir juntos pero frenar el presente.", newProp: "Recibirte con ilusión total el fin de semana que vengas." },
+{ name: "🍃 Hoja 2: Interrogatorios lógicos a las 3:00 AM", healed: false, error: "Forzar debates interminables cuando estabas agotada emocionalmente.", psych: "Intelectualización extrema de la angustia.", empathy: "Sentiste que te trataba como un problema de código.", broken: "Prometer no alargar dramas de noche.", newProp: "Regla de Medianoche: después de las 12 AM solo nos damos paz y dormimos." }
 ]
 }
 ];
 
 const mirrorData = [
-{ title: "1. Callarte pequeñas cosas hasta sobrepensar", feel: "Noto que cuando ando lleno de trabajo o escuela, por ser comprensiva y no querer 'distraerme', te guardas cosas que te incomodan. Pero ese silencio hace que tu mente les dé vueltas hasta que el dolor se vuelve enorme.", broken: "Acuerdo previo: Habíamos quedado en que, como no soy adivino, me dirías cualquier incomodidad en el momento en que nace.", solution: "Propuesta de Co-regulación: Usar nuestra señal secreta (mandarme un 🌻 o decir 'Amor, código abrazo'). En cuanto la vea, dejo todo para escucharte sin defenderme." },
-{ title: "2. El escudo de 'Ya cedí, ya no pediré nada'", feel: "Siento un vacío muy fuerte cuando, tras una decepción por las fotos, el juego o nuestra visita, levantas una muralla y dices: 'Ya no voy a insistir, ya no pediré nada, ahí muere'. Siento que te resignas y apagas tu brillo conmigo.", broken: "Hábito que lastima: Creer que anular tus deseos o 'ceder para evitar peleas' trae paz, cuando en realidad crea distancia emocional.", solution: "Propuesta de Co-regulación: Nunca renunciar a pedirnos amor. Vale decir 'Hoy estoy sentida y necesito que tú te acerques primero', pero jamás cerrar la puerta con un 'nunca más'." },
-{ title: "3. La sed de contacto físico frente a la distancia", feel: "Comprendo y siento cuánto te pesa estar lejos. Tu forma de amar es tocar, abrazar, darme masajitos, cocinarme y compartir un domingo familiar, y la pantalla a veces te desespera hasta hacerte dudar.", broken: "Hábito que lastima: Dejar que pasen semanas pesadas sin una fecha clara y firme en el calendario para tocarnos y vernos.", solution: "Propuesta de Co-regulación: Tener siempre activa nuestra próxima fecha real de encuentro físico y hacer videollamadas donde cocinemos o cenemos al mismo tiempo." },
-{ title: "4. El temor a que la emoción te desborde al hablar", feel: "Escucho tu corazón cuando me dices: 'Yo no soy lógica como tú, si ampliamos el tema mis emociones me van a controlar y terminaré más enojada'. Noto que prefieres cortar el tema para protegerte.", broken: "Hábito que lastima: Yo empujarte con mil preguntas lógicas de madrugada y tú cerrarte por miedo a explotar.", solution: "Propuesta de Co-regulación: Hablar en dosis pequeñas (máximo 10 minutos, de día y de un solo punto a la vez), priorizando abrazarnos con palabras antes de buscar soluciones." },
-{ title: "5. Sentir que tus esfuerzos o tu entorno son menos", feel: "Me dolió en el alma cuando me dijiste 'Es pa lo que me alcanzó, perdón' hablando de tu escuela y tu servicio social. Noto que a veces mis comentarios impulsivos te han hecho sentir que minimizo tu entorno.", broken: "Hábito que lastima: Hablar desde mi burbuja sin medir el peso de mis palabras sobre tu esfuerzo diario.", solution: "Propuesta de Co-regulación: Recordarte todos los días cuánto admiro a la mujer y futura chef que eres, tu disciplina en el gym, tu corazón familiar y todo lo que logras." },
-{ title: "6. La sensibilidad a mis cambios de tono y ausencias", feel: "Noto que percibes de inmediato cuando mi tono cambia a seco, cuando contesto corto ('Meno :v') o cuando desaparezco horas sin avisar bien, y eso activa en ti la sensación de que ya no me importas igual.", broken: "Hábito que lastima: Dar por sentado que 'sabes que estoy ocupado' y descuidar la calidez de mis mensajes cortos.", solution: "Propuesta de Co-regulación: Aunque tenga 10 segundos entre el horno o el código, mandarte un mensaje con ternura ('Amor, entro en chinga pero te adoro con mi vida') para que siempre sientas mi calor." }
+{ title: "1. Callarte pequeñas cosas hasta sobrepensar", feel: "Noto que te guardas cosas por no 'distraerme', pero tu mente les da vueltas hasta doler.", broken: "Acuerdo: Decirme cualquier incomodidad al momento.", solution: "Usar la señal secreta 🌻 o 'Código Abrazo' para escucharte sin defenderme." },
+{ title: "2. El escudo de 'Ya no pediré nada, ahí muere'", feel: "Siento un vacío cuando levantas una muralla y te resignas a no pedir cariño.", broken: "Anular tus deseos para evitar peleas distancia.", solution: "Decir 'Hoy necesito que te acerques primero', pero jamás cerrar la puerta." },
+{ title: "3. La sed de contacto físico a distancia", feel: "Comprendo cuánto te pesa estar lejos porque tu amor es tocar, abrazar y cocinar.", broken: "Dejar pasar semanas sin fecha clara para vernos.", solution: "Tener siempre la próxima fecha de encuentro en el calendario y cocinar en llamadas." },
+{ title: "4. Temor a que la emoción te desborde", feel: "Me dices que no eres lógica como yo y temes enojarte al hablar.", broken: "Empujarte con preguntas de madrugada.", solution: "Hablar en dosis de 10 minutos de día y abrazar con palabras primero." },
+{ title: "5. Sentir que tus esfuerzos son menos", feel: "Me dolía cuando pedías perdón pensando que menospreciaba tu escuela o entorno.", broken: "Hablar sin medir el peso de mis palabras.", solution: "Recordarte todos los días cuánto admiro a la chef que eres y tu esfuerzo." },
+{ title: "6. Sensibilidad a tonos y ausencias", feel: "Percibes de inmediato si mi tono es seco ('Meno :v') o si me ausento sin avisar.", broken: "Descuidar la calidez en mensajes cortos.", solution: "Mandarte un 'Te adoro mi vida' aunque tenga 10 segundos entre tareas." }
 ];
 
 const sosData = [
-{ btn: "🥺 «Hoy te extraño demasiado y ya te necesito»", title: "Protocolo de Presencia Inmediata", steps: "1. Pausa inmediata a cualquier código o tarea por 10 minutos.\n2. Llamada o nota de voz mirándonos/escuchándonos sin distracciones.\n3. Reafirmar nuestro plan del fin de semana para vernos: tu lugar es en mis brazos, nunca eres una molestia." },
-{ btn: "💔 «Siento que ya no pediré nada / Ahí muere»", title: "Protocolo Contra la Resignación", steps: "1. Alto total a la discusión: ninguno se rinde ni renuncia a sus necesidades.\n2. Reconozco mi falta de iniciativa sin excusas.\n3. En lugar de que tú dejes de pedir, hoy yo tomo el volante y te demuestro con hechos que me nace darte el 100%." },
-{ btn: "🌙 «Estoy en mis días / Me siento sensible o bajoneada»", title: "Protocolo Lunar de Apapacho al 1000%", steps: "1. Cero debates, cero ironías y cero exigencias hoy.\n2. Lluvia de bechitos, audios tiernos y recordarte cada hora cuánto te amo y te adoro.\n3. Consentirte con tu cobijita, ver un capítulo de nuestra serie favorita y acompañarte con algo calientito." },
-{ btn: "🕒 «Son más de las 12:00 AM y estamos tensos»", title: "Regla de Oro de Medianoche", steps: "1. Prohibido intentar resolver o enlistar problemas con sueño y cansancio.\n2. Nos decimos: 'Te amo incluso cuando no nos entendemos al 100%, mañana con luz lo cuidamos'.\n3. Nos quedamos acompañados en llamada en paz hasta dormir." }
+{ btn: "🥺 «Hoy te extraño demasiado y te necesito»", title: "Protocolo de Presencia Inmediata", steps: "1. Pausa a cualquier tarea por 10 minutos.\n2. Llamada o audio mirándonos con amor.\n3. Reafirmar nuestra fecha para vernos." },
+{ btn: "💔 «Siento que ya no pediré nada / Ahí muere»", title: "Protocolo Contra la Resignación", steps: "1. Alto total a la discusión.\n2. Reconozco mi falta de iniciativa.\n3. Tomo el volante para darte el 100%." },
+{ btn: "🌙 «Estoy en mis días / Me siento sensible»", title: "Protocolo Lunar de Apapacho", steps: "1. Cero debates y cero exigencias.\n2. Lluvia de besos y audios tiernos.\n3. Ver series acurrucados con algo calientito." },
+{ btn: "🕒 «Son más de las 12:00 AM y estamos tensos»", title: "Regla de Oro de Medianoche", steps: "1. Prohibido analizar problemas con sueño.\n2. Decirnos 'Te amo' y darnos paz.\n3. Dormir tranquilos y hablar de día." }
 ];
 
 const pactsData = [
-"1. Hablar con nuestra señal (🌻) antes de guardarnos las cosas o decir 'ya no pediré nada, ahí muere'.",
-"2. Recibir nuestras visitas y fines de semana juntos en el PRESENTE con ilusión total, sin poner pretextos de dinero o trabajo.",
-"3. Iniciativa constante que nace del amor: mandarte fotos mías, videos exclusivos para ti y buenos días largos sin que tengas que pedirlos.",
-"4. Escuchar siempre tus audios completos antes de opinar y honrar con orgullo tu carrera de Gastronomía y tu esfuerzo.",
-"5. Mantener el juego (COD y Realm) como nuestro refugio de risas, jamás como motivo de reclamos o tonos cortantes.",
-"6. Aplicar la Regla de Medianoche: después de las 12:00 AM no debatimos problemas; nos apapachamos y descansamos juntos."
+"1. Hablar con nuestra señal (🌻) antes de guardarnos cosas.",
+"2. Recibir nuestras visitas en el PRESENTE con ilusión total.",
+"3. Iniciativa constante: fotos mías, videos y buenos días largos sin pedirlo.",
+"4. Escuchar tus audios completos antes de opinar y honrar tu carrera de Gastronomía.",
+"5. Mantener el juego como refugio de risas, jamás de reclamos.",
+"6. Regla de Medianoche: a las 12:00 AM nos apapachamos y descansamos."
+];
+
+let presetDiaries = [
+{ date: "22 de Julio de 2026", title: "Oficialización de Nuestro Aniversario 💖", text: "El día en que marcamos en el calendario nuestra historia oficial. Prometo cuidar tu corazón hoy y cada día 22 que venga." },
+{ date: "11 de Septiembre de 2026", title: "Tu mensaje de amor y vulnerabilidad 🌙", text: "Me dijiste 'Dame bechitos y apapáchame... ¿Me amas mucho?'. Anoté ese momento para recordar que cuidarte en tus días es mi prioridad sagrada." }
 ];
 
 let currentFlowerIndex = 0, currentLeafIndex = 0;
-let savedState = JSON.parse(localStorage.getItem('ecosistema_v2') || '{}');
+let savedState = JSON.parse(localStorage.getItem('ecosistema_v4') || '{}');
 
 function saveProgress() {
     const state = {
         flowers: flowersData.map(f => ({ bloomed: f.bloomed, leaves: f.leaves.map(l => l.healed) })),
-        pacts: Array.from(document.querySelectorAll('.pact-check')).map(c => c.checked)
+        pacts: Array.from(document.querySelectorAll('.pact-check')).map(c => c.checked),
+        diaries: presetDiaries
     };
-    localStorage.setItem('ecosistema_v2', JSON.stringify(state));
+    localStorage.setItem('ecosistema_v4', JSON.stringify(state));
 }
 
 function loadProgress() {
@@ -345,6 +440,9 @@ function loadProgress() {
                 sf.leaves.forEach((lh, lIdx) => { if (flowersData[fIdx].leaves[lIdx]) flowersData[fIdx].leaves[lIdx].healed = lh; });
             }
         });
+    }
+    if (savedState.diaries && savedState.diaries.length > 0) {
+        presetDiaries = savedState.diaries;
     }
 }
 
@@ -367,7 +465,7 @@ function initGarden() {
         p.style.left = (Math.random()*100)+'%'; p.style.animationDuration = (Math.random()*8+7)+'s';
         pCont.appendChild(p);
     }
-    renderPacts(); renderFlowersStage(); selectFlower(0); renderMirrorSection(); renderSosSection(); calculateCycleDates(); updateHealthBar();
+    renderPacts(); renderFlowersStage(); selectFlower(0); renderMirrorSection(); renderSosSection(); renderDiaries(); calculateCycleDates(); updateHealthBar(); initPong(); initPacman();
 }
 
 function calculateCycleDates() {
@@ -381,20 +479,20 @@ function calculateCycleDates() {
     let phaseTitle = "", phaseDesc = "", phaseCare = "";
     if (currentDayInCycle <= 5) {
         phaseTitle = `🌙 Día ${currentDayInCycle} del Ciclo • Fase Menstrual (Tus Días)`;
-        phaseDesc = "Tu cuerpo está liberando y renovándose; es normal sentir cólicos, cansancio físico y ganas de estar acurrucada.";
-        phaseCare = "🧸 Protocolo activo: Muchos bechitos, reafirmarte cuánto te amo, cero discusiones, chocolatito caliente y cobijita.";
+        phaseDesc = "Tu cuerpo se libera y renueva; es normal sentir cólicos y ganas de estar acurrucada.";
+        phaseCare = "🧸 Protocolo: Bechitos, afirmaciones de amor, cero discusiones y algo calientito.";
     } else if (currentDayInCycle <= 13) {
-        phaseTitle = `🌱 Día ${currentDayInCycle} del Ciclo • Fase Folicular (Energía en Ascenso)`;
-        phaseDesc = "Suben tus niveles de energía y entusiasmo para el gym, tu recetario y planear cosas bonitas juntos.";
-        phaseCare = "✨ Protocolo activo: Acompañar tus proyectos, reírnos mucho, jugar juntos y admirar tu progreso.";
+        phaseTitle = `🌱 Día ${currentDayInCycle} del Ciclo • Fase Folicular`;
+        phaseDesc = "Suben tus niveles de energía para el gym y cocinar cosas ricas.";
+        phaseCare = "✨ Protocolo: Acompañar tus proyectos y reírnos mucho.";
     } else if (currentDayInCycle <= 16) {
-        phaseTitle = `☀️ Día ${currentDayInCycle} del Ciclo • Fase Ovulatoria (Plenitud y Conexión)`;
-        phaseDesc = "Días de máxima vitalidad, brillo y deseo de cercanía afectiva y física.";
-        phaseCare = "❤️‍🔥 Protocolo activo: Mandarte fotos mías, piropearte muchísimo y alimentar nuestra conexión.";
+        phaseTitle = `☀️ Día ${currentDayInCycle} del Ciclo • Fase Ovulatoria`;
+        phaseDesc = "Días de máxima vitalidad y deseo de cercanía.";
+        phaseCare = "❤️‍🔥 Protocolo: Mandarte fotos, piropos y demostraciones de amor.";
     } else {
-        phaseTitle = `🍂 Día ${currentDayInCycle} del Ciclo • Fase Lútea / Premenstrual (Mayor Sensibilidad)`;
-        phaseDesc = "Tu cuerpo se prepara para el siguiente ciclo. Aumenta la sensibilidad emocional y la necesidad de sentirte segura y priorizada.";
-        phaseCare = "🌻 Protocolo activo: Escucha extra empática, paciencia total, cero tonos cortantes y muchos mimos preventivos.";
+        phaseTitle = `🍂 Día ${currentDayInCycle} del Ciclo • Fase Lútea (Sensibilidad)`;
+        phaseDesc = "Aumenta la necesidad de sentirte segura y escuchada.";
+        phaseCare = "🌻 Protocolo: Paciencia total, escucharte y mimos preventivos.";
     }
     document.getElementById('current-phase-title').textContent = phaseTitle;
     document.getElementById('current-phase-desc').textContent = phaseDesc;
@@ -407,13 +505,13 @@ function calculateCycleDates() {
         const pms = new Date(c); pms.setDate(c.getDate() - 4);
         if (!nextDate && c >= today) nextDate = c;
         const div = document.createElement('div'); div.className = 'date-pill';
-        div.innerHTML = `<span>🌙 <strong>Ciclo ${i}:</strong> ~${c.getDate()} de ${months[c.getMonth()]}</span><span style="color:#fda4af;font-size:.74rem">Apapacho extra desde el ${pms.getDate()} de ${months[pms.getMonth()]}</span>`;
+        div.innerHTML = `<span>🌙 <strong>Ciclo ${i}:</strong> ~${c.getDate()} de ${months[c.getMonth()]}</span><span style="color:#fda4af;font-size:.74rem">Apapacho desde ${pms.getDate()} ${months[pms.getMonth()]}</span>`;
         list.appendChild(div);
     }
     if (!nextDate) { nextDate = new Date(baseDate); nextDate.setDate(baseDate.getDate() + cycleDays); }
     document.getElementById('next-period-date').textContent = `~ ${nextDate.getDate()} de ${months[nextDate.getMonth()]}, ${nextDate.getFullYear()}`;
     const diff = Math.ceil((nextDate.getTime() - today.getTime()) / 86400000);
-    document.getElementById('next-period-countdown').textContent = `Faltan aprox. ${diff} días • Basado en tu registro del 11 de septiembre`;
+    document.getElementById('next-period-countdown').textContent = `Faltan aprox. ${diff} días`;
 }
 
 function renderFlowersStage() {
@@ -487,13 +585,33 @@ function renderPacts() {
     });
 }
 
+function renderDiaries() {
+    const c = document.getElementById('diaries-container'); c.innerHTML = '';
+    presetDiaries.forEach((d) => {
+        const div = document.createElement('div'); div.className = 'diary-card';
+        div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span class="box-label" style="color:var(--gold)">🗓️ ${d.date}</span></div><h4 style="color:#fde68a;margin-bottom:6px;font-size:.95rem">${d.title}</h4><p class="box-text">${d.text}</p>`;
+        c.appendChild(div);
+    });
+}
+
+function addNewDiaryEntry() {
+    const titleInput = document.getElementById('diary-title');
+    const textInput = document.getElementById('diary-text');
+    if (!titleInput.value.trim() || !textInput.value.trim()) return;
+    const now = new Date();
+    const dateStr = `${now.getDate()} de Septiembre de ${now.getFullYear()}`;
+    presetDiaries.unshift({ date: dateStr, title: titleInput.value.trim(), text: textInput.value.trim() });
+    titleInput.value = ''; textInput.value = '';
+    saveProgress(); renderDiaries();
+}
+
 function updateHealthBar() {
     let totalLeaves = 0, healedLeaves = 0;
     flowersData.forEach(f => f.leaves.forEach(l => { totalLeaves++; if (l.healed) healedLeaves++; }));
     const checks = document.querySelectorAll('.pact-check:checked').length;
     const p = Math.min(100, Math.round(10 + ((healedLeaves / totalLeaves) * 65) + ((checks / pactsData.length) * 25)));
     document.getElementById('health-fill').style.width = p + '%';
-    document.getElementById('health-percent').textContent = p === 100 ? "100% 🌻 ¡Ecosistema en Pleno Florecimiento!" : `${p}% 🌱 (${healedLeaves}/${totalLeaves} hojas sanadas • ${checks}/${pactsData.length} acuerdos)`;
+    document.getElementById('health-percent').textContent = p === 100 ? "100% 🌻 ¡Ecosistema Florecido!" : `${p}% 🌱 (${healedLeaves}/${totalLeaves} hojas sanadas)`;
 }
 
 function renderMirrorSection() {
@@ -528,6 +646,218 @@ function openElementModal(type) {
     document.getElementById('element-modal').classList.add('open');
 }
 function closeElementModal(e) { if (e.target.id === 'element-modal') document.getElementById('element-modal').classList.remove('open'); }
+
+/* SELECCIÓN Y CONTROL DE JUEGOS */
+function selectGame(game) {
+    document.getElementById('btn-show-pong').classList.remove('active');
+    document.getElementById('btn-show-pacman').classList.remove('active');
+    document.getElementById('subpanel-pong').classList.remove('active');
+    document.getElementById('subpanel-pacman').classList.remove('active');
+
+    if (game === 'pong') {
+        document.getElementById('btn-show-pong').classList.add('active');
+        document.getElementById('subpanel-pong').classList.add('active');
+    } else {
+        document.getElementById('btn-show-pacman').classList.add('active');
+        document.getElementById('subpanel-pacman').classList.add('active');
+        iniciarPacman();
+    }
+}
+
+/* MINI JUEGO 1: PING PONG */
+let pongCanvas, pongCtx;
+let paddleWidth = 80, paddleHeight = 12, paddleX = 120;
+let ballX = 160, ballY = 180, ballDX = 3, ballDY = -3;
+let pongScore = 0, pongHighScore = localStorage.getItem('pong_high') || 0;
+let pongInterval = null;
+
+function initPong() {
+    pongCanvas = document.getElementById('pongCanvas');
+    if (!pongCanvas) return;
+    pongCtx = pongCanvas.getContext('2d');
+    document.getElementById('pong-highscore').textContent = pongHighScore;
+    
+    pongCanvas.addEventListener('touchmove', (e) => {
+        const rect = pongCanvas.getBoundingClientRect();
+        const touchX = e.touches[0].clientX - rect.left;
+        paddleX = touchX - paddleWidth / 2;
+        e.preventDefault();
+    }, {passive: false});
+}
+
+function startPongGame() {
+    if (pongInterval) clearInterval(pongInterval);
+    ballX = 160; ballY = 180; ballDX = (Math.random() > 0.5 ? 3 : -3); ballDY = -3;
+    paddleX = 120; pongScore = 0;
+    document.getElementById('pong-score').textContent = pongScore;
+    pongInterval = setInterval(drawPong, 1000/60);
+}
+
+function movePongPaddle(dir) {
+    paddleX += dir;
+    if (paddleX < 0) paddleX = 0;
+    if (paddleX + paddleWidth > pongCanvas.width) paddleX = pongCanvas.width - paddleWidth;
+}
+
+function drawPong() {
+    pongCtx.clearRect(0, 0, pongCanvas.width, pongCanvas.height);
+    
+    pongCtx.fillStyle = '#fbbf24';
+    pongCtx.beginPath();
+    pongCtx.roundRect(paddleX, pongCanvas.height - 20, paddleWidth, paddleHeight, 6);
+    pongCtx.fill();
+    
+    pongCtx.font = "20px sans-serif";
+    pongCtx.fillText("💖", ballX - 10, ballY + 7);
+    
+    ballX += ballDX; ballY += ballDY;
+    
+    if (ballX + ballDX > pongCanvas.width - 10 || ballX + ballDX < 10) ballDX = -ballDX;
+    if (ballY + ballDY < 15) ballDY = -ballDY;
+    
+    if (ballY + ballDY > pongCanvas.height - 30) {
+        if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+            ballDY = -ballDY;
+            pongScore++;
+            document.getElementById('pong-score').textContent = pongScore;
+            if (pongScore > pongHighScore) {
+                pongHighScore = pongScore;
+                localStorage.setItem('pong_high', pongHighScore);
+                document.getElementById('pong-highscore').textContent = pongHighScore;
+            }
+        } else if (ballY > pongCanvas.height) {
+            clearInterval(pongInterval);
+            pongCtx.fillStyle = '#f43f5e';
+            pongCtx.font = "16px sans-serif";
+            pongCtx.fillText("¡Casi! Toca Reiniciar 🌻", 60, 180);
+        }
+    }
+}
+
+/* MINI JUEGO 2: PAC-MAN LOVE EDITION */
+let pacCanvas, pacCtx;
+const tileSize = 20;
+let pacScore = 0;
+let pacInterval = null;
+
+const initialMap = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,0,1,1,0,1,1,0,1,1,0,1,1,0,1],
+  [1,0,1,0,0,0,0,0,0,1,0,0,1,0,1],
+  [1,0,1,0,1,1,1,1,0,1,0,1,1,0,1],
+  [1,0,0,0,1,2,2,1,0,0,0,0,0,0,1],
+  [1,1,1,0,1,2,2,1,0,1,1,1,1,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,1,1,0,1,1,1,0,1,1,0,1,0,1],
+  [1,0,0,1,0,0,0,0,0,1,0,0,1,0,1],
+  [1,1,0,1,0,1,1,1,0,1,0,1,1,0,1],
+  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+  [1,0,1,1,1,0,1,0,1,1,1,1,1,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+let currentMap = [];
+let pacman = { x: 1, y: 1, dirX: 1, dirY: 0, nextDirX: 1, nextDirY: 0 };
+let ghost = { x: 7, y: 7, dirX: 0, dirY: -1 };
+
+function initPacman() {
+    pacCanvas = document.getElementById('pacmanCanvas');
+    if (!pacCanvas) return;
+    pacCtx = pacCanvas.getContext('2d');
+}
+
+function iniciarPacman() {
+    if (pacInterval) clearInterval(pacInterval);
+    currentMap = JSON.parse(JSON.stringify(initialMap));
+    pacScore = 0;
+    document.getElementById('pacman-score').textContent = pacScore;
+    document.getElementById('pacman-status').textContent = "En marcha";
+    pacman = { x: 1, y: 1, dirX: 1, dirY: 0, nextDirX: 1, nextDirY: 0 };
+    ghost = { x: 7, y: 7, dirX: 0, dirY: -1 };
+    pacInterval = setInterval(gameLoopPacman, 220);
+}
+
+function moverPacman(dir) {
+    if (dir === 'UP') { pacman.nextDirX = 0; pacman.nextDirY = -1; }
+    if (dir === 'DOWN') { pacman.nextDirX = 0; pacman.nextDirY = 1; }
+    if (dir === 'LEFT') { pacman.nextDirX = -1; pacman.nextDirY = 0; }
+    if (dir === 'RIGHT') { pacman.nextDirX = 1; pacman.nextDirY = 0; }
+}
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp') moverPacman('UP');
+    if (e.key === 'ArrowDown') moverPacman('DOWN');
+    if (e.key === 'ArrowLeft') moverPacman('LEFT');
+    if (e.key === 'ArrowRight') moverPacman('RIGHT');
+});
+
+function gameLoopPacman() {
+    if (currentMap[pacman.y + pacman.nextDirY][pacman.x + pacman.nextDirX] !== 1) {
+        pacman.dirX = pacman.nextDirX;
+        pacman.dirY = pacman.nextDirY;
+    }
+    
+    if (currentMap[pacman.y + pacman.dirY][pacman.x + pacman.dirX] !== 1) {
+        pacman.x += pacman.dirX;
+        pacman.y += pacman.dirY;
+    }
+
+    if (currentMap[pacman.y][pacman.x] === 0) {
+        currentMap[pacman.y][pacman.x] = 2;
+        pacScore += 10;
+        document.getElementById('pacman-score').textContent = pacScore;
+    }
+
+    const posibles = [
+        {x:0, y:-1}, {x:0, y:1}, {x:-1, y:0}, {x:1, y:0}
+    ].filter(d => currentMap[ghost.y + d.y][ghost.x + d.x] !== 1);
+    
+    if (posibles.length > 0) {
+        const move = posibles[Math.floor(Math.random() * posibles.length)];
+        ghost.x += move.x;
+        ghost.y += move.y;
+    }
+
+    if (pacman.x === ghost.x && pacman.y === ghost.y) {
+        clearInterval(pacInterval);
+        document.getElementById('pacman-status').textContent = "¡Atrapado! 💔";
+        return;
+    }
+
+    dibujarPacmanGame();
+}
+
+function dibujarPacmanGame() {
+    pacCtx.clearRect(0, 0, pacCanvas.width, pacCanvas.height);
+
+    for (let r = 0; r < 15; r++) {
+        for (let c = 0; c < 15; c++) {
+            if (currentMap[r][c] === 1) {
+                pacCtx.fillStyle = '#3f51b5';
+                pacCtx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+            } else if (currentMap[r][c] === 0) {
+                pacCtx.fillStyle = '#ff4081';
+                pacCtx.beginPath();
+                pacCtx.arc(c * tileSize + 10, r * tileSize + 10, 3, 0, Math.PI * 2);
+                pacCtx.fill();
+            }
+        }
+    }
+
+    pacCtx.fillStyle = '#fbbf24';
+    pacCtx.beginPath();
+    pacCtx.arc(pacman.x * tileSize + 10, pacman.y * tileSize + 10, 8, 0.2 * Math.PI, 1.8 * Math.PI);
+    pacCtx.lineTo(pacman.x * tileSize + 10, pacman.y * tileSize + 10);
+    pacCtx.fill();
+
+    pacCtx.fillStyle = '#f43f5e';
+    pacCtx.beginPath();
+    pacCtx.arc(ghost.x * tileSize + 10, ghost.y * tileSize + 10, 8, 0, Math.PI * 2);
+    pacCtx.fill();
+}
+
 window.onload = initGarden;
 </script>
 </body>
