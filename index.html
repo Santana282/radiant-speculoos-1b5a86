@@ -1,129 +1,644 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NUESTRO ECOSISTEMA | Kevin & Analy</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="manifest" href="manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nuestro Ecosistema 🌻 • Kevin & Analy</title>
+<style>
+:root {
+    --bg1: #090d16;
+    --bg2: #161f33;
+    --bg3: #231917;
+    --gold: #fbbf24;
+    --amber: #f59e0b;
+    --rose: #f43f5e;
+    --pink: #fda4af;
+    --green: #22c55e;
+    --purple: #c084fc;
+    --blue: #38bdf8;
+    --card: rgba(15,23,42,0.88);
+    --glass: rgba(255,255,255,0.05);
+    --border: rgba(255,255,255,0.14);
+    --txt: #f8fafc;
+    --muted: #cbd5e1;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 60%, var(--bg3) 100%); color: var(--txt); min-height: 100vh; overflow-x: hidden; position: relative; line-height: 1.55; }
+
+/* ==========================================================================
+   ANIMACIONES CSS Y EFECTOS INTERACTIVOS
+   ========================================================================== */
+
+/* 1. Partículas flotantes */
+.particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.particle { position: absolute; border-radius: 50%; background: rgba(251,191,36,0.55); box-shadow: 0 0 12px var(--gold); animation: floatUp linear infinite; }
+@keyframes floatUp { 0% { transform: translateY(100vh) scale(.4); opacity: 0; } 50% { opacity: .85; } 100% { transform: translateY(-10vh) scale(1.2); opacity: 0; } }
+
+/* 2. Florecimiento Neón (Girasoles) */
+@keyframes bloomGlow {
+    0% { transform: scale(0.95); filter: grayscale(80%) drop-shadow(0 0 2px #a2703f); }
+    50% { transform: scale(1.02); filter: grayscale(30%) drop-shadow(0 0 12px var(--gold)); }
+    100% { transform: scale(1); filter: grayscale(0%) drop-shadow(0 0 20px var(--gold)); }
+}
+.flower-unit.bloomed { animation: bloomGlow 0.9s ease-out forwards; }
+
+/* 3. Pulso Afectivo de Corazón */
+@keyframes pulseHeart {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
+    70% { transform: scale(1.06); box-shadow: 0 0 0 12px rgba(244, 63, 94, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+}
+.heart-pulse { animation: pulseHeart 2s infinite; border-radius: 50%; }
+
+/* 4. Lluvia de bendiciones */
+.rain-drop { position: fixed; top: -20px; width: 2px; height: 18px; background: linear-gradient(transparent, var(--blue)); z-index: 99; pointer-events: none; animation: rainFall .7s linear forwards; }
+@keyframes rainFall { to { transform: translateY(105vh); opacity: 0; } }
+
+/* ESTRUCTURA GENERAL */
+.app-container { position: relative; z-index: 2; max-width: 1240px; margin: 0 auto; padding: 20px 14px 90px; }
+header { text-align: center; margin-bottom: 24px; }
+.badge-date { display: inline-block; background: rgba(251,191,36,0.14); border: 1px solid rgba(251,191,36,0.4); color: var(--gold); padding: 6px 16px; border-radius: 99px; font-size: .8rem; font-weight: 700; letter-spacing: .4px; margin-bottom: 10px; }
+h1 { font-size: clamp(2rem, 5.5vw, 3rem); font-weight: 900; background: linear-gradient(90deg, #fde68a, #f59e0b, #fb7185, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.subtitle { color: var(--muted); max-width: 780px; margin: 0 auto; font-size: .94rem; }
+
+/* REPRODUCTOR FLOTANTE DE MÚSICA (GOLDEN HOUR PIANO) */
+.music-widget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: rgba(15, 23, 42, 0.92); border: 1px solid var(--gold); border-radius: 50px; padding: 10px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.5); backdrop-filter: blur(8px); }
+.music-btn { background: var(--gold); border: none; color: #090d16; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: transform 0.2s; }
+.music-btn:active { transform: scale(0.9); }
+.music-info { font-size: 0.78rem; color: #fde68a; display: flex; flex-direction: column; }
+.music-title { font-weight: 800; color: #fff; }
+
+/* BARRAS Y CONTADORES */
+.health-bar-wrapper { max-width: 560px; margin: 18px auto 0; background: rgba(15,23,42,0.8); padding: 14px 18px; border-radius: 18px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+.health-header { display: flex; justify-content: space-between; font-size: .82rem; margin-bottom: 8px; font-weight: 700; }
+.progress-track { width: 100%; height: 12px; background: rgba(0,0,0,0.5); border-radius: 99px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+.progress-fill { height: 100%; width: 15%; background: linear-gradient(90deg, #f43f5e, #f59e0b, #22c55e); border-radius: 99px; transition: width .7s cubic-bezier(.4,0,.2,1); }
+
+.elements-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 22px 0; }
+.element-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 16px; cursor: pointer; transition: transform .25s, border-color .25s; position: relative; overflow: hidden; }
+.element-card:active { transform: scale(.98); }
+.element-top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.element-icon { font-size: 1.8rem; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: var(--glass); border: 1px solid var(--border); }
+.element-title { font-weight: 800; font-size: 1rem; color: #fff; }
+.element-role { font-size: .7rem; color: var(--gold); text-transform: uppercase; font-weight: 700; letter-spacing: .5px; }
+.element-desc { font-size: .84rem; color: var(--muted); }
+
+.nav-tabs { display: flex; justify-content: center; gap: 8px; margin: 22px 0; flex-wrap: wrap; }
+.tab-btn { background: rgba(15,23,42,0.75); border: 1px solid var(--border); color: var(--txt); padding: 10px 16px; border-radius: 99px; cursor: pointer; font-weight: 700; font-size: .83rem; transition: all .25s; }
+.tab-btn.active { background: linear-gradient(135deg, #f59e0b, #e11d48); border-color: transparent; box-shadow: 0 6px 18px rgba(225,29,72,0.45); }
+.view-section { display: none; animation: fadeIn .35s ease; } .view-section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.garden-layout, .care-layout { display: grid; grid-template-columns: 1.05fr 1.15fr; gap: 18px; align-items: start; }
+@media(max-width:920px){ .garden-layout, .care-layout { grid-template-columns: 1fr; } }
+
+.garden-stage { background: radial-gradient(circle at 50% 18%, rgba(251,191,36,0.15), rgba(15,23,42,0.95) 72%); border: 1px solid var(--border); border-radius: 22px; padding: 16px 8px 0; min-height: 430px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; position: relative; }
+.stage-instruction { text-align: center; font-size: .79rem; color: var(--muted); background: rgba(0,0,0,0.45); padding: 8px 12px; border-radius: 12px; margin: 0 auto 10px; border: 1px solid var(--border); }
+.flowers-row { display: flex; justify-content: space-around; align-items: flex-end; padding: 12px 2px 0; min-height: 280px; flex-wrap: wrap; gap: 4px; }
+.flower-unit { display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 18.5%; min-width: 62px; transition: transform .25s; }
+.flower-unit.selected .flower-label { background: var(--gold); color: #090d16; font-weight: 800; box-shadow: 0 0 12px var(--gold); }
+.flower-svg { width: 100%; max-width: 92px; height: 195px; overflow: visible; transform-origin: bottom center; animation: sway 5s ease-in-out infinite; }
+@keyframes sway { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+
+.flower-unit.wilted .flower-head { transform: translateY(16px) rotate(26deg); transform-origin: 60px 90px; filter: grayscale(75%) brightness(.7); transition: all .7s ease; }
+.flower-unit.bloomed .flower-head { transform: translateY(0) rotate(0deg); filter: drop-shadow(0 0 12px rgba(251,191,36,0.65)); transition: all .7s ease; }
+.flower-unit.wilted .stem-path { stroke: #64748b; } .flower-unit.bloomed .stem-path { stroke: #22c55e; }
+.leaf-svg-item { transition: fill .4s; }
+
+.soil-bed { height: 40px; background: linear-gradient(180deg, #451a03 0%, #1f0b01 100%); margin: 0 -8px; border-top: 3px solid #78350f; display: flex; align-items: center; justify-content: center; font-size: .72rem; color: #fde68a; font-weight: 600; text-align: center; padding: 0 8px; }
+.flower-label { margin: 4px 0 10px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); padding: 4px 6px; border-radius: 99px; font-size: .65rem; text-align: center; white-space: nowrap; }
+.status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 3px; }
+.wilted .status-dot { background: #ef4444; } .bloomed .status-dot { background: #22c55e; }
+
+.inspector-panel, .lunar-card, .likes-panel, .greenhouse-box, .mirror-card, .sos-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+.inspector-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.inspector-title { font-size: 1.12rem; font-weight: 800; color: #fde68a; }
+.inspector-status { padding: 4px 10px; border-radius: 99px; font-size: .68rem; font-weight: 800; white-space: nowrap; }
+.status-wilted { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.4); }
+.status-bloomed { background: rgba(34,197,94,0.2); color: #86efac; border: 1px solid rgba(34,197,94,0.4); }
+
+.leaves-selector, .tag-cloud { display: flex; gap: 6px; flex-wrap: wrap; }
+.leaf-btn { background: var(--glass); border: 1px solid var(--border); color: var(--txt); padding: 8px 11px; border-radius: 10px; cursor: pointer; font-size: .77rem; transition: all .2s; }
+.leaf-btn.active { background: rgba(251,191,36,0.22); border-color: var(--gold); color: #fde68a; font-weight: 700; }
+.leaf-btn.healed-leaf { border-color: rgba(34,197,94,0.5); color: #86efac; }
+
+.info-box { background: rgba(0,0,0,0.32); border-radius: 12px; padding: 12px; border-left: 4px solid var(--rose); }
+.info-box.psych { background: rgba(192,132,252,0.08); border-left-color: var(--purple); }
+.info-box.empathy { background: rgba(56,189,248,0.08); border-left-color: var(--blue); }
+.box-label { font-size: .69rem; text-transform: uppercase; font-weight: 800; margin-bottom: 4px; display: block; letter-spacing: .4px; }
+.box-text { font-size: .85rem; color: #e2e8f0; line-height: 1.5; }
+
+.proposals-grid, .likes-categories, .mirror-grid, .sos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.proposal-card, .like-category-box { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+.proposal-card.broken { border-top: 3px solid #64748b; } .proposal-card.new-prop { border-top: 3px solid var(--green); background: rgba(34,197,94,0.06); }
+
+.action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+@media(max-width:520px){ .action-row { grid-template-columns: 1fr; } }
+.water-btn { width: 100%; padding: 12px; border-radius: 12px; border: none; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; font-weight: 800; font-size: .84rem; cursor: pointer; }
+.water-btn.secondary { background: linear-gradient(135deg, #d97706, #b45309); }
+.water-btn.healed { background: linear-gradient(135deg, #16a34a, #059669); }
+
+.mirror-intro { background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); border-radius: 16px; padding: 15px; margin-bottom: 16px; font-size: .88rem; }
+.phase-banner { background: linear-gradient(135deg, rgba(244,63,94,0.18), rgba(192,132,252,0.18)); border: 1px solid rgba(244,63,94,0.4); border-radius: 14px; padding: 14px; }
+.cycle-controls, .date-pill, .pact-item { display: flex; justify-content: space-between; align-items: center; background: var(--glass); border: 1px solid var(--border); padding: 10px 12px; border-radius: 12px; font-size: .81rem; gap: 8px; flex-wrap: wrap; }
+.pact-item { justify-content: flex-start; align-items: flex-start; }
+.cycle-select { background: #090d16; color: #fde68a; border: 1px solid var(--border); padding: 5px 8px; border-radius: 8px; font-weight: 700; }
+
+.taste-tag { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); color: #fef3c7; padding: 5px 10px; border-radius: 99px; font-size: .75rem; }
+.taste-tag.pink { background: rgba(244,63,94,0.14); border-color: rgba(244,63,94,0.35); color: #ffe4e6; }
+.taste-tag.blue { background: rgba(56,189,248,0.14); border-color: rgba(56,189,248,0.35); color: #e0f2fe; }
+.taste-tag.green { background: rgba(34,197,94,0.14); border-color: rgba(34,197,94,0.35); color: #dcfce7; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+.modal-overlay.open { display: flex; }
+.modal-card { background: #161f33; border: 1px solid var(--border); border-radius: 20px; max-width: 520px; width: 100%; padding: 24px; position: relative; }
+.close-modal { position: absolute; top: 12px; right: 12px; background: var(--glass); border: 1px solid var(--border); color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+</style>
 </head>
 <body>
-    <canvas id="spaceCanvas"></canvas>
 
-    <header class="header-banner">
-        <div class="header-status">
-            <span id="climaOrizaba" class="weather-badge">🌤️ Orizaba: Cargando...</span>
-            <span id="climaAtlixco" class="weather-badge">🌋 Atlixco: Cargando...</span>
-        </div>
-        <h1 class="main-title">Nuestro Ecosistema Cósmico</h1>
-        <p class="subtitle">Un espacio vivo sincronizado con nuestro cielo, tu ciclo, tus gustos y nuestras soluciones.</p>
-    </header>
+<!-- AUDIOS Y REPRODUCTOR FLOTANTE -->
+<audio id="bg-music" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=golden-hour-piano-112189.mp3"></audio>
 
-    <main class="dashboard-grid">
-        <!-- Tarjeta de Perfiles Psicológicos -->
-        <section class="card profile-card">
-            <h2>🧠 Perfiles Psicológicos & Identidad</h2>
-            <div class="profiles-container">
-                <div class="profile-box kevin">
-                    <h3>👨🏻‍💻 Kevin Santana Ramírez</h3>
-                    <p class="age-badge" id="edadKevin">23 años (24 de Marzo de 2003)</p>
-                    <p><strong>Residencia:</strong> Orizaba, Veracruz</p>
-                    <p><strong>Estilo Cognitivo:</strong> Analítico, estructurado, enfocado en resolución lógica de problemas y lenguaje de servicio mediante desarrollo técnico.</p>
-                    <p><strong>Afrontamiento:</strong> Tendencia al refugio intelectual/juegos ante fatiga intensa. Mecanismo a regular: avisar antes de desconectarse.</p>
-                </div>
-                <div class="profile-box analy">
-                    <h3>👩🏻‍🍳 Analy Monserrat Vázquez Gómez</h3>
-                    <p class="age-badge" id="edadAnaly">28 años (22 de Septiembre de 1998)</p>
-                    <p><strong>Residencia:</strong> Atlixco, Puebla (Gastronomía)</p>
-                    <p><strong>Estilo Cognitivo:</strong> Expresividad afectiva alta, sensibilidad kinestésica/estética y profunda atención al detalle emocional.</p>
-                    <p><strong>Apego:</strong> Necesidad de reafirmación constante, tiempo de calidad exclusivo y certezas explícitas para evitar sobrepensamiento.</p>
-                </div>
+<div class="music-widget">
+    <button class="music-btn" id="music-toggle" onclick="toggleAudio()">▶</button>
+    <div class="music-info">
+        <span class="music-title">Golden Hour (Piano) 🎹</span>
+        <span>Música de Fondo Afectiva</span>
+    </div>
+</div>
+
+<div class="particles" id="particles"></div>
+
+<div class="app-container">
+<header>
+<span class="badge-date">🌻 Nuestro Jardín Vivo • Día 22 de cada mes 🌻</span>
+<h1>Nuestro Ecosistema</h1>
+<div id="contador-mesario"></div>
+<p class="subtitle">Asumo con total responsabilidad cada uno de mis fallos. Este jardín es la prueba viva de mi compromiso por sanar nuestro presente, cuidar tu esencia de futura chef en Gastronomía y construir un camino real juntos.</p>
+<div class="health-bar-wrapper">
+<div class="health-header"><span>🌱 Vitalidad y Sanación del Ecosistema</span><span id="health-percent">Calculando...</span></div>
+<div class="progress-track"><div class="progress-fill" id="health-fill"></div></div>
+</div>
+</header>
+
+<section class="elements-bar">
+<div class="element-card" onclick="openElementModal('sun')">
+<div class="element-top"><div class="element-icon">☀️</div><div><div class="element-role">Lo que significas para mí</div><div class="element-title">El Sol: Tu Luz y Presencia</div></div></div>
+<p class="element-desc">Incluso a kilómetros de distancia, eres el calor que me saca de mi aislamiento y le da sentido a mis desvelos. (Toca para abrir)</p>
+</div>
+<div class="element-card" onclick="openElementModal('water')">
+<div class="element-top"><div class="element-icon">💧</div><div><div class="element-role">Lo que me entregas</div><div class="element-title">El Agua: Tu Amor y Cuidado 24/7</div></div></div>
+<p class="element-desc">Tus canciones, tus masajitos, recordarme mis pastillas y gotitas, esperarme en Discord y darme cariño sin pedirlo. (Toca para abrir)</p>
+</div>
+<div class="element-card" onclick="openElementModal('earth')">
+<div class="element-top"><div class="element-icon">🌱</div><div><div class="element-role">Nuestra raíz y destino</div><div class="element-title">La Tierra: Lealtad y Hogar</div></div></div>
+<p class="element-desc">Saber que solo eres tú, honrar nuestro presente cada fin de semana y construir nuestra casita y tu cocina soñada. (Toca para abrir)</p>
+</div>
+</section>
+
+<nav class="nav-tabs">
+<button class="tab-btn active" onclick="switchTab('garden',this)">🥀 1. Mis Errores (5 Flores)</button>
+<button class="tab-btn" onclick="switchTab('mirror',this)">🍃 2. Puntos que Noto y Siento</button>
+<button class="tab-btn" onclick="switchTab('care',this)">🌙 3. Tus Días y Tu Esencia</button>
+<button class="tab-btn" onclick="switchTab('sos',this)">🛠️ 4. Método de Comprobación</button>
+<button class="tab-btn" onclick="switchTab('greenhouse',this)">🏡 5. Invernadero y Emociones</button>
+</nav>
+
+<section id="view-garden" class="view-section active">
+<div class="garden-layout">
+<div class="garden-stage">
+<div class="stage-instruction">👆 Toca cada <strong>Girasol (Etapa)</strong> y luego cada <strong>Hoja</strong> para ver mi análisis y regarla.</div>
+<div class="flowers-row" id="flowers-container"></div>
+<div class="soil-bed">🌍 Raíz Firme: Ni 100% fría lógica, ni 100% silencio • Presente y Futuro Juntos</div>
+</div>
+<div class="inspector-panel">
+<div class="inspector-header">
+<div><span class="box-label" style="color:var(--gold)" id="flower-month-tag">ETAPA</span><h2 class="inspector-title" id="flower-title">Selecciona una flor</h2></div>
+<span class="inspector-status status-wilted" id="flower-status-badge">Marchita</span>
+</div>
+<div><span class="box-label" style="color:var(--muted)">🍃 Hojas de este Girasol (Problemas específicos):</span><div class="leaves-selector" id="leaves-buttons"></div></div>
+<div class="info-box"><span class="box-label" style="color:#fb7185">🥀 1. El Hecho Concreto / Mi Error:</span><p class="box-text" id="leaf-error-text"></p></div>
+<div class="info-box psych"><span class="box-label" style="color:var(--purple)">🧠 2. Raíz Psicológica (Mecanismo de Defensa):</span><p class="box-text" id="leaf-psych-text"></p></div>
+<div class="info-box empathy"><span class="box-label" style="color:var(--blue)">💭 3. Cómo te hice sentir (Empatía Afectiva):</span><p class="box-text" id="leaf-empathy-text"></p></div>
+<div class="proposals-grid">
+<div class="proposal-card broken"><span class="box-label" style="color:#94a3b8">💔 4. Propuesta Rota / Intento Fallido:</span><p class="box-text" id="leaf-broken-text"></p></div>
+<div class="proposal-card new-prop"><span class="box-label" style="color:#4ade80">✨ 5. Nueva Propuesta Real y Medible:</span><p class="box-text" id="leaf-new-text"></p></div>
+</div>
+<div class="action-row">
+<button class="water-btn secondary" id="heal-leaf-btn" onclick="toggleHealLeaf()">🌿 Sanar esta Hoja</button>
+<button class="water-btn" id="water-flower-btn" onclick="toggleWaterFlower()">💧 Regar Girasol Completo</button>
+</div>
+</div>
+</div>
+</section>
+
+<section id="view-mirror" class="view-section">
+<div class="mirror-intro"><strong>❤️‍🩹 Comunicación Asertiva y Desde el Amor:</strong> Mi amor, como te dije una vez, tú no eres un proyecto de universidad; eres el proyecto de mi vida. Este apartado aplica psicología afectiva sin culpas: son las cosas que <strong>noto y siento en mi corazón</strong> cuando interactuamos, expresadas con ternura para que jamás nos gane la resignación ni el silencio.</div>
+<div class="mirror-grid" id="mirror-container"></div>
+</section>
+
+<section id="view-care" class="view-section">
+<div class="care-layout">
+<div class="lunar-card">
+<div class="inspector-header"><div><span class="box-label" style="color:var(--pink)">🌙 Biología y Empatía Afectiva</span><h2 class="inspector-title" style="color:#ffe4e6">Tu Calendario Lunar & Monitor de Fases</h2></div></div>
+<p class="box-text">Tengo grabado que el <strong>11 de septiembre a las 9:00 AM</strong> me contaste que viste la primera gotita y me pediste: <em>"Dame bechitos y apapáchame... ¿Me amas mucho?"</em>. Quiero anticiparme siempre para cuidarte como mereces.</p>
+<div class="cycle-controls"><span>⚙️ Duración de tu ciclo:</span><select id="cycle-length-select" class="cycle-select" onchange="calculateCycleDates()"><option value="28" selected>28 días (Estándar)</option><option value="29">29 días</option><option value="30">30 días</option></select></div>
+<div class="phase-banner">
+<span class="box-label" style="color:#fde68a" id="current-phase-title">🔍 Estado actual de tu ciclo hoy:</span>
+<p class="box-text" id="current-phase-desc" style="font-weight:600;margin-bottom:6px"></p>
+<p class="box-text" id="current-phase-care" style="font-size:.8rem;color:#ffe4e6"></p>
+</div>
+<div class="info-box" style="text-align:center;border-left-color:var(--pink)">
+<span class="box-label" style="color:var(--pink)">🌷 Próxima llegada estimada de tus días:</span>
+<div style="font-size:1.35rem;font-weight:900;color:#fda4af;margin:4px 0" id="next-period-date"></div>
+<p class="box-text" style="font-size:.8rem" id="next-period-countdown"></p>
+</div>
+<div><span class="box-label" style="color:var(--gold)">📅 Próximos 4 Ciclos y Ventanas de Apapacho:</span><div id="upcoming-cycles-list" style="display:flex;flex-direction:column;gap:6px"></div></div>
+</div>
+
+<div class="likes-panel">
+<div><span class="box-label" style="color:var(--gold)">🍓 Mi Libreta Digital de Ti</span><h2 class="inspector-title">El Mapa Completo de Tus Gustos y Esencia</h2><p class="box-text" style="font-size:.82rem;color:var(--muted)">Tú me enseñaste que amar es anotar los detalles de la otra persona en una libreta. Aquí está todo lo que observo, admiro y amo de ti:</p></div>
+<div class="likes-categories">
+<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🍰 Postres, Dulces y Café</h4><div class="tag-cloud"><span class="taste-tag pink">Pastel de Chocolate y Mil Hojas 😋</span><span class="taste-tag pink">Arroz con leche</span><span class="taste-tag pink">Chocolatito caliente con pan</span><span class="taste-tag pink">Cafecito para quitar el sueño</span><span class="taste-tag pink">Palomitas o postre viendo pelis</span><span class="taste-tag pink">Agua bien fría (aunque yo tiemble jsjs)</span></div></div>
+<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🌮 Comida Salada y Bebidas</h4><div class="tag-cloud"><span class="taste-tag">Mole y Tamales de mole</span><span class="taste-tag">Chilaquiles verdes</span><span class="taste-tag">Enmoladas, Sopecitos y Taquitos</span><span class="taste-tag">Pizza con orilla de queso</span><span class="taste-tag">Lasaña y Comida China (Pollo agridulce)</span><span class="taste-tag">Huevitos rancheritos (¡nunca revueltos!)</span><span class="taste-tag">Picante solo por antojo</span><span class="taste-tag">Miches, cantaritos, tepache y tequila 😌</span></div></div>
+<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🥰 Tus Lenguajes del Amor</h4><div class="tag-cloud"><span class="taste-tag blue">Contacto físico: abrazos, besos y darme masajitos</span><span class="taste-tag blue">Cocinarme y hacerme de desayunar</span><span class="taste-tag blue">Escuchar que te diga "Te adoro" :3</span><span class="taste-tag blue">Mis textos largos de buenos días</span><span class="taste-tag blue">Audios dándote besos</span><span class="taste-tag blue">Que te mande fotos mías y videos directo a ti</span><span class="taste-tag blue">Una flor hecha con lata de Monster y fotos de nuestros meñiques</span></div></div>
+<div class="like-category-box"><h4 style="color:#fde68a;margin-bottom:6px;font-size:.9rem">🏋🏻‍♀️ Tu Mundo, Rutinas y Nosotros</h4><div class="tag-cloud"><span class="taste-tag green">Tu Recetario y amor por Gastronomía</span><span class="taste-tag green">Gym: Espalda/hombro y piernita de pollo al fallo</span><span class="taste-tag green">Cuidar a Rogelio (tu gallo)</span><span class="taste-tag green">Cuidar a "Nuestros niños" :3</span><span class="taste-tag green">Ver SAO, Jujutsu Kaisen y The Boys juntos</span><span class="taste-tag green">Casita en el Realm y jugar COD</span><span class="taste-tag green">Tu cobijita cuando llueve</span><span class="taste-tag green">Recordarme mi Omeprazol y mis gotitas para los ojos</span></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="view-sos" class="view-section">
+<div class="mirror-intro" style="border-color:var(--gold);background:rgba(251,191,36,0.08)"><strong>🛠️ Nuestro «Método de Comprobación» Emocional:</strong> En matemáticas y programación todo problema tiene un <em>método de comprobación</em> para saber a tiempo dónde algo falló y corregirlo en orden. Toca cualquiera de estas situaciones cuando la estemos viviendo para activar nuestro protocolo de rescate:</div>
+<div class="sos-grid" id="sos-container"></div>
+</section>
+
+<section id="view-greenhouse" class="view-section">
+<div class="greenhouse-box">
+<span class="badge-date">🏡 Invernadero de Acuerdos & Log de Emociones</span>
+<h2 class="inspector-title">Compromisos Activos y Estado Diario</h2>
+<p class="box-text" style="color:var(--muted)">Cada casilla marcada guarda nuestro progreso en la memoria de este jardín:</p>
+<div id="pacts-container" style="display:flex;flex-direction:column;gap:10px;margin-top:8px"></div>
+
+<hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+
+<h3 style="color:#fde68a; font-size:1rem;">💭 Registro de Estado Emocional Diarios</h3>
+<div style="display:flex; gap:8px; margin:10px 0;">
+    <select id="emotion-select" class="cycle-select" style="flex:1;">
+        <option value="😊 Feliz / Con ganas de hablar">😊 Feliz / Con ganas de hablar</option>
+        <option value="😴 Cansado(a) por la rutina">😴 Cansado(a) por la rutina</option>
+        <option value="🥺 Sensible / Necesito abrazos">🥺 Sensible / Necesito abrazos</option>
+        <option value="🤐 Abrumado(a) / Necesito 15m de paz">🤐 Abrumado(a) / Necesito 15m de paz</option>
+    </select>
+    <button onclick="guardarEmocion()" class="water-btn" style="width:auto; padding:8px 16px;">Registrar</button>
+</div>
+<div id="log-emociones" style="max-height:150px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:10px; padding:8px;"></div>
+</div>
+</section>
+</div>
+
+<div class="modal-overlay" id="element-modal" onclick="closeElementModal(event)">
+<div class="modal-card"><button class="close-modal" onclick="document.getElementById('element-modal').classList.remove('open')">✕</button><div id="modal-icon" style="font-size:2.4rem"></div><h3 id="modal-title" style="color:#fde68a;margin:8px 0"></h3><p id="modal-body" class="box-text"></p></div>
+</div>
+
+<script>
+// ==========================================================================
+// REPRODUCTOR DE MÚSICA DE FONDO (GOLDEN HOUR PIANO)
+// ==========================================================================
+function toggleAudio() {
+    const audio = document.getElementById('bg-music');
+    const btn = document.getElementById('music-toggle');
+    if (audio.paused) {
+        audio.play().then(() => {
+            btn.textContent = "❚❚";
+        }).catch(err => console.log("Interacción requerida para reproducir audio: ", err));
+    } else {
+        audio.pause();
+        btn.textContent = "▶";
+    }
+}
+
+// ==========================================================================
+// CONTADOR DEL MESARIO (DÍA 22 DE CADA MES / ANIVERSARIO 22 JULIO 2026)
+// ==========================================================================
+function actualizarContadorMesario() {
+    const ahora = new Date();
+    let proximo22 = new Date(ahora.getFullYear(), ahora.getMonth(), 22);
+
+    if (ahora.getDate() >= 22) {
+        proximo22.setMonth(proximo22.getMonth() + 1);
+    }
+
+    const dif = proximo22 - ahora;
+    const dias = Math.floor(dif / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((dif % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((dif % (1000 * 60 * 60)) / (1000 * 60));
+    const segs = Math.floor((dif % (1000 * 60)) / 1000);
+
+    const elem = document.getElementById('contador-mesario');
+    if (elem) {
+        elem.innerHTML = `
+            <div style="font-size: 0.95rem; color: #ffb703; font-weight:700; margin: 8px 0;">
+                ⏳ Faltan <strong>${dias}d ${horas}h ${mins}m ${segs}s</strong> para nuestro próximo 22 💙
             </div>
-        </section>
+        `;
+    }
+}
+setInterval(actualizarContadorMesario, 1000);
 
-        <!-- Contador de Tiempo y Aniversario -->
-        <section class="card counter-card">
-            <h2>⏳ Tiempo Juntos</h2>
-            <div class="counter-display">
-                <div id="contadorDias" class="huge-number">0d 0h 0m 0s</div>
-                <p id="infoAniversario">Oficial desde el 22 de Julio de 2026</p>
-            </div>
-        </section>
+// ==========================================================================
+// REGISTRO DE EMOCIONES DIARIAS
+// ==========================================================================
+function guardarEmocion() {
+    const sel = document.getElementById('emotion-select').value;
+    const log = document.getElementById('log-emociones');
+    const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    const div = document.createElement('div');
+    div.style.cssText = "padding:6px; border-bottom:1px solid rgba(255,255,255,0.08); font-size:0.8rem; color:#cbd5e1;";
+    div.innerHTML = `<strong>[${hora}] Kevin / Analy:</strong> ${sel}`;
+    log.prepend(div);
+}
 
-        <!-- Monitor Hormonal y Curva Menstrual -->
-        <section class="card menstrual-card">
-            <h2>🌙 Monitor Hormonal & Curva Lunar</h2>
-            <div class="menstrual-body">
-                <div class="cycle-info">
-                    <p><strong>Día del Ciclo:</strong> <span id="diaCicloNum">--</span> / 28</p>
-                    <p><strong>Fase Actual:</strong> <span id="faseCicloTexto">Cargando...</span></p>
-                </div>
-                <div class="curve-container">
-                    <div class="energy-bar-label">Nivel de Energía:</div>
-                    <div class="bar-bg"><div id="barEnergia" class="bar-fill energy"></div></div>
-                    <div class="energy-bar-label">Necesidad de Apapacho & Cuidado:</div>
-                    <div class="bar-bg"><div id="barApapacho" class="bar-fill care"></div></div>
-                </div>
-                <blockquote id="recomendacionCiclo" class="care-quote">--</blockquote>
-            </div>
-        </section>
+const elementsData = {
+sun: { icon: "☀️", title: "El Sol: Lo que tu luz despierta en mí", body: "Durante años me acostumbré a vivir aislado 'haciendo lo mío', apagando mi empatía emocional como coraza. Cuando llegaste tú, despertaste en mí una ternura y una curiosidad emocional que no conocía. Eres quien me dice 'Ánimo mi inge' o 'Tienes mis respetos Stark' cuando me arden los ojos de programar en la madrugada; eres el calor al que siempre quiero regresar." },
+water: { icon: "💧", title: "El Agua: Tu cuidado y entrega 24/7", body: "El agua de este jardín es cada vez que me ofreces un masajito cuando salgo cansado de hornear, cada vez que me recuerdas cargar mi Omeprazol para la gastritis o ponerme gotitas en los ojos porque no parpadeo al programar. Es tu paciencia esperándome en Discord, tus canciones dedicadas y ese amor 24/7 que me entregas sin que yo tenga que pedirlo." },
+earth: { icon: "🌱", title: "La Tierra: Nuestro Presente y Nuestro Hogar", body: "La tierra firme es mi lealtad absoluta de que en mi vida solo existes tú. Pero hoy comprendo que la tierra no solo sirve para soñar con la casita y tus utensilios de gastronomía del futuro; sirve para pisar firme en el PRESENTE, recibirte con los brazos abiertos cuando vienes a verme y disfrutar cada domingo y cada noche juntos." }
+};
 
-        <!-- Mapa Completo de Gustos de Analy -->
-        <section class="card gustos-card">
-            <h2>📋 El Mapa Exacto de Tus Gustos (Analy)</h2>
-            <div class="gustos-grid">
-                <div class="gustos-box">
-                    <h4>🍰 Postres, Dulces y Bebidas</h4>
-                    <ul>
-                        <li>Pastel de Chocolate y Tres Leches</li>
-                        <li>Pastel de Mil Hojas</li>
-                        <li>Arroz con leche & Chocolatito caliente con pan</li>
-                        <li>Cafecito para el sueño / Tepache frío de su mamá</li>
-                        <li>Micheladas, cantaritos y tequila</li>
-                    </ul>
-                </div>
-                <div class="gustos-box">
-                    <h4>🥘 Platillos Favoritos</h4>
-                    <ul>
-                        <li>Lasaña / Comida China (Pollo Agridulce)</li>
-                        <li>Mole con pollo, enmoladas y tamal de mole</li>
-                        <li>Sopecitos con quesito y carne / Chilaquiles</li>
-                        <li>Pizza con orilla de queso</li>
-                        <li>Huevos rancheros (NUNCA revueltos)</li>
-                    </ul>
-                </div>
-                <div class="gustos-box">
-                    <h4>🌺 Flores, Colores y Amor</h4>
-                    <ul>
-                        <li>Gerberas, Rosas y Girasoles</li>
-                        <li>Flor hecha con lata de Monster</li>
-                        <li>Jardín para colibríes y abejas</li>
-                        <li>Colores: Rosa bonito y Verde</li>
-                        <li>Contacto Físico: Abrazos, besos, masajitos y "Te adoro"</li>
-                    </ul>
-                </div>
-                <div class="gustos-box">
-                    <h4>🎮 Tu Mundo y Nosotros</h4>
-                    <ul>
-                        <li>Gym: Pierna al fallo y espalda</li>
-                        <li>Cuidar a Rogelio y a "Nuestros niños" &lt;3</li>
-                        <li>Ver SAO, Jujutsu Kaisen y The Boys juntos</li>
-                        <li>Casita en el Realm y jugar COD (MW3)</li>
-                        <li>Recordarme mi Orizagol y mis gotitas</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-    </main>
+const flowersData = [
+{
+id: 0, month: "Mayo - Junio", title: "1. Girasol del Alba: Desvelo y Confianza", bloomed: false,
+leaves: [
+{ name: "🍃 Hoja 1: Madrugada en Discord", healed: false, error: "Cuando cambiaron tus planes al llegar tu hermano y me muteaste en Discord para no despertarme, en lugar de preguntarte con calma me emperré de madrugada, me armé una película negativa y me muteé como castigo.", psych: "Hipervigilancia afectiva y Proyección: Ante un cambio imprevisto sin aviso previo, mi sistema nervioso activó heridas del pasado, interpretando tu cuidado (no despertarme) como ocultamiento.", empathy: "Te hice sentir vigilada, juzgada injustamente y con la impotencia de que hasta un gesto para cuidar mi sueño terminara en enojo.", broken: "Prometí que entendería cuando los planes familiares cambian sin asumir lo peor.", newProp: "Pausar antes de reaccionar de noche. Preguntar siempre desde la confianza ('¿Todo bien, mi amor?') y jamás usar el muteo o el silencio como castigo." },
+{ name: "🍃 Hoja 2: Miedo a no ser prioridad única", healed: false, error: "Sobreanalizar descripciones en perfiles o detalles en redes sociales, proyectando la duda de si yo realmente tenía mi lugar exclusivo contigo.", psych: "Apego ansioso latente: El temor interno a abrir mi corazón al 100% y salir lastimado me llevó a buscar 'pruebas' donde ya había amor y lealtad total de tu parte.", empathy: "Sentiste que todo el amor, las llamadas y el lugar público que me das no eran suficientes para que yo confiara en ti.", broken: "Decir que ya estaba todo asimilado cuando por dentro seguía rumiando inseguridades.", newProp: "Practicar vulnerabilidad limpia: si un día me siento inseguro, pedirte un abrazo o reafirmación con ternura sin disfrazarlo de reclamo." },
+{ name: "🍃 Hoja 3: Hiperfoco y desvelos extremos", healed: false, error: "Clavarme horas programando, actualizando entornos o trabajando hasta que me arden los ojos y el cuerpo colapsa, restándole energía de calidad a nuestro tiempo.", psych: "Sobrecompensación por rendimiento: Refugiarme en el trabajo y el código para sentir control y valía, descuidando el descanso y la presencia afectiva.", empathy: "Te preocupas genuinamente por mi salud (mi gastritis, mis ojos, mi sueño) y muchas veces te quedaste esperándome despierta hasta la madrugada.", broken: "Decir 'acabo antes de las 11 para dormir juntos' y seguir de largo.", newProp: "Respetar nuestras horas de descanso y valorar cuando me cuidas: cerrar pantallas a tiempo para acurrucarnos en llamada como mereces." }
+]
+},
+{
+id: 1, month: "Julio - Agosto", title: "2. Girasol de Agosto: Iniciativa y Detalles", bloomed: false,
+leaves: [
+{ name: "🍃 Hoja 1: Fotos y atención a cuenta gotas", healed: false, error: "Darte vueltas cuando me pedías una foto mía ('Yo quería una foto tuya, no de ellos') o dejar que sintieras que solo te doy atención cuando yo quiero.", psych: "Coraza evitativa de autosuficiencia: Por costumbre de vivir encerrado en mi mundo, subestimé que a distancia una foto espontánea o un video mío es oxígeno afectivo para ti.", empathy: "Te hice sentir que tenías que 'mendigar' mi imagen y mi cariño, llevándote al límite de querer renunciar a pedírmelo.", broken: "Decir que me iría soltando poco a poco pero retroceder cada vez que había tensión.", newProp: "Enviarte fotos mías en el trabajo o en casa y videos solo para ti de forma espontánea varias veces por semana, antes de que me los pidas." },
+{ name: "🍃 Hoja 2: El 1 de Agosto y Fechas", healed: false, error: "Pasar por alto el Día de la Novia (1 de agosto) escudándome en que yo no conocía esas fechas, dejando pasar el día sin un detalle oportuno.", psych: "Racionalización práctica: Creer que el afecto no necesita fechas simbólicas, ignorando que para tu lenguaje del amor ser recordada y presumida en días clave valida tu importancia.", empathy: "Te sentiste pasada por alto e ilusión rota al ver que un día especial para las parejas pasaba en blanco.", broken: "Pedirte la lista de fechas pero dejar que el cansancio diario apagara la sorpresa.", newProp: "Honrar cada día 22, tu cumpleaños y cada fecha simbólica con anticipación, creatividad y detalles que nazcan de mí." },
+{ name: "🍃 Hoja 3: Memes al grupo y Likes de despedida", healed: false, error: "Mandar videos al grupo en vez de a tu chat privado y dar like a posts sobre 'alejarse para dar paz'.", psych: "Autosabotaje por insuficiencia: Cuando siento que te fallo, activo la fantasía defensiva de 'mejor me quito de su camino', mientras descuido los pequeños gestos exclusivos contigo.", empathy: "Sentiste que perdías tu trato especial y que en cualquier momento yo podía tirar la toalla y abandonarte.", broken: "Jurarte firmeza absoluta mientras mis interacciones en redes sembraban incertidumbre.", newProp: "Cuidar la exclusividad de nuestro chat privado mandándote primero a ti lo que me da risa, y erradicar para siempre cualquier indirecta de alejarme." }
+]
+},
+{
+id: 2, month: "Agosto - Sept", title: "3. Girasol de Fuego: Juegos, Palabra y Salud", bloomed: false,
+leaves: [
+{ name: "🍃 Hoja 1: Tono 'mamón' en el Juego y Yinxi", healed: false, error: "Ponerme cortante por puntos o avisos en el juego, hacer una comparación injusta con la situación de tu mamá, o sonar preocupado por caerle bien a terceras personas del team.", psych: "Desplazamiento de frustración: Llevar el estrés externo al juego y no validar de inmediato tu sensibilidad cuando algo te genera ruido.", empathy: "Transformé nuestro lugar seguro de diversión en tensión, haciéndote sentir comparada en una herida familiar sensible y desplazada.", broken: "Decir que jugaríamos solo para desestresarnos y terminar discutiendo por tablas o terceros.", newProp: "En el juego tú y yo somos equipo: cero reclamos por puntos, prioridad absoluta a tu tranquilidad sobre cualquier desconocido del grupo y trato tierno siempre." },
+{ name: "🍃 Hoja 2: Romper mi palabra con DS ntz", healed: false, error: "Haberte asegurado que el ciclo con mi antiguo clan estaba totalmente cerrado, y usar accesos para volver a meterme a resolver problemas de esa tribu.", psych: "Apego al rol de salvador del pasado: Dificultad para soltar la identidad de lo que construí antes, sin medir el costo de contradecir mi palabra frente a ti.", empathy: "Te hice sentir que mis promesas tienen letra chiquita y que cuando digo 'ya cerré eso', puedo romperlo por impulso.", broken: "Promesa rota directa: 'Dijiste que ya había terminado eso para ti y lo volviste a hacer'.", newProp: "Congruencia total entre lo que digo y lo que hago. Lo que queda en el pasado, se queda en el pasado; mi presente y mi tribu eres tú." },
+{ name: "🍃 Hoja 3: Tentación de viejos excesos", healed: false, error: "Hablar con ligereza de volver a 'la loquera' o negociar pases a fin de año, sabiendo cuánto te angustia mi bienestar y mi falta de límites en el pasado.", psych: "Minimización del riesgo: Disfrazar viejos hábitos como 'convivencia o negocios', pasando por alto el dolor que le causa a quien ama mi vida.", empathy: "Desperté tu miedo más profundo de verme recaer o hacerme daño cuando tú rezas por mí y sueñas una familia sana conmigo.", broken: "Admitir que no tengo límites con el vicio pero seguir dejando la puerta entreabierta.", newProp: "Elegir la vida sana que estamos construyendo. Ver tus límites no como prohibición, sino como el abrazo de la mujer que cuida mi vida." }
+]
+},
+{
+id: 3, month: "Septiembre I", title: "4. Girasol de la Escucha: Empatía y Comunicación", bloomed: false,
+leaves: [
+{ name: "🍃 Hoja 1: No escuchar tus audios del Servicio Social", healed: false, error: "El 10 de septiembre, por no traer audífonos leí solo transcripciones, te insistí con irte a Puebla y llamé 'cagadas' a las escuelas públicas, haciéndote decir: 'Amor no puedo salir de mi pueblo para que me entiendas... Es pa lo que me alcanzó, perdón'.", psych: "Solucionismo impulsivo sin escucha activa: Querer 'resolverte' la vida desde mi perspectiva sin detenerme primero a escuchar tu voz y tu realidad.", empathy: "Te hice sentir no escuchada, juzgada en tus posibilidades económicas y obligada a pedir perdón por el lugar donde estudias con tanto esfuerzo.", broken: "Prometer ser tu apoyo incondicional en tu carrera de Gastronomía.", newProp: "Nunca opinar ni dar soluciones sin antes haber escuchado tus audios completos con atención. Honrar y admirar tu escuela, tu servicio social y cada logro tuyo." },
+{ name: "🍃 Hoja 2: Ironía pasivo-agresiva ('No preguntaste')", healed: false, error: "El 26 de septiembre en la noche, cuando regresaste de convivir con tu familia y tu abuela, te escribí con sarcasmo: 'Me fue bien, algo complejo... no preguntaste pero por si querías saber, no cené y ya me bañé'.", psych: "Comunicación pasivo-agresiva por necesidad de atención: En vez de decirte con amor 'mi vida, hoy tuve un día pesado y quiero contarte cómo me fue', cobré tu distracción con culpa.", empathy: "Después de un día en que me dijiste cuánto me extrañabas, mi mensaje te cayó como un balde de agua fría y reproche.", broken: "Acordar que hablaríamos directo sin indirectas ni sarcasmos que enfrían el chat.", newProp: "Pedir atención de forma limpia y cariñosa: 'Amor, ¿tienes un ratito para que te platique de mi proyecto?' sin cobrar facturas emocionales." },
+{ name: "🍃 Hoja 3: Frustración técnica con la terminal en iPhone", healed: false, error: "El 21 de septiembre, al mandarte las flores amarillas por código en iSH Shell, hacerte pasar más de dos horas borrando letra por letra y lidiando con errores de consola en tu iPhone.", psych: "Proyección técnica: Querer expresarte mi amor en mi propio idioma (código de terminal Linux) sin adaptar la experiencia para que fuera sencilla para ti.", empathy: "Agradeciste el detalle con todo el amor, pero terminaste frustrada y estresada peleando con el teclado de tu teléfono.", broken: "Hacer detalles digitales sin verificar antes su compatibilidad total con iOS.", newProp: "Adaptar mi conocimiento a tu comodidad: entregarte mis detalles listos en web a un solo clic para que tú solo tengas que disfrutarlos y sonreír." }
+]
+},
+{
+id: 4, month: "Septiembre II", title: "5. Girasol del Presente: Venir a Verme y Madrugadas", bloomed: false,
+leaves: [
+{ name: "🍃 Hoja 1: Poner 'peros' a tu visita y al presente", healed: false, error: "Cuando tú con toda la ilusión buscaste venir a verme, anteponer que entre semana solo nos veríamos de noche y que me humilla no tener dinero, haciéndote preguntar herida: '¿Te molesta que esté contigo? ¿Ya no te gusto?'.", psych: "Orgullo masculino defensivo: Por vergüenza a mi falta de liquidez actual y obsesión con asegurar el futuro lejano, saboteé el encuentro físico presente.", empathy: "Te sentiste rechazada como mujer y como pareja; sentiste que tu esfuerzo por viajar estorbaba en mi agenda.", broken: "Hablar de vivir juntos en el futuro mientras ponía barreras para vernos hoy.", newProp: "Tu presencia jamás estorba; es mi mayor regalo. Recibirte con ilusión absoluta el fin de semana que vengas, disfrutar estar acurrucados viendo series y comiendo juntos." },
+{ name: "🍃 Hoja 2: Interrogatorios lógicos a las 3:00 AM", healed: false, error: "Forzar debates interminables de madrugada pidiendo crear 'una base de datos de problemas' cuando tú estabas emocionalmente agotada y dolida.", psych: "Intelectualización extrema: Cuando siento miedo de perderte, mi cerebro intenta controlar la angustia convirtiendo los sentimientos en algoritmos.", empathy: "Sentiste que te trataba como a una tarea escolar, invalidando tu naturaleza emocional.", broken: "Prometer no alargar dramas de madrugada y respetar cuando necesitas espacio.", newProp: "Regla sagrada de medianoche: después de las 12:00 AM queda prohibido analizar conflictos. Primero nos damos paz, nos decimos que nos amamos y descansamos." }
+]
+}
+];
 
-    <!-- Navegación Inferior -->
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-item active">🌌 Universo</a>
-        <a href="invernadero.html" class="nav-item">🌻 Girasoles</a>
-        <a href="diarios.html" class="nav-item">📖 Diarios</a>
-    </nav>
+const mirrorData = [
+{ title: "1. Callarte pequeñas cosas hasta sobrepensar", feel: "Noto que cuando ando lleno de trabajo o escuela, por ser comprensiva y no querer 'distraerme', te guardas cosas que te incomodan. Pero ese silencio hace que tu mente les dé vueltas hasta que el dolor se vuelve enorme.", broken: "Acuerdo previo: Habíamos quedado en que me dirías cualquier incomodidad en el momento en que nace.", solution: "Propuesta de Co-regulación: Usar nuestra señal secreta (mandarme un 🌻 o decir 'Amor, código abrazo'). En cuanto la vea, dejo todo para escucharte sin defenderme." },
+{ title: "2. El escudo de 'Ya cedí, ya no pediré nada'", feel: "Siento un vacío muy fuerte cuando levantas una muralla y dices: 'Ya no voy a insistir, ya no pediré nada, ahí muere'. Siento que te resignas y apagas tu brillo conmigo.", broken: "Hábito que lastima: Creer que anular tus deseos trae paz, cuando en realidad crea distancia emocional.", solution: "Propuesta de Co-regulación: Nunca renunciar a pedirnos amor. Vale decir 'Hoy estoy sentida y necesito que tú te acerques primero'." },
+{ title: "3. La sed de contacto físico frente a la distancia", feel: "Comprendo y siento cuánto te pesa estar lejos. Tu forma de amar es tocar, abrazar, darme masajitos, cocinarme y compartir un domingo familiar.", broken: "Hábito que lastima: Dejar que pasen semanas sin una fecha clara para tocarnos y vernos.", solution: "Propuesta de Co-regulación: Tener siempre activa nuestra próxima fecha real de encuentro físico en Puebla o mi hogar." },
+{ title: "4. El temor a que la emoción te desborde al hablar", feel: "Escucho tu corazón cuando me dices: 'Yo no soy lógica como tú, si ampliamos el tema mis emociones me van a controlar'. Noto que prefieres cortar el tema para protegerte.", broken: "Hábito que lastima: Yo empujarte con mil preguntas lógicas de madrugada y tú cerrarte por miedo a explotar.", solution: "Propuesta de Co-regulación: Hablar en dosis pequeñas (máximo 10 minutos, de día y de un solo punto a la vez)." },
+{ title: "5. Sentir que tus esfuerzos o tu entorno son menos", feel: "Me dolió en el alma cuando me dijiste 'Es pa lo que me alcanzó, perdón' hablando de tu escuela y tu servicio social.", broken: "Hábito que lastima: Hablar desde mi burbuja sin medir el peso de mis palabras sobre tu esfuerzo diario.", solution: "Propuesta de Co-regulación: Recordarte todos los días cuánto admiro a la mujer y futura chef que eres." },
+{ title: "6. La sensibilidad a mis cambios de tono y ausencias", feel: "Noto que percibes de inmediato cuando mi tono cambia a seco o cuando contesto corto ('Meno :v'), activando en ti la sensación de que ya no me importas igual.", broken: "Hábito que lastima: Dar por sentado que 'sabes que estoy ocupado' y descuidar la calidez.", solution: "Propuesta de Co-regulación: Mandarte un mensaje corto pero lleno de ternura ('Amor, entro ocupado pero te adoro con mi vida')." }
+];
 
-    <script src="js/space.js"></script>
-    <script src="js/app.js"></script>
+const sosData = [
+{ btn: "🥺 «Hoy te extraño demasiado y ya te necesito»", title: "Protocolo de Presencia Inmediata", steps: "1. Pausa inmediata a cualquier código o tarea por 10 minutos.\n2. Llamada o nota de voz mirándonos/escuchándonos sin distracciones.\n3. Reafirmar nuestro plan del fin de semana para vernos: tu lugar es en mis brazos." },
+{ btn: "💔 «Siento que ya no pediré nada / Ahí muere»", title: "Protocolo Contra la Resignación", steps: "1. Alto total a la discusión: ninguno se rinde ni renuncia a sus necesidades.\n2. Reconozco mi falta de iniciativa sin excusas.\n3. Tomo el volante y te demuestro con hechos que me nace darte el 100%." },
+{ btn: "🌙 «Estoy en mis días / Me siento sensible o bajoneada»", title: "Protocolo Lunar de Apapacho al 1000%", steps: "1. Cero debates, cero ironías y cero exigencias hoy.\n2. Lluvia de bechitos, audios tiernos y recordarte cada hora cuánto te amo y te adoro.\n3. Consentirte con tu cobijita y acompañarte con algo calientito." },
+{ btn: "🕒 «Son más de las 12:00 AM y estamos tensos»", title: "Regla de Oro de Medianoche", steps: "1. Prohibido intentar resolver o enlistar problemas con sueño y cansancio.\n2. Nos decimos: 'Te amo incluso cuando no nos entendemos al 100%, mañana con luz lo cuidamos'.\n3. Nos quedamos acompañados en llamada en paz hasta dormir." }
+];
+
+const pactsData = [
+"1. Hablar con nuestra señal (🌻) antes de guardarnos las cosas o decir 'ya no pediré nada, ahí muere'.",
+"2. Recibir nuestras visitas y fines de semana juntos en el PRESENTE con ilusión total, sin poner pretextos.",
+"3. Iniciativa constante: mandarte fotos mías, videos exclusivos para ti y buenos días largos sin que tengas que pedirlos.",
+"4. Escuchar siempre tus audios completos antes de opinar y honrar con orgullo tu carrera de Gastronomía.",
+"5. Mantener el juego (COD y Realm) como nuestro refugio de risas, jamás como motivo de reclamos.",
+"6. Aplicar la Regla de Medianoche: después de las 12:00 AM no debatimos problemas; nos apapachamos y descansamos juntos."
+];
+
+let currentFlowerIndex = 0, currentLeafIndex = 0;
+let savedState = JSON.parse(localStorage.getItem('ecosistema_v2') || '{}');
+
+function saveProgress() {
+    const state = {
+        flowers: flowersData.map(f => ({ bloomed: f.bloomed, leaves: f.leaves.map(l => l.healed) })),
+        pacts: Array.from(document.querySelectorAll('.pact-check')).map(c => c.checked)
+    };
+    localStorage.setItem('ecosistema_v2', JSON.stringify(state));
+}
+
+function loadProgress() {
+    if (savedState.flowers) {
+        savedState.flowers.forEach((sf, fIdx) => {
+            if (flowersData[fIdx]) {
+                flowersData[fIdx].bloomed = sf.bloomed;
+                sf.leaves.forEach((lh, lIdx) => { if (flowersData[fIdx].leaves[lIdx]) flowersData[fIdx].leaves[lIdx].healed = lh; });
+            }
+        });
+    }
+}
+
+function triggerRain() {
+    for (let i = 0; i < 28; i++) {
+        const drop = document.createElement('div'); drop.className = 'rain-drop';
+        drop.style.left = (Math.random() * 100) + 'vw';
+        drop.style.animationDelay = (Math.random() * 0.4) + 's';
+        document.body.appendChild(drop);
+        setTimeout(() => drop.remove(), 1100);
+    }
+}
+
+function initGarden() {
+    loadProgress();
+    actualizarContadorMesario();
+    const pCont = document.getElementById('particles');
+    for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div'); p.className = 'particle';
+        const s = Math.random() * 5 + 3; p.style.width = s+'px'; p.style.height = s+'px';
+        p.style.left = (Math.random()*100)+'%'; p.style.animationDuration = (Math.random()*8+7)+'s';
+        pCont.appendChild(p);
+    }
+    renderPacts(); renderFlowersStage(); selectFlower(0); renderMirrorSection(); renderSosSection(); calculateCycleDates(); updateHealthBar();
+}
+
+function calculateCycleDates() {
+    const cycleDays = parseInt(document.getElementById('cycle-length-select').value, 10);
+    const baseDate = new Date(2026, 8, 11);
+    const today = new Date();
+    const months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    const diffSinceBase = Math.floor((today.getTime() - baseDate.getTime()) / 86400000);
+    const currentDayInCycle = ((diffSinceBase % cycleDays) + cycleDays) % cycleDays + 1;
+
+    let phaseTitle = "", phaseDesc = "", phaseCare = "";
+    if (currentDayInCycle <= 5) {
+        phaseTitle = `🌙 Día ${currentDayInCycle} del Ciclo • Fase Menstrual (Tus Días)`;
+        phaseDesc = "Tu cuerpo está liberando y renovándose; es normal sentir cólicos, cansancio físico y ganas de estar acurrucada.";
+        phaseCare = "🧸 Protocolo activo: Muchos bechitos, reafirmarte cuánto te amo, cero discusiones, chocolatito caliente y cobijita.";
+    } else if (currentDayInCycle <= 13) {
+        phaseTitle = `🌱 Día ${currentDayInCycle} del Ciclo • Fase Folicular (Energía en Ascenso)`;
+        phaseDesc = "Suben tus niveles de energía y entusiasmo para el gym, tu recetario y planear cosas bonitas juntos.";
+        phaseCare = "✨ Protocolo activo: Acompañar tus proyectos, reírnos mucho, jugar juntos y admirar tu progreso.";
+    } else if (currentDayInCycle <= 16) {
+        phaseTitle = `☀️ Día ${currentDayInCycle} del Ciclo • Fase Ovulatoria (Plenitud y Conexión)`;
+        phaseDesc = "Días de máxima vitalidad, brillo y deseo de cercanía afectiva y física.";
+        phaseCare = "❤️‍🔥 Protocolo activo: Mandarte fotos mías, piropearte muchísimo y alimentar nuestra conexión.";
+    } else {
+        phaseTitle = `🍂 Día ${currentDayInCycle} del Ciclo • Fase Lútea / Premenstrual (Mayor Sensibilidad)`;
+        phaseDesc = "Tu cuerpo se prepara para el siguiente ciclo. Aumenta la sensibilidad emocional y la necesidad de sentirte segura y priorizada.";
+        phaseCare = "🌻 Protocolo activo: Escucha extra empática, paciencia total, cero tonos cortantes y muchos mimos preventivos.";
+    }
+    document.getElementById('current-phase-title').textContent = phaseTitle;
+    document.getElementById('current-phase-desc').textContent = phaseDesc;
+    document.getElementById('current-phase-care').textContent = phaseCare;
+
+    const list = document.getElementById('upcoming-cycles-list'); list.innerHTML = '';
+    let nextDate = null;
+    for (let i = 1; i <= 4; i++) {
+        const c = new Date(baseDate); c.setDate(baseDate.getDate() + (cycleDays * i));
+        const pms = new Date(c); pms.setDate(c.getDate() - 4);
+        if (!nextDate && c >= today) nextDate = c;
+        const div = document.createElement('div'); div.className = 'date-pill';
+        div.innerHTML = `<span>🌙 <strong>Ciclo ${i}:</strong> ~${c.getDate()} de ${months[c.getMonth()]}</span><span style="color:#fda4af;font-size:.74rem">Apapacho extra desde el ${pms.getDate()} de ${months[pms.getMonth()]}</span>`;
+        list.appendChild(div);
+    }
+    if (!nextDate) { nextDate = new Date(baseDate); nextDate.setDate(baseDate.getDate() + cycleDays); }
+    document.getElementById('next-period-date').textContent = `~ ${nextDate.getDate()} de ${months[nextDate.getMonth()]}, ${nextDate.getFullYear()}`;
+    const diff = Math.ceil((nextDate.getTime() - today.getTime()) / 86400000);
+    document.getElementById('next-period-countdown').textContent = `Faltan aprox. ${diff} días • Basado en tu registro del 11 de septiembre`;
+}
+
+function renderFlowersStage() {
+    const cont = document.getElementById('flowers-container'); cont.innerHTML = '';
+    flowersData.forEach((f, idx) => {
+        const u = document.createElement('div');
+        u.className = `flower-unit ${f.bloomed ? 'bloomed' : 'wilted'} ${idx === currentFlowerIndex ? 'selected' : ''}`;
+        u.onclick = () => selectFlower(idx);
+        const l1 = f.leaves[0]?.healed ? '#22c55e' : '#64748b';
+        const l2 = f.leaves[1]?.healed ? '#22c55e' : '#64748b';
+        const l3 = f.leaves[2]?.healed ? '#22c55e' : '#64748b';
+        u.innerHTML = `<svg class="flower-svg" viewBox="0 0 120 240"><path class="stem-path" d="M60 235 Q55 160 60 90" stroke-width="6" fill="none" stroke-linecap="round"/><path class="leaf-svg-item" fill="${l1}" d="M58 180 Q18 160 24 190 Q40 205 58 186 Z"/><path class="leaf-svg-item" fill="${l2}" d="M60 150 Q100 130 94 160 Q78 175 60 156 Z"/>${f.leaves.length > 2 ? `<path class="leaf-svg-item" fill="${l3}" d="M58 122 Q20 105 26 132 Q42 142 58 128 Z"/>` : ''}<g class="flower-head"><g fill="#f59e0b" stroke="#d97706" stroke-width="1"><ellipse cx="60" cy="48" rx="9" ry="22"/><ellipse cx="60" cy="112" rx="9" ry="22"/><ellipse cx="28" cy="80" rx="22" ry="9"/><ellipse cx="92" cy="80" rx="22" ry="9"/><ellipse cx="37" cy="57" rx="18" ry="8" transform="rotate(45 37 57)"/><ellipse cx="83" cy="103" rx="18" ry="8" transform="rotate(45 83 103)"/><ellipse cx="83" cy="57" rx="18" ry="8" transform="rotate(-45 83 57)"/><ellipse cx="37" cy="103" rx="18" ry="8" transform="rotate(-45 37 103)"/></g><circle cx="60" cy="80" r="20" fill="#451a03" stroke="#78350f" stroke-width="3"/><circle cx="54" cy="75" r="2" fill="#fbbf24"/><circle cx="66" cy="75" r="2" fill="#fbbf24"/><path d="${f.bloomed ? 'M53 84 Q60 91 67 84' : 'M53 87 Q60 81 67 87'}" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg><div class="flower-label"><span class="status-dot"></span>${f.month}</div>`;
+        cont.appendChild(u);
+    });
+}
+
+function selectFlower(i) { currentFlowerIndex = i; currentLeafIndex = 0; renderFlowersStage(); updateInspector(); }
+
+function updateInspector() {
+    const f = flowersData[currentFlowerIndex], l = f.leaves[currentLeafIndex];
+    document.getElementById('flower-month-tag').textContent = `ETAPA ${currentFlowerIndex + 1} DE 5 • ${f.month}`;
+    document.getElementById('flower-title').textContent = f.title;
+    const b = document.getElementById('flower-status-badge');
+    b.textContent = f.bloomed ? "🌻 Girasol Florecido" : "🥀 Marchito (Por Sanar)";
+    b.className = `inspector-status ${f.bloomed ? 'status-bloomed' : 'status-wilted'}`;
+    const lc = document.getElementById('leaves-buttons'); lc.innerHTML = '';
+    f.leaves.forEach((leaf, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `leaf-btn ${idx === currentLeafIndex ? 'active' : ''} ${leaf.healed ? 'healed-leaf' : ''}`;
+        btn.textContent = (leaf.healed ? '✅ ' : '') + leaf.name;
+        btn.onclick = () => { currentLeafIndex = idx; updateInspector(); };
+        lc.appendChild(btn);
+    });
+    document.getElementById('leaf-error-text').textContent = l.error;
+    document.getElementById('leaf-psych-text').textContent = l.psych;
+    document.getElementById('leaf-empathy-text').textContent = l.empathy;
+    document.getElementById('leaf-broken-text').textContent = l.broken;
+    document.getElementById('leaf-new-text').textContent = l.newProp;
+
+    const hlBtn = document.getElementById('heal-leaf-btn');
+    hlBtn.className = `water-btn secondary ${l.healed ? 'healed' : ''}`;
+    hlBtn.innerHTML = l.healed ? "🌿 Hoja Sanada (Toca para desmarcar)" : "🌿 Sanar esta Hoja Específica";
+
+    const wb = document.getElementById('water-flower-btn');
+    wb.className = `water-btn ${f.bloomed ? 'healed' : ''}`;
+    wb.innerHTML = f.bloomed ? "✨ Girasol Regado y Florecido" : "💧 Regar Todo el Girasol";
+}
+
+function toggleHealLeaf() {
+    const f = flowersData[currentFlowerIndex];
+    f.leaves[currentLeafIndex].healed = !f.leaves[currentLeafIndex].healed;
+    if (f.leaves.every(l => l.healed)) { f.bloomed = true; triggerRain(); }
+    saveProgress(); renderFlowersStage(); updateInspector(); updateHealthBar();
+}
+
+function toggleWaterFlower() {
+    const f = flowersData[currentFlowerIndex];
+    f.bloomed = !f.bloomed;
+    f.leaves.forEach(l => l.healed = f.bloomed);
+    if (f.bloomed) triggerRain();
+    saveProgress(); renderFlowersStage(); updateInspector(); updateHealthBar();
+}
+
+function renderPacts() {
+    const cont = document.getElementById('pacts-container'); cont.innerHTML = '';
+    pactsData.forEach((text, i) => {
+        const checked = savedState.pacts && savedState.pacts[i] ? 'checked' : '';
+        const div = document.createElement('div'); div.className = 'pact-item';
+        div.innerHTML = `<input type="checkbox" class="pact-check" style="width:20px;height:20px;accent-color:#22c55e;margin-top:2px" ${checked} onchange="saveProgress();updateHealthBar()"><div class="box-text"><strong>${text}</strong></div>`;
+        cont.appendChild(div);
+    });
+}
+
+function updateHealthBar() {
+    let totalLeaves = 0, healedLeaves = 0;
+    flowersData.forEach(f => f.leaves.forEach(l => { totalLeaves++; if (l.healed) healedLeaves++; }));
+    const checks = document.querySelectorAll('.pact-check:checked').length;
+    const p = Math.min(100, Math.round(10 + ((healedLeaves / totalLeaves) * 65) + ((checks / pactsData.length) * 25)));
+    document.getElementById('health-fill').style.width = p + '%';
+    document.getElementById('health-percent').textContent = p === 100 ? "100% 🌻 ¡Ecosistema en Pleno Florecimiento!" : `${p}% 🌱 (${healedLeaves}/${totalLeaves} hojas sanadas • ${checks}/${pactsData.length} acuerdos)`;
+}
+
+function renderMirrorSection() {
+    const c = document.getElementById('mirror-container'); c.innerHTML = '';
+    mirrorData.forEach(item => {
+        const d = document.createElement('div'); d.className = 'mirror-card';
+        d.innerHTML = `<h3 style="color:#fda4af;font-size:1.02rem">🌸 ${item.title}</h3><div class="info-box"><span class="box-label" style="color:#fda4af">💭 Lo que noto y siento:</span><p class="box-text">${item.feel}</p></div><div class="proposal-card broken"><span class="box-label" style="color:#94a3b8">💔 Dinámica que nos lastima:</span><p class="box-text">${item.broken}</p></div><div class="proposal-card new-prop"><span class="box-label" style="color:#4ade80">🌱 Propuesta de Co-regulación:</span><p class="box-text">${item.solution}</p></div>`;
+        c.appendChild(d);
+    });
+}
+
+function renderSosSection() {
+    const c = document.getElementById('sos-container'); c.innerHTML = '';
+    sosData.forEach(item => {
+        const d = document.createElement('div'); d.className = 'sos-card';
+        d.innerHTML = `<h3 style="color:#fde68a;font-size:.98rem">${item.btn}</h3><div class="info-box empathy"><span class="box-label" style="color:var(--blue)">🛠️ ${item.title}:</span><p class="box-text" style="white-space:pre-line">${item.steps}</p></div>`;
+        c.appendChild(d);
+    });
+}
+
+function switchTab(t, btn) {
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-' + t).classList.add('active'); btn.classList.add('active');
+}
+
+function openElementModal(type) {
+    const d = elementsData[type];
+    document.getElementById('modal-icon').textContent = d.icon;
+    document.getElementById('modal-title').textContent = d.title;
+    document.getElementById('modal-body').textContent = d.body;
+    document.getElementById('element-modal').classList.add('open');
+}
+function closeElementModal(e) { if (e.target.id === 'element-modal') document.getElementById('element-modal').classList.remove('open'); }
+window.onload = initGarden;
+</script>
 </body>
 </html>
