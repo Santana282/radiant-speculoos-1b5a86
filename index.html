@@ -2,114 +2,214 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ecosistema Cósmico - Kevin & Analy</title>
-  <link rel="manifest" href="./manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Stark-OS v4.0: Entrelazamiento Cuántico - Kevin & Analy</title>
+
+  <!-- Librería 3D para la Galaxia -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Fuentes Elegantes -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-color: #05050d;
-      --card-bg: rgba(20, 20, 35, 0.75);
-      --accent-pink: #ff77a9;
-      --accent-yellow: #ffd32a;
-      --accent-blue: #70a1ff;
-      --text-color: #f1f2f6;
+      --bg-dark: #030308;
+      --card-bg: rgba(15, 15, 30, 0.75);
+      --card-border: rgba(255, 183, 3, 0.25);
+      --neon-gold: #ffb703;
+      --neon-pink: #ff4757;
+      --neon-blue: #00d2d3;
+      --neon-purple: #9b59b6;
+      --text-light: #f1f2f6;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Quicksand', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: var(--bg-dark);
+      color: var(--text-light);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* Overlay para desbloqueo de audio en móviles */
+    /* Fondo Canvas 3D */
+    #canvas3d {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Pantalla de Desbloqueo de Audio / Bienvenida */
     #audioOverlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(5, 5, 13, 0.95);
-      z-index: 9999;
+      background: radial-gradient(circle at center, rgba(15,15,35,0.98), rgba(3,3,8,0.99));
+      z-index: 99999;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 20px;
+      padding: 25px;
     }
 
-    .btn-enter {
-      background: linear-gradient(45deg, var(--accent-pink), var(--accent-yellow));
+    .btn-portal {
+      background: linear-gradient(135deg, var(--neon-gold), var(--neon-pink));
       border: none;
       color: #000;
-      padding: 15px 30px;
+      padding: 18px 36px;
+      font-family: 'Orbitron', sans-serif;
       font-size: 1.1rem;
-      font-weight: bold;
-      border-radius: 25px;
+      font-weight: 900;
+      border-radius: 50px;
       cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 0 15px rgba(255, 119, 169, 0.5);
+      margin-top: 25px;
+      box-shadow: 0 0 25px rgba(255, 183, 3, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .btn-portal:active { transform: scale(0.95); }
+
+    /* Contenedor Principal */
+    .app-container {
+      position: relative;
+      z-index: 10;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 20px 15px 80px 15px;
     }
 
     header {
       text-align: center;
-      margin-bottom: 20px;
-      width: 100%;
-      max-width: 600px;
+      margin-bottom: 30px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     h1 {
-      font-size: 1.8rem;
-      color: var(--accent-yellow);
-      margin-bottom: 5px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      background: linear-gradient(45deg, var(--neon-gold), var(--neon-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
     }
 
-    .card {
+    .identity-badge {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+      font-size: 0.85rem;
+      background: rgba(255,255,255,0.03);
+      padding: 10px;
+      border-radius: 12px;
+    }
+
+    /* Tarjetas Modulares */
+    .section-card {
       background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 20px;
-      width: 100%;
-      max-width: 600px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
     }
 
-    /* Audio Player */
-    .audio-player {
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      color: var(--neon-gold);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 8px;
+    }
+
+    /* Reproductor de Audio */
+    .audio-box {
       display: flex;
       align-items: center;
       justify-content: space-between;
       background: rgba(255, 255, 255, 0.05);
-      padding: 10px 15px;
-      border-radius: 10px;
+      padding: 12px 18px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 183, 3, 0.3);
     }
 
-    .controls-btn {
-      background: var(--accent-pink);
+    .btn-audio {
+      background: var(--neon-pink);
       border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
       color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
       font-weight: bold;
       cursor: pointer;
     }
 
+    /* Girasoles Interactivos */
+    .sunflower-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .sunflower-card {
+      background: rgba(20, 20, 40, 0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 15px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .sunflower-card.marchito { border-left: 4px solid #e74c3c; }
+    .sunflower-card.sanado { border-left: 4px solid #2ecc71; }
+
+    .btn-water {
+      background: linear-gradient(45deg, var(--neon-blue), #3498db);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* Gráfica del Ciclo */
+    canvas.chart-canvas {
+      width: 100%;
+      height: 150px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
     /* Canvas de Juegos */
-    canvas {
-      background: #0a0a14;
-      border: 2px solid var(--accent-pink);
-      border-radius: 10px;
+    canvas.game-canvas {
+      background: #080812;
+      border: 2px solid var(--neon-gold);
+      border-radius: 15px;
       display: block;
       margin: 10px auto;
       max-width: 100%;
@@ -117,240 +217,361 @@
 
     .dpad {
       display: grid;
-      grid-template-columns: repeat(3, 50px);
-      grid-gap: 5px;
+      grid-template-columns: repeat(3, 45px);
+      gap: 5px;
       justify-content: center;
       margin-top: 10px;
     }
 
     .dpad button {
-      width: 50px;
-      height: 50px;
+      width: 45px;
+      height: 45px;
       background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--accent-blue);
+      border: 1px solid var(--neon-blue);
       color: white;
-      font-size: 1.2rem;
-      border-radius: 8px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+    }
+
+    /* Área de Texto Interactiva */
+    textarea {
+      width: 100%;
+      height: 90px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--neon-purple);
+      border-radius: 12px;
+      color: white;
+      padding: 10px;
+      resize: none;
+      margin-top: 10px;
     }
 
     .badge {
-      display: inline-block;
       padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      margin-bottom: 5px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: bold;
     }
-    .sanada { background: #2ed573; color: black; }
-    .pendiente { background: #ffa502; color: black; }
+    .badge-marchito { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+    .badge-sanado { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
   </style>
 </head>
 <body>
 
-  <!-- Pantalla de Inicio / Permiso de Audio -->
+  <!-- Background Canvas 3D -->
+  <canvas id="canvas3d"></canvas>
+
+  <!-- Overlay de Bienvenida y Autoplay -->
   <div id="audioOverlay">
-    <h2>✨ Nuestro Espacio Cósmico ✨</h2>
-    <p style="margin-top: 10px; color: #ccc;">Haz clic abajo para iniciar la experiencia con música de fondo.</p>
-    <button class="btn-enter" onclick="iniciarExperiencia()">Entrar a Nuestro Espacio 🎵</button>
+    <h1 style="font-size: 2rem;">✨ Stark-OS v4.0 ✨</h1>
+    <p style="color: #aaa; margin-top: 10px; max-width: 400px;">
+      Espacio Cósmico de Entrelazamiento Cuántico.<br>Diseñado para Kevin & Analy.
+    </p>
+    <button class="btn-portal" onclick="iniciarExperiencia()">Sincronizar Universo 🎵</button>
   </div>
 
-  <header>
-    <h1>🌻 Kevin & Analy 🌌</h1>
-    <p id="countdown">Cargando fecha especial...</p>
-  </header>
+  <div class="app-container">
 
-  <!-- Reproductor Audio -->
-  <div class="card">
-    <h3>🎵 Música de Fondo: Golden Hour (Piano)</h3>
-    <div class="audio-player" style="margin-top: 10px;">
-      <span id="musicStatus">Estado: Pausado</span>
-      <button class="controls-btn" onclick="toggleAudio()">Play / Pausa</button>
+    <!-- Encabezado con Nombres y Edades -->
+    <header>
+      <h1>🌻 Kevin & Analy 🌌</h1>
+      <p id="counterDays" style="color: var(--neon-gold); font-weight: bold; margin-top: 5px;">
+        Calculando tiempo juntos...
+      </p>
+
+      <div class="identity-badge">
+        <div>👨🏻‍💻 <strong>Kevin Santana Ramírez</strong><br><small>24/03/2003 (23 años) | Orizaba</small></div>
+        <div>👩🏻‍🍳 <strong>Analy Monserrat Vázquez Gómez</strong><br><small>22/09/1998 (28 años) | Atlixco</small></div>
+      </div>
+    </header>
+
+    <!-- Reproductor de Audio Principal -->
+    <div class="section-card">
+      <div class="section-title">🎵 Reproductor Cósmico</div>
+      <div class="audio-box">
+        <div>
+          <strong style="color: var(--neon-gold);">Golden Hour (Piano)</strong>
+          <p id="audioStatusText" style="font-size: 0.8rem; color: #aaa;">Estado: Pausado</p>
+        </div>
+        <button class="btn-audio" onclick="toggleAudio()">Play / Pausa</button>
+      </div>
+      <audio id="bgMusic" loop preload="auto">
+        <source src="./audio/golden-hour.mp3" type="audio/mpeg">
+      </audio>
     </div>
-    <!-- Reproductor HTML5 interno -->
-    <audio id="bgMusic" loop preload="auto">
-      <source src="./audio/golden-hour.mp3" type="audio/mpeg">
-      Tu navegador no soporta el reproductor de audio.
-    </audio>
-  </div>
 
-  <!-- Minijuego 1: Pac-Garden 2.0 -->
-  <div class="card">
-    <h3>🕹️ Pac-Garden: Caza de Antojos</h3>
-    <p style="font-size:0.85rem; color:#aaa; margin-bottom:5px;">Junta los antojos (🍰, 🍓, 🌻) y evita el estrés (👻).</p>
-    <canvas id="pacmanCanvas" width="300" height="300"></canvas>
-    
-    <!-- Controles táctiles móviles -->
-    <div class="dpad">
-      <div></div>
-      <button onclick="movePacman(0, -1)">▲</button>
-      <div></div>
-      <button onclick="movePacman(-1, 0)">◄</button>
-      <div></div>
-      <button onclick="movePacman(1, 0)">►</button>
-      <div></div>
-      <button onclick="movePacman(0, 1)">▼</button>
-      <div></div>
+    <!-- Invernadero de Girasoles (Análisis de Conflictos) -->
+    <div class="section-card">
+      <div class="section-title">🌻 Invernadero de Girasoles & Resoluciones</div>
+      <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 15px;">
+        Cada girasol representa un punto de tensión analizado. Analy puede tocarlos para "Regar" y restaurar su energía.
+      </p>
+      <div class="sunflower-grid" id="sunflowerContainer"></div>
     </div>
-  </div>
 
-  <!-- Minijuego 2: Pong Estelar -->
-  <div class="card">
-    <h3>🏓 Pong Estelar (Kevin vs Analy)</h3>
-    <p style="font-size:0.85rem; color:#aaa;">Mueve tu raqueta usando el toque sobre el tablero.</p>
-    <canvas id="pongCanvas" width="300" height="200"></canvas>
-  </div>
+    <!-- Monitor del Ciclo Menstrual & Gráfica Sinusoidal -->
+    <div class="section-card">
+      <div class="section-title">🌸 Monitor Biológico & Curva Emocional</div>
+      <p id="periodInfo" style="font-size: 0.9rem; margin-bottom: 5px;"></p>
+      <canvas id="periodChart" class="chart-canvas"></canvas>
+      <div style="font-size: 0.8rem; color: #aaa; margin-top: 8px;">
+        💡 <strong>Recomendación para Kevin:</strong> En días de baja energía, preparar té tibio, apapachos sin discursos lógicos y abastecimiento de tamal de mole o arroz con leche.
+      </div>
+    </div>
 
-  <!-- Invernadero de Girasoles -->
-  <div class="card">
-    <h3>🌻 Invernadero de Compromisos</h3>
-    <div id="girasolesGrid"></div>
+    <!-- Perfiles Psicológicos Clínicos -->
+    <div class="section-card">
+      <div class="section-title">🧠 Perfil Psicológico & Dinámica de Apego</div>
+      <div style="font-size: 0.88rem; line-height: 1.5; color: #ddd;">
+        <p style="margin-bottom: 10px;">
+          <strong style="color: var(--neon-blue);">• Kevin (Apego Evitativo-Protector):</strong> Tendencia a canalizar la sobrecarga personal replegándose en tareas lógicas (código, panadería, juegos). <em>Solución:</em> Notificar previamente antes de desconectarse para evitar disparar ansiedad.
+        </p>
+        <p>
+          <strong style="color: var(--neon-pink);">• Analy (Apego Ansioso-Reasegurador):</strong> Sensibilidad alta a los cambios de tono o silencio prolongado. Requiere confirmación de permanencia afectiva. <em>Solución:</em> Kevin ofrece certezas proactivas sin ponerse a la defensiva.
+        </p>
+      </div>
+    </div>
+
+    <!-- Diarios Íntimos y Expresión de Analy -->
+    <div class="section-card">
+      <div class="section-title">📖 Bitácora & Espacio de Expresión</div>
+      <div style="font-size: 0.88rem; color: #ccc; margin-bottom: 10px;">
+        <strong>Perspectiva de Kevin:</strong> "Rereconozco mis fallas en discusiones nocturnas y respuestas frías. Mi compromiso es validar sus emociones antes de proponer soluciones técnicas."
+      </div>
+      <label style="font-size: 0.85rem; color: var(--neon-gold);">Escribe tus pensamientos (Analy):</label>
+      <textarea id="analyNotes" placeholder="Expresa cómo te sientes hoy o si algo te inquieta..."></textarea>
+      <button class="btn-water" style="width: 100%; margin-top: 5px;" onclick="guardarNota()">Guardar en la Bitácora</button>
+      <p id="saveMsg" style="font-size:0.75rem; color:#2ecc71; margin-top:5px; display:none;">¡Nota guardada correctamente en el sistema!</p>
+    </div>
+
+    <!-- Minijuego: Pac-Garden -->
+    <div class="section-card">
+      <div class="section-title">🕹️ Pac-Garden: Caza de Antojos</div>
+      <p style="font-size: 0.8rem; color: #aaa;">Controla a Analy (👩🏻‍🍳) junta sus postres (🍰, 🍓, 🌻) y esquiva el estrés (👻).</p>
+      <canvas id="pacmanCanvas" class="game-canvas" width="280" height="280"></canvas>
+      <div class="dpad">
+        <div></div><button onclick="movePacman(0, -1)">▲</button><div></div>
+        <button onclick="movePacman(-1, 0)">◄</button><div></div><button onclick="movePacman(1, 0)">►</button>
+        <div></div><button onclick="movePacman(0, 1)">▼</button><div></div>
+      </div>
+    </div>
+
+    <!-- Minijuego: Pong Estelar -->
+    <div class="section-card">
+      <div class="section-title">🏓 Pong Estelar (Kevin vs Analy)</div>
+      <p style="font-size: 0.8rem; color: #aaa;">Desliza el dedo sobre la pantalla para mover tu raqueta (derecha).</p>
+      <canvas id="pongCanvas" class="game-canvas" width="280" height="180"></canvas>
+    </div>
+
   </div>
 
   <script>
-    // 1. Manejo de Audio y Autoplay
+    // ==========================================
+    // 1. MOTOR 3D TRES.JS (GALAXIA DE ESTRELLAS)
+    // ==========================================
+    const canvas3d = document.getElementById('canvas3d');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const starsGeometry = new THREE.BufferGeometry();
+    const count = 2500;
+    const positions = new Float32Array(count * 3);
+    for(let i=0; i<count*3; i++) {
+      positions[i] = (Math.random() - 0.5) * 600;
+    }
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const starsMaterial = new THREE.PointsMaterial({ color: 0xffb703, size: 0.85, transparent: true, opacity: 0.8 });
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starField);
+    camera.position.z = 200;
+
+    function animate3D() {
+      requestAnimationFrame(animate3D);
+      starField.rotation.y += 0.0005;
+      starField.rotation.x += 0.0002;
+      renderer.render(scene, camera);
+    }
+    animate3D();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ==========================================
+    // 2. AUDIO & AUTOPLAY CONTROL
+    // ==========================================
     const audio = document.getElementById('bgMusic');
-    const musicStatus = document.getElementById('musicStatus');
+    const audioStatusText = document.getElementById('audioStatusText');
 
     function iniciarExperiencia() {
       document.getElementById('audioOverlay').style.display = 'none';
       audio.play().then(() => {
-        musicStatus.innerText = "Estado: Reproduciendo 🎶";
-      }).catch(err => {
-        musicStatus.innerText = "Estado: Toca Play para escuchar";
-        console.log("Autoplay bloqueado:", err);
+        audioStatusText.innerText = "Estado: Reproduciendo 🎶";
+      }).catch(e => {
+        audioStatusText.innerText = "Estado: Toca Play para escuchar";
       });
     }
 
     function toggleAudio() {
       if (audio.paused) {
         audio.play();
-        musicStatus.innerText = "Estado: Reproduciendo 🎶";
+        audioStatusText.innerText = "Estado: Reproduciendo 🎶";
       } else {
         audio.pause();
-        musicStatus.innerText = "Estado: Pausado";
+        audioStatusText.innerText = "Estado: Pausado";
       }
     }
 
-    // 2. Contador de Aniversario (Día 22)
+    // ==========================================
+    // 3. CONTADOR DE TIEMPO
+    // ==========================================
     function actualizarContador() {
+      const inicioRelacion = new Date('2026-07-22T00:00:00');
       const ahora = new Date();
-      let proximo22 = new Date(ahora.getFullYear(), ahora.getMonth(), 22);
-      if (ahora.getDate() > 22) {
-        proximo22.setMonth(proximo22.getMonth() + 1);
-      }
-      const dif = proximo22 - ahora;
-      const dias = Math.floor(dif / (1000 * 60 * 60 * 24));
-      const horas = Math.floor((dif / (1000 * 60 * 60)) % 24);
-      document.getElementById('countdown').innerText = `Faltan ${dias} días y ${horas} horas para nuestro próximo día 22 ❤️`;
+      const diffTime = Math.abs(ahora - inicioRelacion);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diffTime / (1000 * 60 * 60)) % 24);
+      document.getElementById('counterDays').innerText = `✨ ${diffDays} días y ${hours} horas construyendo nuestro universo ✨`;
     }
     setInterval(actualizarContador, 1000);
     actualizarContador();
 
-    // 3. Juego Pac-Garden
+    // ==========================================
+    // 4. GIRASOLES & CONFLICTOS INTERACTIVOS
+    // ==========================================
+    const girasolesData = [
+      { id: 1, titulo: "Girasol del Estado de FB y Discord", errorK: "Falta de claridad al cambiar estados.", errorA: "Inseguridad por desconexión no avisada.", sol: "Avisar momentos de trabajo o desconexión.", regado: true },
+      { id: 2, titulo: "Girasol de las Discusiones Nocturnas (3 AM)", errorK: "Racionalización fría sin empatía.", errorA: "Sobrepensamiento e insomnio.", sol: "Límite de chat a las 12 AM en desacuerdos.", regado: false },
+      { id: 3, titulo: "Girasol del Futuro e Incertidumbre", errorK: "Temor defensivo al compromiso.", errorA: "Exigencia justa de certeza.", sol: "Registro diario de certezas afectivas.", regado: false }
+    ];
+
+    function renderGirasoles() {
+      const container = document.getElementById('sunflowerContainer');
+      container.innerHTML = girasolesData.map(g => `
+        <div class="sunflower-card ${g.regado ? 'sanado' : 'marchito'}">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>🌻 ${g.titulo}</strong>
+            <span class="badge ${g.regado ? 'badge-sanado' : 'badge-marchito'}">${g.regado ? 'Sanado / Regado' : 'Marchito'}</span>
+          </div>
+          <p style="font-size:0.8rem; color:#aaa; margin-top:5px;"><strong>Falla Kevin:</strong> ${g.errorK}</p>
+          <p style="font-size:0.8rem; color:#aaa;"><strong>Sentir Analy:</strong> ${g.errorA}</p>
+          <p style="font-size:0.82rem; color:var(--neon-gold); margin-top:4px;"><strong>Solución:</strong> ${g.sol}</p>
+          ${!g.regado ? `<button class="btn-water" onclick="regarGirasol(${g.id})">💧 Regar Girasol</button>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function regarGirasol(id) {
+      const g = girasolesData.find(item => item.id === id);
+      if(g) { g.regado = true; renderGirasoles(); }
+    }
+    renderGirasoles();
+
+    // ==========================================
+    // 5. MONITOR Y GRÁFICA DE CICLO MENSTRUAL
+    // ==========================================
+    function renderCiclo() {
+      const basePeriodo = new Date('2026-09-11');
+      const hoy = new Date();
+      const diasTranscurridos = Math.floor((hoy - basePeriodo) / (1000 * 60 * 60 * 24)) % 28;
+      document.getElementById('periodInfo').innerHTML = `Día <strong>${diasTranscurridos}</strong> del ciclo estimado (~28 días). Próxima fecha clave aprox.`;
+
+      const canvas = document.getElementById('periodChart');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 150;
+
+      ctx.clearRect(0,0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#ff4757';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      for (let x = 0; x < canvas.width; x++) {
+        let y = canvas.height/2 + Math.sin((x / canvas.width) * Math.PI * 2) * 40;
+        if(x===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    setTimeout(renderCiclo, 300);
+
+    // ==========================================
+    // 6. MINIJUEGO PAC-GARDEN
+    // ==========================================
     const pCanvas = document.getElementById('pacmanCanvas');
     const pCtx = pCanvas.getContext('2d');
-    const GRID = 20;
-    let player = { x: 1, y: 1, score: 0 };
-    let items = [{x:3, y:3, type:'🍰'}, {x:5, y:5, type:'🌻'}, {x:2, y:7, type:'🍓'}, {x:10, y:10, type:'☕'}];
-    let ghost = { x: 12, y: 12 };
+    let pUser = { x: 1, y: 1 };
+    let items = [{x:3, y:2, t:'🍰'}, {x:5, y:5, t:'🌻'}, {x:2, y:6, t:'🍓'}, {x:6, y:3, t:'☕'}];
 
     function renderPacman() {
-      pCtx.fillStyle = '#0a0a14';
+      pCtx.fillStyle = '#080812';
       pCtx.fillRect(0, 0, pCanvas.width, pCanvas.height);
-
-      // Dibujar Items
-      pCtx.font = "14px Arial";
-      items.forEach(it => {
-        pCtx.fillText(it.type, it.x * GRID + 2, it.y * GRID + 16);
-      });
-
-      // Dibujar Fantasma
-      pCtx.fillText("👻", ghost.x * GRID + 2, ghost.y * GRID + 16);
-
-      // Dibujar Jugadora (Analy)
-      pCtx.fillText("👩🏻‍‍🍳", player.x * GRID + 2, player.y * GRID + 16);
+      pCtx.font = "16px Arial";
+      items.forEach(it => pCtx.fillText(it.t, it.x * 25 + 2, it.y * 25 + 20));
+      pCtx.fillText("👻", 8 * 25 + 2, 8 * 25 + 20); // Fantasma Estrés
+      pCtx.fillText("👩🏻‍🍳", pUser.x * 25 + 2, pUser.y * 25 + 20); // Analy
     }
 
     function movePacman(dx, dy) {
-      let nx = player.x + dx;
-      let ny = player.y + dy;
-      if (nx >= 0 && nx < 15 && ny >= 0 && ny < 15) {
-        player.x = nx;
-        player.y = ny;
-        // Comer items
-        items = items.filter(it => !(it.x === nx && it.y === ny));
+      let nx = pUser.x + dx, ny = pUser.y + dy;
+      if (nx >= 0 && nx < 10 && ny >= 0 && ny < 10) {
+        pUser.x = nx; pUser.y = ny;
+        items = items.filter(i => !(i.x === nx && i.y === ny));
         renderPacman();
       }
     }
-
-    window.addEventListener('keydown', e => {
-      if(e.key === 'ArrowUp') movePacman(0, -1);
-      if(e.key === 'ArrowDown') movePacman(0, 1);
-      if(e.key === 'ArrowLeft') movePacman(-1, 0);
-      if(e.key === 'ArrowRight') movePacman(1, 0);
-    });
     renderPacman();
 
-    // 4. Juego Pong Estelar
+    // ==========================================
+    // 7. MINIJUEGO PONG ESTELAR
+    // ==========================================
     const poCanvas = document.getElementById('pongCanvas');
     const poCtx = poCanvas.getContext('2d');
-    let ball = { x: 150, y: 100, dx: 2, dy: 2 };
-    let pKevin = 70, pAnaly = 70;
+    let ball = { x: 140, y: 90, dx: 2, dy: 2 };
+    let pKevin = 60, pAnaly = 60;
 
     poCanvas.addEventListener('touchmove', e => {
       let rect = poCanvas.getBoundingClientRect();
-      let touchY = e.touches[0].clientY - rect.top;
-      pAnaly = touchY - 25;
+      pAnaly = e.touches[0].clientY - rect.top - 20;
     });
 
     function loopPong() {
-      poCtx.fillStyle = '#0a0a14';
+      poCtx.fillStyle = '#080812';
       poCtx.fillRect(0, 0, poCanvas.width, poCanvas.height);
 
-      // Pelota
-      poCtx.fillStyle = '#ffd32a';
-      poCtx.beginPath();
-      poCtx.arc(ball.x, ball.y, 5, 0, Math.PI*2);
-      poCtx.fill();
+      poCtx.fillStyle = '#ffb703';
+      poCtx.beginPath(); poCtx.arc(ball.x, ball.y, 4, 0, Math.PI*2); poCtx.fill();
 
-      // Raquetas
-      poCtx.fillStyle = '#70a1ff';
-      poCtx.fillRect(5, pKevin, 6, 40); // Kevin (IA)
-      poCtx.fillStyle = '#ff77a9';
-      poCtx.fillRect(289, pAnaly, 6, 40); // Analy
+      poCtx.fillStyle = '#00d2d3'; poCtx.fillRect(5, pKevin, 5, 35);
+      poCtx.fillStyle = '#ff4757'; poCtx.fillRect(270, pAnaly, 5, 35);
 
-      // Movimiento pelota
-      ball.x += ball.dx;
-      ball.y += ball.dy;
-
+      ball.x += ball.dx; ball.y += ball.dy;
       if(ball.y <= 0 || ball.y >= poCanvas.height) ball.dy *= -1;
-      if(ball.x <= 11 && ball.y >= pKevin && ball.y <= pKevin + 40) ball.dx *= -1;
-      if(ball.x >= 284 && ball.y >= pAnaly && ball.y <= pAnaly + 40) ball.dx *= -1;
+      if(ball.x <= 10 && ball.y >= pKevin && ball.y <= pKevin + 35) ball.dx *= -1;
+      if(ball.x >= 265 && ball.y >= pAnaly && ball.y <= pAnaly + 35) ball.dx *= -1;
+      if(ball.x < 0 || ball.x > poCanvas.width) { ball.x = 140; ball.y = 90; }
 
-      if(ball.x < 0 || ball.x > poCanvas.width) { ball.x = 150; ball.y = 100; }
-
-      // IA Kevin
-      pKevin += (ball.y - (pKevin + 20)) * 0.05;
-
+      pKevin += (ball.y - (pKevin + 17)) * 0.06;
       requestAnimationFrame(loopPong);
     }
     loopPong();
 
-    // 5. Invernadero de Girasoles
-    const girasoles = [
-      { t: "Girasol del Alba", h: "Sanado", m: "Despedirme siempre con calidez." },
-      { t: "Girasol de la Claridad", h: "Sanado", m: "Transparencia absoluta y comunicación asertiva." }
-    ];
-
-    document.getElementById('girasolesGrid').innerHTML = girasoles.map(g => `
-      <div style="margin-top:10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">
-        <strong>🌻 ${g.t}</strong> <span class="badge sanada">${g.h}</span>
-        <p style="font-size:0.85rem; color:#ccc;">Compromiso: ${g.m}</p>
-      </div>
-    `).join('');
-
-    // Service Worker PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
+    // ==========================================
+    // 8. BITÁCORA / LOCALSTORAGE
+    // ==========================================
+    function guardarNota() {
+      const val = document.getElementById('analyNotes').value;
+      if(val.trim() !== '') {
+        localStorage.setItem('analy_note', val);
+        document.getElementById('saveMsg').style.display = 'block';
+        setTimeout(() => document.getElementById('saveMsg').style.display = 'none', 3000);
+      }
+    }
+    if(localStorage.getItem('analy_note')) {
+      document.getElementById('analyNotes').value = localStorage.getItem('analy_note');
     }
   </script>
 </body>
