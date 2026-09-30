@@ -1,14 +1,9 @@
-const CACHE_NAME = 'ecosistema-v3';
+const CACHE_NAME = 'ecosistema-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './carta.html',
-  './diarios.html',
-  './invernadero.html',
-  './css/styles.css',
-  './js/pingpong.js',
-  './audio/golden-hour.mp3',
-  './manifest.json'
+  './manifest.json',
+  './audio/golden-hour.mp3'
 ];
 
 self.addEventListener('install', (event) => {
