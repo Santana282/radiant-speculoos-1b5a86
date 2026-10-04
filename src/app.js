@@ -7,16 +7,13 @@ import { Router } from './core/router.js';
 import './components/layout/app-header.js';
 import './components/layout/bottom-nav.js';
 import './views/home-view.js';
-import './views/garden-view.js'; // <-- Asegúrate de importarla arriba
+import './views/garden-view.js'; // <-- Ruta del invernadero agregada
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicializar Persistencia Pública
     const publicStorage = new StorageService(CONFIG.publicStorageKey);
     const savedState = publicStorage.get() || { initialized: true };
-    const routes = {
-    '#/': 'home-view',
-    '#/jardin': 'garden-view'
-};
+
     // 2. Inicializar Estado Público (Store)
     const appStore = new Store(savedState);
 
@@ -25,17 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
         publicStorage.save(newState);
     });
 
-    // 4. Configurar Enrutador
+    // 4. Configurar Enrutador (Declarado una sola vez)
     const routes = {
-        '#/': 'home-view'
-        // Futuras rutas de la SPA se agregarán aquí
+        '#/': 'home-view',
+        '#/jardin': 'garden-view'
     };
     const router = new Router(routes, 'app-root');
     
     // Forzar renderizado inicial
     router.resolveRoute();
 
-    // 5. Registro Pasivo de Service Worker (Usando ruta relativa obligatoria)
+    // 5. Registro Pasivo de Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
             .then(reg => console.log('[App] SW Registrado en scope:', reg.scope))
