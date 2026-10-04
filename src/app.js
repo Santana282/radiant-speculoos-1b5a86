@@ -7,12 +7,16 @@ import { Router } from './core/router.js';
 import './components/layout/app-header.js';
 import './components/layout/bottom-nav.js';
 import './views/home-view.js';
+import './views/garden-view.js'; // <-- Asegúrate de importarla arriba
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicializar Persistencia Pública
     const publicStorage = new StorageService(CONFIG.publicStorageKey);
     const savedState = publicStorage.get() || { initialized: true };
-
+    const routes = {
+    '#/': 'home-view',
+    '#/jardin': 'garden-view'
+};
     // 2. Inicializar Estado Público (Store)
     const appStore = new Store(savedState);
 
