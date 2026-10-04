@@ -7,18 +7,13 @@ import { Router } from './core/router.js';
 import './components/layout/app-header.js';
 import './components/layout/bottom-nav.js';
 import './views/home-view.js';
-import './views/garden-view.js'; // <-- Ruta del invernadero agregada
-import './views/arcade-view.js';
+import './views/garden-view.js';
+import './views/arcade-view.js'; // <-- Ruta del arcade agregada
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicializar Persistencia Pública
     const publicStorage = new StorageService(CONFIG.publicStorageKey);
     const savedState = publicStorage.get() || { initialized: true };
-    const routes = {
-    '#/': 'home-view',
-    '#/jardin': 'garden-view',
-    '#/arcade': 'arcade-view'
-};
 
     // 2. Inicializar Estado Público (Store)
     const appStore = new Store(savedState);
@@ -28,10 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
         publicStorage.save(newState);
     });
 
-    // 4. Configurar Enrutador (Declarado una sola vez)
+    // 4. Configurar Enrutador (Declarado una sola vez con todas las vistas)
     const routes = {
         '#/': 'home-view',
-        '#/jardin': 'garden-view'
+        '#/jardin': 'garden-view',
+        '#/arcade': 'arcade-view'
     };
     const router = new Router(routes, 'app-root');
     
